@@ -1,0 +1,28 @@
+# @Author: Mathew Black <Mathew>
+# @Date:   2019-11-02T13:43:37-05:00
+# @Email:  dev@mathewblack.com
+# @Filename: server-deployment.yaml
+# @Last modified by:   Mathew
+# @Last modified time: 2019-11-02T14:20:35-05:00
+# @License: MIT
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: server
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels: # labels to select/identify the deployment
+        app: server
+    spec:     # pod spec
+      containers:
+      - name: server
+        image: server:v1 # image we pushed
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: server-side-configs
+        - secretRef:
+            name: server-side-secrets

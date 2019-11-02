@@ -1,0 +1,18 @@
+# @Author: Mathew Black <Mathew>
+# @Date:   2019-11-02T13:41:21-05:00
+# @Email:  dev@mathewblack.com
+# @Filename: frontend-service.yaml
+# @Last modified by:   Mathew
+# @Last modified time: 2019-11-02T14:24:46-05:00
+# @License: MIT
+apiVersion: v1
+kind: Service
+metadata:
+  name: react
+spec:
+  selector:
+    app: react
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
