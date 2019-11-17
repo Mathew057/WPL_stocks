@@ -28,7 +28,7 @@ jobs:
 
       - name: Push image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/server
+          IMAGE_ID=$(echo "docker.pkg.github.com/${{ github.repository }}/server" | awk '{print tolower($0)}')
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
