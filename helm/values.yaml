@@ -5,8 +5,8 @@
 replicaCount: 1
 
 pullPolicy: IfNotPresent
-client_image:  docker.pkg.github.com/mathew057/wpl_stocks/client:latest
-server_image: docker.pkg.github.com/mathew057/wpl_stocks/server:latest
+client_image:  docker.pkg.github.com/mathew057/hodl/client:latest
+server_image: docker.pkg.github.com/mathew057/hodl/server:latest
 
 mongodb:
   enabled: true
