@@ -4,11 +4,11 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-17T16:01:02-06:00
+ * @Last modified time: 2019-11-17T16:42:44-06:00
  * @License: MIT
  */
 
-const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017"
+const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
 const client = process.env.CLIENT || "localhost"
 const port = process.env.PORT || 5000
 

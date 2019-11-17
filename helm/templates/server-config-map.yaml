@@ -5,4 +5,4 @@ metadata:
 data:
   PORT: "5000"
   CLIENT: <frontend-service-ip>:<port>
-  MONGODB_URL: mongodb://mongo-service:27017/server-k8s
+  MONGODB_URL: mongodb://mongo-service:27017/hodl
