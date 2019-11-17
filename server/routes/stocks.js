@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-02T13:29:16-05:00
+ * @Last modified time: 2019-11-17T14:57:04-06:00
  * @License: MIT
  */
 
@@ -37,7 +37,7 @@
  routes.route('/:stock_id')
  .get((req, res) => {
    res.json({
-     stock_indicator: req.params.account_id,
+     stock_indicator: req.params.stock_id,
      price: "10.22",
      quantity: "100",
      graph: [{

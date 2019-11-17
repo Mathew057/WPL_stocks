@@ -4,12 +4,17 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-02T14:38:32-05:00
+ * @Last modified time: 2019-11-17T16:01:02-06:00
  * @License: MIT
  */
+
+const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017"
+const client = process.env.CLIENT || "localhost"
+const port = process.env.PORT || 5000
+
 const mongoose = require('mongoose')
 
-mongoose.connect(process.env.MONGODB_URL, {
+mongoose.connect(mongodb_url, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -27,11 +32,11 @@ const cors = require('cors')
 const helmet = require('helmet')
 
 const app = express()
-const port = process.env.PORT || 5000
+
 
 app.use(express.json())
 app.use(cors({
-    origin: process.env.CLIENT,
+    origin: client,
     credentials: true
 }))
 
