@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.css'
-import WPLNavigation from './components/navigation/WPLNavigation';
+import HodlNavigation from './components/navigation/HodlNavigation';
 import Home from './components/Home.jsx';
 import Login from './components/Login.jsx';
 import Profile from './components/Profile.jsx';
@@ -19,7 +19,7 @@ class App extends Component{
         const {classes} = this.props;
         return(
             <div className="App">
-                <WPLNavigation title="WPL Stocks App"/>
+                <HodlNavigation title="HODL Me"/>
                 <main className={classes.content}>
                     <div className={classes.toolbar}/>
                     <Route path="/" exact component={Home}/>
