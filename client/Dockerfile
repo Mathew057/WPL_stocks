@@ -10,7 +10,7 @@ COPY . .
 
 ENV REACT_APP_baseAPIURL=<backend-service-ip>:<port>
 
-RUN npm build
+RUN npm run-script build
 
 FROM nginx:latest
 
