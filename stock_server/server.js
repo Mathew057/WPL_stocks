@@ -4,55 +4,105 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-17T15:48:48-06:00
+ * @Last modified time: 2019-11-17T17:09:57-06:00
  * @License: MIT
  */
- const express = require('express')
- const cors = require('cors')
- var seedrandom = require('seedrandom');
- const stock_routes = require('./routes/stocks')
+const express = require('express')
+const cors = require('cors')
+const crypto = require('crypto');
+var seedrandom = require('seedrandom');
+const stock_routes = require('./routes/stocks')
 
- const epoch_2010 = 1259560800000
+var boxMullerRandom = (function() {
+  var phase = 0,
+    RAND_MAX,
+    array,
+    random,
+    x1, x2, w, z;
 
- const app = express()
- const port = process.env.PORT || 5000
+  if (crypto && typeof crypto.getRandomValues === 'function') {
+    RAND_MAX = Math.pow(2, 32) - 1;
+    array = new Uint32Array(1);
+    random = function() {
+      crypto.getRandomValues(array);
 
-function get_time(datetime = "now") {
-  var date = new Date()
-  if (datetime !== "now") {
-    date = new Date(datetime)
+      return array[0] / RAND_MAX;
+    };
+  } else {
+    random = Math.random;
   }
 
-  return Math.round((date.getTime() - epoch_2010)/60000)
+  return function() {
+    if (!phase) {
+      do {
+        x1 = 2.0 * random() - 1.0;
+        x2 = 2.0 * random() - 1.0;
+        w = x1 * x1 + x2 * x2;
+      } while (w >= 1.0);
+
+      w = Math.sqrt((-2.0 * Math.log(w)) / w);
+      z = x1 * w;
+    } else {
+      z = x2 * w;
+    }
+
+    phase ^= 1;
+
+    return z;
+  }
+}());
+
+function randomWalk(steps, randFunc) {
+  steps = steps >>> 0 || 5000;
+  if (typeof randFunc !== 'function') {
+    randFunc = boxMullerRandom;
+  }
+
+  var points = [],
+    value = 0,
+    t;
+
+  for (t = 0; t < steps; t += 1) {
+    value += randFunc();
+    points.push([t, value]);
+  }
+
+  return points;
 }
 
-function get_stock_at_time(stock, datetime="now") {
-  var epoch_time = get_time()
-  var rng = seedrandom(stock)
-  for (var j = 0; j<get_time(datetime); ++j) rng();
-  return rng();
+function getYValues(points) {
+  return points.map(function(point) {
+    return point[1];
+  });
 }
 
+function generatePlots(howMany) {
+  howMany = howMany >>> 0 || 10;
+  var plots = [],
+    index;
 
- var saveable = seedrandom("secret-seed", {state: true});
- for (var j = 0; j < 1e5; ++j) saveable();
- var saved = saveable.state();
- console.log(saved)
- saveable();
- saved = saveable.state();
- console.log(saved)
+  for (index = 0; index < howMany; index += 1) {
+    var rnd = seedrandom('AAAA')
+    plots.push({
+      name: 'plot' + index,
+      data: getYValues(randomWalk())
+    });
+  }
 
- console.log(get_stock_at_time('GOOG'))
+  return plots;
+}
 
- app.use(express.json())
- app.use(cors({
-     origin: process.env.CLIENT,
-     credentials: true
- }))
+console.log(generatePlots(10))
 
- app.get('/', (req, res) => {
-   res.send('Hello World!')
- })
+app.use(express.json())
+app.use(cors({
+  origin: process.env.CLIENT,
+  credentials: true
+}))
 
- app.use('/stocks',stock_routes)
- // app.listen(port, () => console.log(`App listening on port ${port}!`))
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.use('/stocks', stock_routes)
+// app.listen(port, () => console.log(`App listening on port ${port}!`))
