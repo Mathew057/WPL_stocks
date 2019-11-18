@@ -1,6 +1,6 @@
 import React from 'react';
-import WPLAppBar from './WPLAppBar';
-import WPLDrawer from './WPLDrawer';
+import HodlAppBar from './HodlAppBar';
+import HodlDrawer from './HodlDrawer';
 import {withStyles} from '@material-ui/core/styles';
 
 const drawerWidth = 240;
@@ -15,7 +15,7 @@ const styles = theme => ({
     }
 });
 
-class WPLNavigation extends React.Component{
+class HodlNavigation extends React.Component{
     constructor(){
         super();
         this.state={
@@ -32,8 +32,8 @@ class WPLNavigation extends React.Component{
         return(
             <div className={classes.content}>
                 <div className={classes.toolbar}>
-                    <WPLAppBar title={title}/>
-                    <WPLDrawer handleDrawerToggle={this.handleDrawerToggle} mobileOpen={this.state.mobileOpen}/>
+                    <HodlAppBar title={title}/>
+                    <HodlDrawer handleDrawerToggle={this.handleDrawerToggle} mobileOpen={this.state.mobileOpen}/>
                     {this.props.children}
                 </div>
             </div>
@@ -41,4 +41,4 @@ class WPLNavigation extends React.Component{
     }
 }
 
-export default withStyles(styles, {withTheme:true}) (WPLNavigation)
+export default withStyles(styles, {withTheme:true}) (HodlNavigation)

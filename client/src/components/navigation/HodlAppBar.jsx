@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const WPLAppBar = ({title}) => {
+const HodlAppBar = ({title}) => {
     const classes = useStyles();
 
     return(
@@ -94,4 +94,4 @@ const WPLAppBar = ({title}) => {
     );
 };
 
-export default (WPLAppBar);
+export default (HodlAppBar);

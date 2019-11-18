@@ -17,7 +17,7 @@ const styles = theme => ({
     toolbar: theme.mixins.toolbar
 });
 
-const WPLDrawer = ({classes, handleDrawerToggle, mobileOpen}) => {
+const HodlDrawer = ({classes, handleDrawerToggle, mobileOpen}) => {
     return(
         <div>
             <Hidden mdUp>
@@ -51,4 +51,4 @@ const WPLDrawer = ({classes, handleDrawerToggle, mobileOpen}) => {
 };
 
 
-export default withStyles(styles,{withTheme:true}) (WPLDrawer);
+export default withStyles(styles,{withTheme:true}) (HodlDrawer);
