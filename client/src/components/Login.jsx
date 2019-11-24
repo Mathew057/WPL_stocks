@@ -10,6 +10,24 @@ import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 
 class Login extends React.Component{
+
+    constructor(){
+        super();
+        this.state = {
+            user: "",
+            password: ""
+        }
+    }
+
+    handleChange = e =>{
+        this.setState({[e.target.name]: e.target.value})
+    }
+
+    handleSubmit = e =>{
+        console.log("user: " + this.state.user)
+        console.log("password: " + this.state.password)
+    }
+
     render(){
         const {classes} = this.props;
         return(
@@ -21,21 +39,25 @@ class Login extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Login</h2>
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     <div>
                         <TextField
                           label="Username"
+                          name="user"
                           margin="normal"
                           variant="outlined"
+                          onChange = {this.handleChange}
                           fullWidth
                         />
                     </div>
                     <div>
                         <TextField
                           label="Password"
+                          name="password"
                           margin="normal"
                           variant="outlined"
                           type="password"
+                          onChange = {this.handleChange}
                           fullWidth
                         />
                     </div>

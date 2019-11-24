@@ -11,6 +11,54 @@ import Grid from '@material-ui/core/Grid';
 
 
 class Signup extends React.Component{
+
+    constructor(){
+        super();
+        this.state={
+            firstName: "",
+            lastName: "",
+            physAddr: "",
+            email: "",
+            user: "",
+            password: ""
+        }
+    }
+
+    handleChange = e => {
+        this.setState({[e.target.name]: e.target.value})
+    }
+
+    handleSubmit = e =>{
+        console.log("firstName: " + this.state.firstName)
+        console.log("lastName: " + this.state.lastName)
+        console.log("physAddr: " + this.state.physAddr)
+        console.log("email: " + this.state.email)
+        console.log("user: " + this.state.user)
+        console.log("password: " + this.state.password)
+
+        const url =  process.env.REACT_APP_baseAPIURL + '/login/signup'
+        const data = {
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            physAddr: this.state.physAddr,
+            email: this.state.email,
+            user: this.state.user,
+            password: this.state.password
+        }
+        fetch( url,
+            {method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .catch(error => console.log('Error:',error))
+        .then(response => console.log ('Success:', response));
+        }
+
+
+
     render(){
         const {classes} = this.props;
         return(
@@ -22,46 +70,66 @@ class Signup extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Sign Up</h2>
-                <form>
+                <form onSubmit= {this.handleSubmit}>
                     <div>
                         <TextField
-                          label="Full Name"
+                          label="First Name"
+                          name="firstName"
                           margin="normal"
                           variant="outlined"
+                          onChange = {this.handleChange}
+                          fullWidth
+                        />
+                    </div>
+                    <div>
+                        <TextField
+                          label="Last Name"
+                          name="lastName"
+                          margin="normal"
+                          variant="outlined"
+                          onChange = {this.handleChange}
                           fullWidth
                         />
                     </div>
                     <div>
                         <TextField
                           label="Physical Address"
+                          name="physAddr"
                           margin="normal"
                           variant="outlined"
+                          onChange = {this.handleChange}
                           fullWidth
                         />
                     </div>
                      <div>
                          <TextField
                            label="E-mail Address"
+                           name="email"
                            margin="normal"
                            variant="outlined"
                            type="email"
+                           onChange = {this.handleChange}
                            fullWidth
                          />
                      </div>
                     <div>
                         <TextField
                           label="Username"
+                          name="user"
                           margin="normal"
                           variant="outlined"
+                          onChange = {this.handleChange}
                           fullWidth
                         />
                     </div>
                     <div>
                         <TextField
                           label="Password"
+                          name="password"
                           margin="normal"
                           variant="outlined"
                           type="password"
+                          onChange = {this.handleChange}
                           fullWidth
                         />
                     </div>

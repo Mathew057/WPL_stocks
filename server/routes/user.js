@@ -46,7 +46,9 @@ routes.get('/profile', (req, res) => {
     username: "blah",
     first_name: "test",
     last_name: "dummy",
-    someotherstuff: "stuff"
+    address: "123 Potato Street",
+    email: "test@gmail.com",
+    password: "secretpassword"
   })
 })
 
@@ -56,7 +58,7 @@ routes.get('/accounts', (req,res) => {
     name: "test",
     card_type: "VISA",
     account_indicator: "3322",
-    expiration: ""
+    expiration: "10/21"
   },{
     type: "bank_account",
     name: "test",

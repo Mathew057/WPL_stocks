@@ -9,6 +9,50 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 
 class Profile extends React.Component{
+    constructor(){
+        super();
+        this.state={
+            firstName: "",
+            lastName: "",
+            physAddr: "",
+            email: "",
+            user: "",
+            password: ""
+        }
+    }
+
+    componentDidMount(){
+        const url =  process.env.REACT_APP_baseAPIURL + '/user/profile'
+        fetch(url)
+        .then(res => res.json())
+        .catch(error => console.log('Error:',error))
+//        .then(response => console.log ('Success:', response))
+        .then(response => {this.setState({
+             firstName: response.first_name,
+             lastName: response.last_name,
+             physAddr: response.address,
+             email: response.email,
+             user: response.username,
+             password: response.password
+            }
+        )})
+        ;
+    }
+
+    handleChange = e => {
+        this.setState({[e.target.name]: e.target.value})
+    }
+
+    handleUpdate = e =>{
+        console.log("firstName: " + this.state.firstName)
+        console.log("lastName: " + this.state.lastName)
+        console.log("physAddr: " + this.state.physAddr)
+        console.log("email: " + this.state.email)
+        console.log("user: " + this.state.user)
+        console.log("password: " + this.state.password)
+        //TODO: DO THINGS ON UPDATE OF FIELDS
+    }
+
     render(){
         const {classes} = this.props;
         return(
@@ -20,47 +64,67 @@ class Profile extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Profile</h2>
-                <form>
+                <form onSubmit={this.handleUpdate}>
                     <div>
                         <TextField
-                          label="Full Name"
+                          label="First Name"
+                          name= "firstName"
                           margin="normal"
                           fullWidth
-                          defaultValue="Jim Bob"
+                          onChange = {this.handleChange}
+                          value={this.state.firstName}
+                        />
+                    </div>
+                    <div>
+                        <TextField
+                          label="Last Name"
+                          name = "lastName"
+                          margin="normal"
+                          fullWidth
+                          onChange = {this.handleChange}
+                          value= {this.state.lastName}
                         />
                     </div>
                     <div>
                         <TextField
                           label="Physical Address"
+                          name = "address"
                           margin="normal"
                           fullWidth
-                          defaultValue="123 Potato Street"
+                          onChange = {this.handleChange}
+                          value={this.state.physAddr}
                         />
                     </div>
                     <div>
                         <TextField
                           label="E-mail"
+                          name="email"
                           margin="normal"
                           type="email"
                           fullWidth
-                          defaultValue="jimbob@gmail.com"
+                          onChange = {this.handleChange}
+                          value={this.state.email}
                         />
                     </div>
                     <div>
                         <TextField
                           label="Username"
+                          name="user"
                           margin="normal"
                           fullWidth
-                          defaultValue="jimbob124"
+                          onChange = {this.handleChange}
+                          value= {this.state.user}
                         />
                     </div>
                     <div>
                         <TextField
                           label="Password"
+                          name="password"
                           margin="normal"
                           type="password"
                           fullWidth
-                          defaultValue="secret"
+                          onChange = {this.handleChange}
+                          value={this.state.password}
                         />
                     </div>
                     <Button type="submit" variant="contained" color="primary" fullWidth>
