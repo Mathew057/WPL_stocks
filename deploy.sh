@@ -31,20 +31,10 @@ if [ ${FAILS} -ne 0 ]; then
   helm ls --all --short | xargs -L1 helm delete -n "$KUBE_NAMESPACE"
 fi
 
-GITHUB_USER="mathew057"
-GITHUB_TOKEN="5978bedf38ae9d606c5223d670b45d01f9866c6b"
-
-if [[ -z "$(kubectl get secrets | grep github-token)" ]]; then
-  echo "creating docker registery secret"
-  kubectl create secret docker-registry github-token --docker-server=https://docker.pkg.github.com --docker-username=$GITHUB_USER --docker-password=$GITHUB_TOKEN --docker-email=mathew0057@gmail.com
-fi
-
 if [ ${DEPLOYS}  -eq 0 ]; then
   echo "Creating helm deployment"
-  helm install ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE" \
-    --set imagePullSecret=github-token
+  helm install ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE"
 else
   echo "Upgrading helm deployment"
-  helm upgrade ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE" \
-    --set imagePullSecret=github-token
+  helm upgrade ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE"
 fi
