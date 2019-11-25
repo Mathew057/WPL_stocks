@@ -21,14 +21,14 @@ jobs:
       - name: Build image
         run: |
           cd server
-          docker build . --file Dockerfile --tag server
+          docker build . --file Dockerfile --tag hodl-server
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login docker.pkg.github.com -u mathew0057 --password-stdin
 
       - name: Push image
         run: |
-          IMAGE_ID=$(echo "docker.pkg.github.com/${{ github.repository }}/server" | awk '{print tolower($0)}')
+          IMAGE_ID="mathew0057/hodl-server"
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
@@ -42,42 +42,42 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker tag server $IMAGE_ID:$VERSION
+          docker tag hodl-server $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
-  stock_server:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Build image
-        run: |
-          cd stock_server
-          docker build . --file Dockerfile --tag stock_server
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Push image
-        run: |
-          IMAGE_ID=$(echo "docker.pkg.github.com/${{ github.repository }}/stock_server" | awk '{print tolower($0)}')
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag stock_server $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+  # stock_server:
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'push'
+  #
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #
+  #     - name: Build image
+  #       run: |
+  #         cd stock_server
+  #         docker build . --file Dockerfile --tag stock_server
+  #
+  #     - name: Log into registry
+  #       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+  #
+  #     - name: Push image
+  #       run: |
+  #         IMAGE_ID="mathew0057/hodl-server"
+  #
+  #         # Strip git ref prefix from version
+  #         VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+  #
+  #         # Strip "v" prefix from tag name
+  #         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+  #
+  #         # Use Docker `latest` tag convention
+  #         [ "$VERSION" == "master" ] && VERSION=latest
+  #
+  #         echo IMAGE_ID=$IMAGE_ID
+  #         echo VERSION=$VERSION
+  #
+  #         docker tag stock_server $IMAGE_ID:$VERSION
+  #         docker push $IMAGE_ID:$VERSION
 
   client:
     runs-on: ubuntu-latest
@@ -89,14 +89,14 @@ jobs:
       - name: Build image
         run: |
           cd client
-          docker build . --file Dockerfile --tag client
+          docker build . --file Dockerfile --tag hodl-client
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login docker.pkg.github.com -u mathew0057 --password-stdin
 
       - name: Push image
         run: |
-          IMAGE_ID=$(echo "docker.pkg.github.com/${{ github.repository }}/client" | awk '{print tolower($0)}')
+          IMAGE_ID="mathew0057/hodl-client"
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
@@ -110,5 +110,5 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker tag client $IMAGE_ID:$VERSION
+          docker tag hodl-client $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
