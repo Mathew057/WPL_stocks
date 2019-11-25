@@ -24,7 +24,7 @@ jobs:
           docker build . --file Dockerfile --tag hodl-server
 
       - name: Log into registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login docker.pkg.github.com -u mathew0057 --email=mathew0057@gmail.com --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login docker.pkg.github.com -u mathew0057 --password-stdin
 
       - name: Push image
         run: |
@@ -92,7 +92,7 @@ jobs:
           docker build . --file Dockerfile --tag hodl-client
 
       - name: Log into registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login docker.pkg.github.com -u mathew0057 --email=mathew0057@gmail.com --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login docker.pkg.github.com -u mathew0057 --password-stdin
 
       - name: Push image
         run: |
