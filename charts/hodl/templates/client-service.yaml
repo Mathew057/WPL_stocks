@@ -1,0 +1,25 @@
+{{- if .Values.service.client.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hodl.fullname" . }}-frontend
+  labels:
+    app.kubernetes.io/name: {{ include "hodl.name" . }}
+    helm.sh/chart: {{ include "hodl.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.service.client.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.service.client.type }}
+  ports:
+    - port: {{ .Values.service.client.externalPort }}
+      targetPort: {{ .Values.service.client.internalPort }}
+      protocol: {{ .Values.service.client.protocol }}
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "hodl.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

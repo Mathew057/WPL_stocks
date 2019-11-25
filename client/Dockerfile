@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-ENV REACT_APP_baseAPIURL=<backend-service-ip>:<port>
+ENV REACT_APP_baseAPIURL=http://localhost:5000
 
 RUN npm run-script build
 

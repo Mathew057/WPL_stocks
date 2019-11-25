@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hodl.fullname" . }}-client
+  labels:
+    app.kubernetes.io/name: {{ include "hodl.name" . }}
+    helm.sh/chart: {{ include "hodl.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    {{- range $key, $value := .Values.deployment.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "hodl.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels: # labels to select/identify the deployment
+        app.kubernetes.io/name: {{ template "hodl.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: client
+          image: "{{ .Values.client.image.repository }}:{{ .Values.client.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+          - name: {{ include "hodl.fullname" . }}-client-config
+            mountPath: /etc/nginx/conf.d
+          resources:
+{{ toYaml .Values.client.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+      {{- if hasKey .Values "imagePullSecret"}}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      volumes:
+        - name: {{ include "hodl.fullname" . }}-client-config
+          configMap:
+            name: {{ include "hodl.fullname" . }}-client-config

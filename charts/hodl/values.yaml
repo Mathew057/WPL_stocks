@@ -4,12 +4,21 @@
 
 replicaCount: 1
 
-pullPolicy: IfNotPresent
-client_image:  docker.pkg.github.com/mathew057/hodl/client:latest
-server_image: docker.pkg.github.com/mathew057/hodl/server:latest
-
 mongodb:
   enabled: true
+
+client:
+  image:
+    repository: docker.pkg.github.com/mathew057/hodl/client
+    tag: latest
+    pullPolicy: IfNotPresent
+
+server:
+  image:
+    repository: docker.pkg.github.com/mathew057/hodl/server
+    tag: latest
+    pullPolicy: IfNotPresent
+
 
 imagePullSecrets: []
 nameOverride: ""
@@ -34,18 +43,33 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
-  port: 80
+  server:
+    enabled: true
+    type: NodePort
+    internalPort: 80
+    externalPort: 8080
+    protocol: TCP
+    annotations: {}
+  client:
+    enabled: true
+    type: NodePort
+    internalPort: 5000
+    externalPort: 5000
+    protocol: TCP
+    annotations: {}
 
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/issuer: "letsencrypt-staging"
+    kubernetes.io/tls-acme: "true"    # kubernetes.io/ingress.class: nginx
   hosts:
     - host: chart-example.local
       paths: []
-  tls: []
+
+  tls:
+    secretName: ""
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
@@ -67,3 +91,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+deployment:
+  annotations: {}
