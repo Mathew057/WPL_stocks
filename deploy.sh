@@ -1,12 +1,11 @@
-##!/usr/bin/env bash
-set -e
+#!/bin/bash
 export KUBE_NAMESPACE="default"
-if ! [ -x "$(command -v helm)" ]; then
+if [ ! -x "$(command -v helm)" ]; then
   echo "could not find helm installation"
   exit 1
 fi
 
-if ! [ -x "$(command -v kubectl)" ]; then
+if [ ! -x "$(command -v kubectl)" ]; then
   echo "could not find kubectl installation"
   exit 1
 fi

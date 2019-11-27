@@ -6,6 +6,8 @@ replicaCount: 1
 
 mongodb:
   enabled: true
+  persistence:
+    enabled: false
 
 client:
   image:
@@ -43,14 +45,14 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  server:
+  client:
     enabled: true
     type: NodePort
     internalPort: 80
     externalPort: 8080
     protocol: TCP
     annotations: {}
-  client:
+  server:
     enabled: true
     type: NodePort
     internalPort: 5000
