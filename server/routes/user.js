@@ -164,8 +164,10 @@ routes.get('/balance', (req,res) => {
 
 routes.get('/transfer', (req,res) => {
   res.json({
-	account_id: "3322",
-	account_name: "test bank account",
+	from_id: "3322",
+	from_name: "test bank account",
+	to_id: "0000",
+	to_name: "balance",
     amount: "350.42"
   })
 })
