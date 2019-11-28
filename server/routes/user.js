@@ -55,14 +55,14 @@ routes.get('/profile', (req, res) => {
 routes.get('/accounts', (req,res) => {
   res.json([{
     type: "card",
-    name: "test",
+    name: "test1",
     card_type: "VISA",
     account_indicator: "3322",
     expiration: "10/21"
   },{
     type: "bank_account",
-    name: "test",
-    account_indicator: "3322",
+    name: "test2",
+    account_indicator: "33223242432",
     routing_number: "11111111111"
   }])
 })
@@ -85,4 +85,81 @@ routes.route('/accounts/:account_id')
   res.send('success')
 })
 
+
+routes.get('/schedules', (req,res) => {
+  res.json([{
+    id: "sched1",
+    type: "buy",
+    frequency: "day",
+    interval: "1",
+    stock_indicator: "GOOGL",
+    quantity: "512",
+    start_date: "2019-11-18",
+    end_date: "2019-12-18"
+  },{
+    id: "sched2",
+    type: "sell",
+    frequency: "week",
+    interval: "2",
+    stock_indicator: "AMZN",
+    quantity: "10",
+    start_date: "2019-12-15",
+    end_date: "2020-01-10"
+  },{
+    id: "sched3",
+    type: "sell",
+    frequency: "month",
+    interval: "4",
+    stock_indicator: "AAPL",
+    quantity: "10",
+    start_date: "2019-12-15",
+    end_date: "2020-01-10"
+  },{
+    id: "sched4",
+    type: "buy",
+    frequency: "year",
+    interval: "5",
+    stock_indicator: "WMT",
+    quantity: "10",
+    start_date: "2019-12-15",
+    end_date: "2020-01-10"
+     }
+  ])
+})
+
+routes.route('/schedules/:schedule_id')
+.get((req, res) => {
+  res.json({
+    id: "sched1",
+    type: "buy",
+    frequency: "day",
+    interval: "1",
+    stock_indicator: "GOOGL",
+    quantity: "512",
+    start_date: "2019-11-18",
+    end_date: "2019-12-18"
+  })
+})
+.put((req,res) => {
+  console.log(req)
+  res.send('success')
+})
+.delete((req,res) => {
+  res.send('success')
+})
+
+
+routes.get('/balance', (req,res) => {
+  res.json({
+	amount: "52.40"
+  })
+})
+
+routes.get('/transfer', (req,res) => {
+  res.json({
+	account_id: "3322",
+	account_name: "test bank account",
+    amount: "350.42"
+  })
+})
 module.exports = routes;
