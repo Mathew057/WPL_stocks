@@ -13,13 +13,20 @@ const routes = require('express').Router();
 routes.get('/stocks', (req, res) => {
   res.json([{
     stock_indicator: "GOOGL",
+    company_name: "Google",
+    trend: "+1.5",
     price: "10.22",
-    quantity: "100",
-    graph: [{
-      x: new Date(),
-      y: 100
-    }]
-  }])
+    quantity: "200",
+    data: [65, 59, 80, 81, 56, 55, 40]
+  },{
+    stock_indicator: "AMZN",
+    company_name: "Amazon",
+    trend: "-1.5",
+    price: "4100.22",
+    quantity: "500",
+    data: [25, 50, 25, 64, 99, 26, 72]
+    }
+  ])
 })
 
 routes.route('/stocks/:stock_id')
