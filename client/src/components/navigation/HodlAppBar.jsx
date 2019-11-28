@@ -63,7 +63,7 @@ const HodlAppBar = ({title}) => {
                       </Typography>
                    </Link>
                   </Grid>
-                  <Grid item>
+              {/*    <Grid item>
              <div className={classes.search}>
                          <div className={classes.searchIcon}>
                            <SearchIcon />
@@ -77,7 +77,7 @@ const HodlAppBar = ({title}) => {
                            inputProps={{ 'aria-label': 'search' }}
                          />
                        </div>
-                 </Grid>
+                 </Grid> */}
 
                   <Grid item>
                     <div>

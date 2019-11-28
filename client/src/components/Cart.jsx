@@ -5,7 +5,7 @@ import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import {Line} from 'react-chartjs-2';
 
-class Home extends React.Component{
+class Cart extends React.Component{
 
     state = {
         stocks: []
@@ -53,7 +53,6 @@ class Home extends React.Component{
         return data;
     }
 
-
     render(){
         const {classes} = this.props;
         const {stocks} = this.props;
@@ -75,26 +74,21 @@ class Home extends React.Component{
                        pageSize: 10,
                        pageSizeOptions: [10,20,25]
                      }}
-                    actions={[
-                      {
-                        icon: 'add',
-                        tooltip: 'Save User',
-                        onClick: (event, rowData) => alert(rowData.stock_indicator + " has been added to your cart")
-                      }
-                    ]}
-                    components={{
-                      Action: props => (
-                        <Button
-                          onClick={(event) => props.action.onClick(event, props.data)}
-                          color="primary"
-                          variant="contained"
-                          style={{textTransform: 'none'}}
-                          size="small"
-                        >
-                          Buy/Sell
-                        </Button>
-                      ),
-                    }}
+                    editable={{
+                              onRowDelete: oldData =>
+                                new Promise((resolve, reject) => {
+                                  setTimeout(() => {
+                                    {
+                                      let data = this.state.stocks;
+                                      const index = data.indexOf(oldData);
+                                      data.splice(index, 1);
+                                      this.setState({ data }, () => resolve());
+                                    }
+                                    resolve()
+                                  }, 1000)
+                                }),
+                            }}
+
                      detailPanel={rowData => {
                           return (
                             <div>
@@ -109,4 +103,4 @@ class Home extends React.Component{
     }
 }
 
-export default withStyles(styles) (Home);
+export default withStyles(styles) (Cart);
