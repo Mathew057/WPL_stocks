@@ -4,6 +4,7 @@ import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import {Line} from 'react-chartjs-2';
+import {tableIcons} from './materialTableConstants';
 
 class Home extends React.Component{
 
@@ -66,35 +67,42 @@ class Home extends React.Component{
                        { title: 'Stock Indicator', field: 'stock_indicator' },
                        { title: 'Company Name', field: 'company_name' },
                        { title: 'Trend', field: 'trend'},
-                       { title: 'Price', field: 'price', type: 'numeric' },
+                       { title: 'Price', field: 'price', type: 'currency' },
                        { title: 'Shares Available', field: 'shares_available', type: 'numeric' }
                      ]}
                      data= {this.state.stocks}
                      options={{
                        sorting: true,
                        pageSize: 10,
-                       pageSizeOptions: [10,20,25]
+                       pageSizeOptions: [10,20,25],
+                       selection: true
                      }}
+                    icons={tableIcons}
                     actions={[
                       {
                         icon: 'add',
-                        tooltip: 'Save User',
-                        onClick: (event, rowData) => alert(rowData.stock_indicator + " has been added to your cart")
+                        tooltip: 'Buy',
+                        onClick: (event, rowData) => alert("You saved " + rowData.name)
+                      },
+                      {
+                        icon: 'delete',
+                        tooltip: 'Sell',
+                        onClick: (event, rowData) => alert("You want to delete " + rowData.name)
                       }
                     ]}
-                    components={{
-                      Action: props => (
-                        <Button
-                          onClick={(event) => props.action.onClick(event, props.data)}
-                          color="primary"
-                          variant="contained"
-                          style={{textTransform: 'none'}}
-                          size="small"
-                        >
-                          Buy/Sell
-                        </Button>
-                      ),
-                    }}
+//                    components={{
+//                      Action: props => (
+//                        <Button
+//                          onClick={(event) => props.action.onClick(event, props.data)}
+//                          color="primary"
+//                          variant="contained"
+//                          style={{textTransform: 'none'}}
+//                          size="small"
+//                        >
+//                          Buy/Sell
+//                        </Button>
+//                      ),
+//                    }}
                      detailPanel={rowData => {
                           return (
                             <div>
