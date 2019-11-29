@@ -4,11 +4,12 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-02T13:22:09-05:00
+ * @Last modified time: 2019-11-27T19:50:41-06:00
  * @License: MIT
  */
 
 const routes = require('express').Router();
+const auth = require('../middlewares/auth')
 
 routes.get('/stocks', (req, res) => {
   res.json([{
