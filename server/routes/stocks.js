@@ -4,38 +4,29 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-17T14:57:04-06:00
+ * @Last modified time: 2019-11-29T12:46:21-06:00
  * @License: MIT
  */
 
  const routes = require('express').Router();
+ const auth = require('../middlewares/auth')
+ const axios = require('axios')
 
- routes.post('/search', (req, res) => {
-   res.json([{
-     stock_indicator: "GOOGL",
-     price: "10.22",
-     quantity: "100",
-     graph: [{
-       x: new Date(),
-       y: 100
-     }]
-   }])
- })
+const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:3000/stock_api"
 
- routes.get('/', (req, res) => {
-   res.json([{
-     stock_indicator: "GOOGL",
-     price: "10.22",
-     quantity: "100",
-     graph: [{
-       x: new Date(),
-       y: 100
-     }]
-   }])
+ routes.get('/', async (req, res) => {
+   try {
+     var response = await axios.get(`${base_exchange_url}/stocks`)
+     console.log(response.data.length)
+     res.json(response.data)
+   }
+   catch {
+     res.send(error)
+   }
  })
 
  routes.route('/:stock_id')
- .get((req, res) => {
+ .get(async (req, res) => {
    res.json({
      stock_indicator: req.params.stock_id,
      price: "10.22",
@@ -46,10 +37,10 @@
      }]
    })
  })
- .put((req,res) => {
+ .put(async (req,res) => {
    res.send('success')
  })
- .delete((req,res) => {
+ .delete(async (req,res) => {
    res.send('success')
  })
 
