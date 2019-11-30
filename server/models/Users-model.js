@@ -36,17 +36,6 @@ const usersSchema = new mongoose.Schema({
     timestamps: true
 })
 
-usersSchema.pre('save', async function (next) {
-    const user = this
-
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8)
-    }
-
-    next()
-})
-
-
 usersSchema.statics.findByCredentials = async (email, password) => {
     const user = await Users.findOne({ email })
 
@@ -89,4 +78,3 @@ usersSchema.methods.toJSON = function () {
 const Users = mongoose.model('Users', usersSchema)
 
 module.exports = Users
-
