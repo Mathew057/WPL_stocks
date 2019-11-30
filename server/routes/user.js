@@ -4,50 +4,88 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-30T12:01:19-06:00
+ * @Last modified time: 2019-11-30T13:05:27-06:00
  * @License: MIT
  */
 
 const routes = require('express').Router();
 const auth = require('../middlewares/auth')
 const Account = require('../models/Account-model')
+const Stock = require('../models/Stock-model')
+const Schedule = require('../models/Schedule-model')
+const Balance = require('../models/Balance-model')
 
-routes.get('/stocks', (req, res) => {
-  res.json([{
-    stock_indicator: "GOOGL",
-    company_name: "Google",
-    trend: "+1.5",
-    price: "10.22",
-    quantity: "200",
-    data: [65, 59, 80, 81, 56, 55, 40]
-  },{
-    stock_indicator: "AMZN",
-    company_name: "Amazon",
-    trend: "-1.5",
-    price: "4100.22",
-    quantity: "500",
-    data: [25, 50, 25, 64, 99, 26, 72]
+routes.route('/stocks')
+.get(async (req, res) => {
+  // res.json([{
+  //   stock_indicator: "GOOGL",
+  //   company_name: "Google",
+  //   trend: "+1.5",
+  //   price: "10.22",
+  //   quantity: "200",
+  //   data: [65, 59, 80, 81, 56, 55, 40]
+  // },{
+  //   stock_indicator: "AMZN",
+  //   company_name: "Amazon",
+  //   trend: "-1.5",
+  //   price: "4100.22",
+  //   quantity: "500",
+  //   data: [25, 50, 25, 64, 99, 26, 72]
+  //   }
+  // ])
+  try {
+    var stocks = await Stocks.find()
+    stocks.map((stock) => {
+      console.log(stock)
+      return stock
+    })
+    res.json(stocks)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+})
+.post(async (req, res) => {
+  const newStocks = req.body
+  var payload = []
+  if (!(newStocks instanceof Array)) {
+    res.status(400).send('request is not a list of stocks!')
+  }
+  try {
+    for (var i = 0; i < newStocks.length; i++) {
+      const newStock = await Stock(stock);
+      await newStock.save();
+      payload.push({newStock})
     }
-  ])
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+  res.json(payload)
 })
 
 routes.route('/stocks/:stock_id')
-.get((req, res) => {
-  res.json({
-    stock_indicator: "GOOGL",
-    price: "10.22",
-    quantity: "100",
-    graph: [{
-      x: new Date(),
-      y: 100
-    }]
-  })
+.get(async (req, res) => {
+  try {
+    var stocks = await Stocks.findOne({stock_indicator: req.params.stock_id})
+    res.json(Stocks)
+  }
+  catch (e) {
+    res.status(400).send(e)
+  }
 })
-.put((req,res) => {
+.put(async (req,res) => {
   res.send('success')
 })
-.delete((req,res) => {
-  res.send('success')
+.delete(async (req,res) => {
+  try {
+    var stocks = await Stocks.deleteOne({stock_indicator: req.params.stock_id})
+    res.send('success')
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+
 })
 
 routes.get('/profile', (req, res) => {
@@ -62,8 +100,13 @@ routes.get('/profile', (req, res) => {
 
 routes.route('/accounts')
 .get(async (req,res) => {
-  const Accounts = await Account.find()
-  res.json(Accounts)
+  try {
+    const Accounts = await Account.find()
+    res.json(Accounts)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 .post(async (req,res) => {
   const newAccount = req.body
@@ -98,82 +141,80 @@ routes.route('/accounts/:account_id')
 })
 
 
-routes.get('/schedules', (req,res) => {
-  res.json([{
-    id: "sched1",
-    type: "buy",
-    frequency: "day",
-    interval: "1",
-    stock_indicator: "GOOGL",
-    quantity: "512",
-    start_date: "2019-11-18",
-    end_date: "2019-12-18"
-  },{
-    id: "sched2",
-    type: "sell",
-    frequency: "week",
-    interval: "2",
-    stock_indicator: "AMZN",
-    quantity: "10",
-    start_date: "2019-12-15",
-    end_date: "2020-01-10"
-  },{
-    id: "sched3",
-    type: "sell",
-    frequency: "month",
-    interval: "4",
-    stock_indicator: "AAPL",
-    quantity: "10",
-    start_date: "2019-12-15",
-    end_date: "2020-01-10"
-  },{
-    id: "sched4",
-    type: "buy",
-    frequency: "year",
-    interval: "5",
-    stock_indicator: "WMT",
-    quantity: "10",
-    start_date: "2019-12-15",
-    end_date: "2020-01-10"
-     }
-  ])
+routes.route('/schedules')
+.get(async (req,res) => {
+  try {
+    const Schedules = await Schedule.find()
+    res.json(Schedules)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+})
+.post(async (req,res) => {
+  const newSchedule = req.body
+  try {
+      const schedule = await Schedule(newSchedule)
+      await schedule.save()
+      res.json({ schedule })
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 
 routes.route('/schedules/:schedule_id')
-.get((req, res) => {
-  res.json({
-    id: "sched1",
-    type: "buy",
-    frequency: "day",
-    interval: "1",
-    stock_indicator: "GOOGL",
-    quantity: "512",
-    start_date: "2019-11-18",
-    end_date: "2019-12-18"
-  })
+.get(async (req, res) => {
+  try {
+      const schedule = await Schedule.findById(req.params.schedule_id)
+      res.json({schedule})
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
-.put((req,res) => {
-  console.log(req)
-  res.send('success')
+.delete(async (req,res) => {
+  try {
+      const schedule = await Schedule.findByIdAndDelete(req.params.schedule_id)
+      res.send('success')
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
-.delete((req,res) => {
-  res.send('success')
-})
-
 
 routes.get('/balance', (req,res) => {
-  res.json({
-	amount: "52.40"
-  })
+  try {
+    var balance = await Balance.findOne()
+    res.json(balance)
+  }
+  catch (e) {
+    res.status(400).send(e)
+  }
 })
 
-routes.get('/transfer', (req,res) => {
-  res.json({
-	from_id: "3322",
-	from_name: "test bank account",
-	to_id: "0000",
-	to_name: "balance",
-    amount: "350.42"
-  })
+routes.post('/transfer', (req,res) => {
+  const {from_id, to_id, amount} = req.body;
+  try {
+    const old_balance = await Balance.findOne()
+    var transfer_amount = old_balance.amount
+    if (from_id === "balance") {
+      // transfer out
+      transfer_amount -= amount
+    }
+    else if (to_id === "balance") {
+      // transfer in
+      transfer_amount += amount
+    }
+    else {
+      res.start(400).send('cannot transfer between accounts, only to and from the balance')
+    }
+    const balance = await Balance.updateOne({}, {
+      amount: transfer_amount
+    })
+  }
+  catch (e) {
+    res.status(400).send(e)
+  }
 })
 module.exports = routes;
