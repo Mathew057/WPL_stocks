@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-29T12:48:44-06:00
+ * @Last modified time: 2019-11-29T13:05:05-06:00
  * @License: MIT
  */
 
@@ -21,27 +21,55 @@ const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:3000/st
      res.json(response.data)
    }
    catch {
-     res.send(error)
+     res.send('error')
    }
  })
 
  routes.route('/:stock_id')
  .get(async (req, res) => {
-   res.json({
-     stock_indicator: req.params.stock_id,
-     price: "10.22",
-     quantity: "100",
-     graph: [{
-       x: new Date(),
-       y: 100
-     }]
-   })
+   var stock_id = req.params.stock_id
+   try {
+     var today = new Date().toISOString()
+     var last_month =  new Date()
+     last_month = last_month.setMonth(last_month.getMonth() - 1).toISOString();
+     var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock_id}`, {
+       start_datetime: last_month,
+       end_datetime: today
+     })
+     res.json(response.data)
+   }
+   catch {
+     res.send('error')
+   }
  })
- .put(async (req,res) => {
-   res.send('success')
- })
- .delete(async (req,res) => {
-   res.send('success')
+ .post(async (req, res) => {
+   var stock_id = req.params.stock_id
+   try {
+     var {start_datetime, end_datetime, interval} = req.body
+     var url = "daily"
+     switch (interval) {
+       case '5min':
+         url = '5min'
+         break;
+       case 'hourly':
+         url = 'hourly'
+         break;
+       case 'daily':
+        url = 'daily';
+        break;
+      case 'weekly':
+        url = 'weekly'
+        break;
+     }
+     var response = await axios.post(`${base_exchange_url}/stocks/${url}/${stock_id}`, {
+       start_datetime: start_datetime,
+       end_datetime: end_datetime
+     })
+     res.json(response.data)
+   }
+   catch {
+     res.send('error')
+   }
  })
 
  module.exports = routes;

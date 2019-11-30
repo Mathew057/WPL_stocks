@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-29T12:14:28-06:00
+ * @Last modified time: 2019-11-30T11:53:11-06:00
  * @License: MIT
  */
 
@@ -62,7 +62,7 @@ mongoose.connect(mongodb_url, {
 
   app.listen(port, () => console.log(`App listening on port ${port}!`))
 })
-.catch(() => {
-  console.error(`Could not connect to ${mongodb_url} exiting`)
+.catch((error) => {
+  console.error(`Could not connect to ${mongodb_url} exiting`, error)
   process.exit(1)
 })

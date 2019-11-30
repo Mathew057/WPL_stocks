@@ -4,12 +4,13 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-27T19:50:41-06:00
+ * @Last modified time: 2019-11-30T12:01:19-06:00
  * @License: MIT
  */
 
 const routes = require('express').Router();
 const auth = require('../middlewares/auth')
+const Account = require('../models/Account-model')
 
 routes.get('/stocks', (req, res) => {
   res.json([{
@@ -56,41 +57,44 @@ routes.get('/profile', (req, res) => {
     last_name: "dummy",
     address: "123 Potato Street",
     email: "test@gmail.com",
-    password: "secretpassword"
   })
 })
 
-routes.get('/accounts', (req,res) => {
-  res.json([{
-    type: "card",
-    name: "test1",
-    card_type: "VISA",
-    account_indicator: "3322",
-    expiration: "10/21"
-  },{
-    type: "bank_account",
-    name: "test2",
-    account_indicator: "33223242432",
-    routing_number: "11111111111"
-  }])
+routes.route('/accounts')
+.get(async (req,res) => {
+  const Accounts = await Account.find()
+  res.json(Accounts)
+})
+.post(async (req,res) => {
+  const newAccount = req.body
+  try {
+      const account = await Account(newAccount)
+      await account.save()
+      res.json({ account })
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 
 routes.route('/accounts/:account_id')
-.get((req, res) => {
-  res.json({
-    id: req.params.account_id,
-    type: "bank_account",
-    name: "test",
-    account_indicator: "3322",
-    routing_number: "11111111111"
-  })
+.get(async (req, res) => {
+  try {
+      const account = await Account.findById(req.params.account_id)
+      res.json({account})
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
-.put((req,res) => {
-  console.log(req)
-  res.send('success')
-})
-.delete((req,res) => {
-  res.send('success')
+.delete(async (req,res) => {
+  try {
+      const account = await Account.findByIdAndDelete(req.params.account_id)
+      res.send('success')
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 
 
