@@ -33,7 +33,13 @@ class Accounts extends React.Component {
         expanded: null,
         accountData: [],
         open: false,
-        addAccount: 'bank'
+
+        addAccount: 'bank',
+        fromAccount: '',
+        toAccount: '',
+        amount: '',
+
+        hodlBalance:''
     };
 
     componentDidMount() {
@@ -46,20 +52,19 @@ class Accounts extends React.Component {
                     accountData: response
                 })
             });
+        const balance_url = process.env.REACT_APP_baseAPIURL + '/user/balance'
+        fetch(balance_url)
+            .then(res => res.json())
+            .catch(error => console.log('Error:', error))
+            .then(response => {
+                this.setState({
+                    hodlBalance: response.amount
+                })
+            });
     }
     handleInputFocus = (e) => {
         this.setState({
             focus: e.target.name
-        });
-    }
-
-    handleInputChange = (e) => {
-        const {
-            name,
-            value
-        } = e.target;
-        this.setState({
-            [name]: value
         });
     }
 
@@ -69,11 +74,18 @@ class Accounts extends React.Component {
          console.log(this.state.addAccount)
       };
 
-    handleChange = panel => (event, expanded) => {
+    handlePanelChange = panel => (event, expanded) => {
         this.setState({
             expanded: expanded ? panel : false,
         });
     };
+
+    handleChange = e =>{
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+    }
+
 
       handleClickOpen = () => {
         this.setState({ open: true });
@@ -90,10 +102,15 @@ class Accounts extends React.Component {
         const {
             expanded,
             accountData,
-            addAccount
+            addAccount,
+            toAccount,
+            fromAccount,
+            hodlBalance,
+            amount
         } = this.state;
         return (
-            <div className={classes.contentContainer} id="PaymentForm">
+        <div>
+            <div className={classes.contentContainer} id="AccountForm">
            <h2>Accounts</h2>
            <div >
                 <div>
@@ -102,11 +119,11 @@ class Accounts extends React.Component {
                    <AddIcon className={classes.rightIcon} />
                  </Button>
                  </div>
-
+           <h2 className= {classes.leftText}> Hodl Balance: ${this.state.hodlBalance} </h2>
            <h3 className= {classes.leftText}>Linked Accounts </h3>
                {accountData.map((account, index)=>{
                     return(
-                                     <ExpansionPanel className= {classes.leftText} expanded={expanded === 'panel'+index} onChange={this.handleChange('panel'+index)} key={index}>
+                                     <ExpansionPanel className= {classes.leftText} expanded={expanded === 'panel'+index} onChange={this.handlePanelChange('panel'+index)} key={index}>
                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                          <Typography className={classes.heading}>{account.name}</Typography>
                                          <Typography className={classes.secondaryHeading}>{account.account_indicator}</Typography>
@@ -165,7 +182,7 @@ class Accounts extends React.Component {
                                       type="tel"
                                       label="Card Number"
                                       required
-                                      onChange={this.handleInputChange}
+                                      onChange={this.handleChange}
                                       onFocus={this.handleInputFocus}
                                       fullWidth
                                       margin="normal"
@@ -177,7 +194,7 @@ class Accounts extends React.Component {
                                       type="text"
                                       label="Name"
                                       required
-                                      onChange={this.handleInputChange}
+                                      onChange={this.handleChange}
                                       onFocus={this.handleInputFocus}
                                       fullWidth
                                       margin="normal"
@@ -190,7 +207,7 @@ class Accounts extends React.Component {
                                        label="CVC"
                                        inputProps={{ pattern: "[0-9]{3,4}" }}
                                        required
-                                       onChange={this.handleInputChange}
+                                       onChange={this.handleChange}
                                        onFocus={this.handleInputFocus}
                                        fullWidth
                                       margin="normal"
@@ -245,6 +262,82 @@ class Accounts extends React.Component {
                      </DialogActions>
                    </Dialog>
            </div>
+          </div>
+              <div className={classes.contentContainer}>
+                <h3 className= {classes.leftText}>Transfer Money</h3>
+                <form onSubmit={this.handleTransfer} className= {classes.leftText}>
+                    <div>
+                   <TextField
+                      select
+                      label="From Account"
+                      name= "fromAccount"
+                      className={classes.textField}
+                      value={fromAccount}
+                      onChange={this.handleChange}
+//                      SelectProps={{
+//                        MenuProps: {
+//                          className: classes.menu,
+//                        },
+//                      }}
+                      error={(toAccount === fromAccount && fromAccount !== '')}
+                      helperText={toAccount === fromAccount && fromAccount !== '' ? "Must pick different to/from accounts": "Account to transfer money from"}
+                      margin="normal"
+                      variant="outlined"
+                      fullWidth
+                    >
+                      {this.state.accountData.map(accountOption => (
+                        <MenuItem key={accountOption.name} value={accountOption.name}>
+                            <Typography className={classes.heading}>{accountOption.name}</Typography>
+                             <Typography className={classes.secondaryHeading}>{accountOption.account_indicator}</Typography>
+                        </MenuItem>
+                      ))}
+                       <MenuItem key={'Hodl Balance'} value={'Hodl Balance'}>Hodl Balance</MenuItem>
+                    </TextField>
+                   <TextField
+                      select
+                      label="To Account"
+                      name= "toAccount"
+                      error={toAccount === fromAccount && toAccount !== ''}
+                      className={classes.textField}
+                      value={toAccount}
+                      onChange={this.handleChange}
+//                      SelectProps={{
+//                        MenuProps: {
+//                          className: classes.menu,
+//                        },
+//                      }}
+                      helperText={toAccount === fromAccount && toAccount !== '' ? "Must pick different to/from accounts": "Account to transfer money to"}
+                      margin="normal"
+                      variant="outlined"
+                    >
+                      {this.state.accountData.map(accountOption => (
+                        <MenuItem key={accountOption.name} value={accountOption.name}>
+                            <Typography className={classes.heading}>{accountOption.name}</Typography>
+                             <Typography className={classes.secondaryHeading}>{accountOption.account_indicator}</Typography>
+                        </MenuItem>
+                      ))}
+                      <MenuItem key={'Hodl Balance'} value={'Hodl Balance'}>Hodl Balance</MenuItem>
+                    </TextField>
+                        <TextField
+                          type= "number"
+                          label="Amount"
+                          name= "amount"
+                          margin="normal"
+                          variant="outlined"
+                          helperText= {fromAccount==='Hodl Balance' && amount > parseFloat(hodlBalance)? "Unable to transfer more than Hodl Balance" : "Amount to transfer"}
+                          onChange = {this.handleChange}
+                          value={amount}
+                          className= {classes.textField}
+                          error= {fromAccount==='Hodl Balance' && amount > parseFloat(hodlBalance)}
+                        />
+                    </div>
+                    <Button type="submit" variant="contained" color="primary">
+                        Transfer Money
+
+
+                    </Button>
+                  </form>
+                </div>
           </div>
 
         );

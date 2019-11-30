@@ -5,9 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import {Link} from 'react-router-dom';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -80,13 +80,21 @@ const HodlAppBar = ({title}) => {
                  </Grid> */}
 
                   <Grid item>
-                    <div>
+                    <span>
                     <Link style={{textDecoration: 'none'}} to="/login">
                                <Button variant="contained" color="primary" >
                                    Login
                                 </Button>
                             </Link>
-                    </div>
+                    </span>
+                    <span>
+                    <Link style={{textDecoration: 'none'}} to="/cart">
+                               <IconButton color="secondary" >
+                                   <ShoppingCartIcon/>
+                                </IconButton>
+                            </Link>
+                    </span>
+
                   </Grid>
                 </Grid>
             </Toolbar>

@@ -1,24 +1,20 @@
 import React from 'react';
 import styles from './routeStyles';
 import {withStyles} from  '@material-ui/core/styles/index';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MaterialTable from 'material-table';
 import {Line} from 'react-chartjs-2';
+import {tableIcons} from './materialTableConstants';
 
 class MyStocks extends React.Component{
 
     state= {
-        expanded: null,
-        stocks: []
+        stocks: [],
+        schedules: []
     }
 
     componentDidMount() {
-        const url = process.env.REACT_APP_baseAPIURL + '/user/stocks'
-        fetch(url)
+        const stocks_url = process.env.REACT_APP_baseAPIURL + '/user/stocks'
+        fetch(stocks_url)
             .then(res => res.json())
             .catch(error => console.log('Error:', error))
             .then(response => {
@@ -26,12 +22,20 @@ class MyStocks extends React.Component{
                     stocks: response
                 })
             });
+
+        const schedule_url = process.env.REACT_APP_baseAPIURL + '/user/schedules'
+        fetch(schedule_url)
+            .then(res => res.json())
+            .catch(error => console.log('Error:', error))
+            .then(response => {
+                this.setState({
+                    schedules: response
+                })
+            });
     }
 
-    handleChange = panel => (event, expanded) => {
-        this.setState({
-            expanded: expanded ? panel : false,
-        });
+    handleTypeChange = () => {
+
     };
 
     getConfigData(stockData){
@@ -66,35 +70,19 @@ class MyStocks extends React.Component{
 
     render(){
         const {classes} = this.props;
-        const {expanded, stocks, stock_data} = this.state;
+        const {stocks, schedules} = this.state;
         return(
 
             <div className={classes.contentContainer}>
-          {/*                    {stocks.map((stock, index)=>{
-                                    return(
-                                                     <ExpansionPanel className= {classes.leftText} expanded={expanded === 'panel'+index} onChange={this.handleChange('panel'+index)} key={index}>
-                                                       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                                         <Typography className={classes.heading}>{stock.stock_indicator}</Typography>
-                                                         <Typography className={classes.secondaryHeading}>{stock.price}</Typography>
-                                                         <Typography className={classes.tertiaryHeading}>{stock.quantity}</Typography>
-                                                       </ExpansionPanelSummary>
-                                                       <ExpansionPanelDetails>
-                                                         <Typography>
-                                                                WOW what a pretty graph
-                                                         </Typography>
-                                                       </ExpansionPanelDetails>
-                                                     </ExpansionPanel>
-
-                                    );
-                                })
-                              } */}
+                <div>
                    <MaterialTable
                      title="My Stocks"
+                     icons={tableIcons}
                      columns={[
                        { title: 'Stock Indicator', field: 'stock_indicator' },
                        { title: 'Company Name', field: 'company_name' },
                        { title: 'Trend', field: 'trend' },
-                       { title: 'Price', field: 'price' },
+                       { title: 'Price', field: 'price', type: 'currency'},
                        { title: 'Quantity', field: 'quantity', type: 'numeric' }
                      ]}
                      data= {stocks}
@@ -109,6 +97,54 @@ class MyStocks extends React.Component{
                           )
                         }}
                    />
+                </div>
+                <div>
+                   <br/>
+                   <MaterialTable
+                     title="My Schedules"
+                     icons={tableIcons}
+                     columns={[
+                       { title: 'Schedule ID', field: 'id',editable: 'never' },
+                       { title: 'Stock Indicator', field: 'stock_indicator', editable: 'never' },
+                       { title: 'Type', field: 'type', lookup: { buy: 'Buy', sell: 'Sell' }},
+                       { title: 'Quantity', field: 'quantity', type: 'numeric' },
+                       { title: 'Start Date', field: "start_date", type: 'date'},
+                       { title: 'End Date', field: "end_date", type: 'date'},
+                       { title: 'Interval', field: 'interval', type: 'numeric' },
+                       { title: 'Frequency', field: 'frequency',lookup: { day: 'Day', week: 'Week', month: 'Month', year: 'Year' } },
+                    ]}
+                     data= {schedules}
+                     options={{
+                       sorting: true
+                     }}
+                     editable={{
+                        onRowUpdate: (newData, oldData) =>
+                          new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                              {
+                                const data = this.state.schedules;
+                                const index = data.indexOf(oldData);
+                                data[index] = newData;
+                                this.setState({ data }, () => resolve());
+                              }
+                              resolve()
+                            }, 1000)
+                          }),
+                        onRowDelete: oldData =>
+                          new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                              {
+                                let data = this.state.schedules;
+                                const index = data.indexOf(oldData);
+                                data.splice(index, 1);
+                                this.setState({ data }, () => resolve());
+                              }
+                              resolve()
+                            }, 1000)
+                          }),
+                      }}
+                   />
+                </div>
              </div>
         );
     }

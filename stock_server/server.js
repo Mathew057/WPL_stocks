@@ -13,7 +13,7 @@ const cors = require('cors')
 const stock_routes = require('./routes/stocks')
 const app = express()
 const client = process.env.CLIENT || "localhost"
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
 const base_route = process.env.BASE_ROUTE || "/stock_api"
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
