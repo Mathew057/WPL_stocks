@@ -4,8 +4,6 @@ import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
 import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 
 class MyStocks extends React.Component{
 

@@ -2,8 +2,6 @@ import React from 'react';
 import styles from './routeStyles';
 import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
-import Button from '@material-ui/core/Button';
-import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
 
 class Cart extends React.Component{

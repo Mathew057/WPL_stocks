@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './routeStyles';
 import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
-import Button from '@material-ui/core/Button';
 import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
 
@@ -57,7 +56,7 @@ class Home extends React.Component{
 
     render(){
         const {classes} = this.props;
-        const {stocks} = this.props;
+        const {stocks} = this.state;
 
         return(
             <div className={classes.contentContainer}>
@@ -70,7 +69,7 @@ class Home extends React.Component{
                        { title: 'Price', field: 'price', type: 'currency' },
                        { title: 'Shares Available', field: 'shares_available', type: 'numeric' }
                      ]}
-                     data= {this.state.stocks}
+                     data= {stocks}
                      options={{
                        sorting: true,
                        pageSize: 10,

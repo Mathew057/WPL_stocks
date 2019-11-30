@@ -54,6 +54,11 @@ const style = theme => ({
       },
      rightButton: {
         float: 'right'
+     },
+     textField: {
+           marginLeft: theme.spacing(1),
+           marginRight: theme.spacing(1),
+           width: '30%'
      }
 });
 
