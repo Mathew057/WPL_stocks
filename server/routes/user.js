@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-30T13:05:27-06:00
+ * @Last modified time: 2019-11-30T13:07:14-06:00
  * @License: MIT
  */
 
@@ -183,7 +183,7 @@ routes.route('/schedules/:schedule_id')
   }
 })
 
-routes.get('/balance', (req,res) => {
+routes.get('/balance', async (req,res) => {
   try {
     var balance = await Balance.findOne()
     res.json(balance)
@@ -193,7 +193,7 @@ routes.get('/balance', (req,res) => {
   }
 })
 
-routes.post('/transfer', (req,res) => {
+routes.post('/transfer', async (req,res) => {
   const {from_id, to_id, amount} = req.body;
   try {
     const old_balance = await Balance.findOne()
