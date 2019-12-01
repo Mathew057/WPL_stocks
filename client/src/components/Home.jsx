@@ -4,6 +4,11 @@ import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
 import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import RemoveShoppingCart from '@material-ui/icons/RemoveShoppingCart';
+import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+
 
 class Home extends React.Component{
 
@@ -12,15 +17,20 @@ class Home extends React.Component{
     }
 
     componentDidMount() {
-    const url = process.env.REACT_APP_baseAPIURL + '/stocks'
-        fetch(url)
-            .then(res => res.json())
-            .catch(error => console.log('Error:', error))
-            .then(response => {
-                this.setState({
-                    stocks: response
-                })
-            });
+      if(this.state.stocks.length === 0)
+        this.getStockData();
+    }
+
+    getStockData = () =>{
+     const url = process.env.REACT_APP_baseAPIURL + '/stocks'
+         fetch(url)
+             .then(res => res.json())
+             .catch(error => console.log('Error:', error))
+             .then(response => {
+                 this.setState({
+                     stocks: response
+                 })
+             });
     }
 
     getConfigData(stockData){
@@ -79,15 +89,26 @@ class Home extends React.Component{
                     icons={tableIcons}
                     actions={[
                       {
-                        icon: 'add',
-                        tooltip: 'Buy',
+                        icon: AddShoppingCart,
+                        tooltip: 'Buy Stocks',
                         onClick: (event, rowData) => alert("You saved " + rowData.name)
                       },
                       {
-                        icon: 'delete',
-                        tooltip: 'Sell',
+                        icon: RemoveShoppingCart,
+                        tooltip: 'Sell Stocks',
                         onClick: (event, rowData) => alert("You want to delete " + rowData.name)
-                      }
+                      },
+                      {
+                        icon: ScheduleIcon,
+                        tooltip: 'Schedule Stocks',
+                        onClick: (event, rowData) => alert("You want to delete " + rowData.name)
+                      },
+                       {
+                         icon: RefreshIcon,
+                         tooltip: 'Refresh Stocks',
+                         isFreeAction: true,
+                         onClick:()=>{this.getStockData()}
+                       }
                     ]}
 //                    components={{
 //                      Action: props => (

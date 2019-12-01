@@ -1,8 +1,6 @@
 import React from 'react';
 import styles from './routeStyles';
-import {
-    withStyles
-} from '@material-ui/core/styles/index';
+import {withStyles} from '@material-ui/core/styles/index';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 import TextField from '@material-ui/core/TextField';
@@ -21,10 +19,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import {encodeFormData} from './functions';
+import DeleteIcon from '@material-ui/icons/Delete';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
 
 class Accounts extends React.Component {
 
     state = {
+        accountName:'',
         cvc: '',
         expiry: '',
         focus: '',
@@ -34,45 +37,52 @@ class Accounts extends React.Component {
         accountData: [],
         open: false,
 
-        addAccount: 'bank',
+        type: 'bank_account',
         fromAccount: '',
+        from_id:'',
         toAccount: '',
+        to_id:"",
         amount: '',
 
         hodlBalance:''
     };
 
     componentDidMount() {
+        if(this.state.accountData.length ===0)
+            this.getAccounts()
+        if(this.state.hodlBalance==='')
+            this.getBalance()
+    };
+
+    getAccounts = () =>{
         const url = process.env.REACT_APP_baseAPIURL + '/user/accounts'
         fetch(url)
-            .then(res => res.json())
-            .catch(error => console.log('Error:', error))
-            .then(response => {
-                this.setState({
-                    accountData: response
-                })
-            });
+        .then(res => res.json())
+        .catch(error => console.log('Error:', error))
+        .then(response => {
+            this.setState({
+                accountData: response
+            })
+        });
+    };
+
+    getBalance= () =>{
         const balance_url = process.env.REACT_APP_baseAPIURL + '/user/balance'
         fetch(balance_url)
-            .then(res => res.json())
-            .catch(error => console.log('Error:', error))
-            .then(response => {
-                this.setState({
-                    hodlBalance: response.amount
-                })
-            });
-    }
+        .then(res => res.json())
+        .catch(error => console.log('Error:', error))
+        .then(response => {
+            this.setState({
+                hodlBalance: response.amount
+            })
+        });
+    };
+
     handleInputFocus = (e) => {
         this.setState({
             focus: e.target.name
         });
-    }
-
-      handleAccount = (e) => {
-         this.setState({addAccount: e.target.value});
-         console.log(e.target.value)
-         console.log(this.state.addAccount)
-      };
+    };
 
     handlePanelChange = panel => (event, expanded) => {
         this.setState({
@@ -86,28 +96,93 @@ class Accounts extends React.Component {
         });
     }
 
+    handleInputChange = (e, child, fieldName) =>{
+        this.setState({
+            [e.target.name]: e.target.value,
+            [fieldName]: child.key
+        });
+    }
 
-      handleClickOpen = () => {
-        this.setState({ open: true });
-      };
+    handleClickOpen = () => {
+    this.setState({ open: true });
+    };
 
-      handleClose = () => {
+    handleClose = () => {
+    this.setState({ open: false });
+    };
+
+    handleTransfer = () =>{
+        const {from_id, to_id, amount} = this.state;
+        let transferInfo = {
+            from_id: from_id,
+            to_id: to_id,
+            amount: amount
+        };
+        const url = process.env.REACT_APP_baseAPIURL + '/user/transfer'
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: encodeFormData(transferInfo)
+        })
+        .then(response => console.log(response))
+        .catch(error => console.log(error))
+        this.getBalance();
+    }
+
+    getFormData = () =>{
+        const {type, name, account_number, routing_number, number, cvc, expiry, name_on_card} = this.state;
+        let bankFormData = {type: type,
+                            name: name,
+                            account_number: account_number,
+                            routing_number: routing_number};
+        let creditData =    {type: type,
+                            name: name,
+                            card_number: number,
+                            security_code: cvc,
+                            expiration: expiry,
+                            name_on_card: name_on_card
+                            };
+        let formData = type==='bank_account'? bankFormData : creditData
+        return formData;
+    };
+
+    addNewAccount = () =>{
+        let formData = this.getFormData();
+        const url = process.env.REACT_APP_baseAPIURL + '/user/accounts'
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: encodeFormData(formData)
+        })
+        .then(response => console.log(response))
+        .catch(error => console.log(error))
         this.setState({ open: false });
-      };
+        this.getAccounts();
+    };
+
+    deleteAccount = (event, id) =>{
+        event.stopPropagation();
+        const url = process.env.REACT_APP_baseAPIURL + '/user/accounts/' + id;
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            }
+        })
+        this.getAccounts();
+
+    };
 
     render() {
-        const {
-            classes
-        } = this.props;
-        const {
-            expanded,
-            accountData,
-            addAccount,
-            toAccount,
-            fromAccount,
-            hodlBalance,
-            amount
-        } = this.state;
+        const {classes} = this.props;
+        const {expanded, accountData, type, toAccount, fromAccount, hodlBalance, amount, from_id, to_id} = this.state;
         return (
         <div>
             <div className={classes.contentContainer} id="AccountForm">
@@ -119,25 +194,36 @@ class Accounts extends React.Component {
                    <AddIcon className={classes.rightIcon} />
                  </Button>
                  </div>
-           <h2 className= {classes.leftText}> Hodl Balance: ${this.state.hodlBalance} </h2>
+           <h2 className= {classes.leftText}> Hodl Balance: ${hodlBalance} </h2>
            <h3 className= {classes.leftText}>Linked Accounts </h3>
                {accountData.map((account, index)=>{
                     return(
-                                     <ExpansionPanel className= {classes.leftText} expanded={expanded === 'panel'+index} onChange={this.handlePanelChange('panel'+index)} key={index}>
-                                       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                         <Typography className={classes.heading}>{account.name}</Typography>
-                                         <Typography className={classes.secondaryHeading}>{account.account_indicator}</Typography>
-                                       </ExpansionPanelSummary>
-                                       <ExpansionPanelDetails>
-                                         <Typography>
-                                            Account Type: {account.card_type ? account.card_type + ' ': ''} {account.type} <br/>
-                                            Account Name: {account.name} <br/>
-                                            Account Indicator: {account.account_indicator} <br/>
-                                            {account.expiration ? 'Account Expiration: ' + account.expiration : ''}
-                                            {account.routing_number ? 'Routing Number: ' + account.routing_number : ''}
-                                         </Typography>
-                                       </ExpansionPanelDetails>
-                                     </ExpansionPanel>
+                         <ExpansionPanel className= {classes.leftText} expanded={expanded === 'panel'+index} onChange={this.handlePanelChange('panel'+index)} key={index}>
+                           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                           <IconButton onClick={(event)=>{this.deleteAccount(event, account._id)}} color="primary">
+                               <DeleteIcon />
+                             </IconButton>
+                           <Typography className={classes.heading}>{account.name}</Typography>
+                           </ExpansionPanelSummary>
+                           <ExpansionPanelDetails>
+                           <div>
+                             <Typography variant="body1">Account Name: {account.name} </Typography>
+                             {account.type==="bank_account" &&
+                                <div>
+                                    <Typography variant="body1">Account Number: {account.account_number} </Typography>
+                                    <Typography variant="body1">Routing Number: {account.routing_number}</Typography>
+                                </div>
+                             }
+                             {account.type==="credit_card" &&
+                                <div>
+                                    <Typography variant="body1">Name on Card: {account.name_on_card} </Typography>
+                                    <Typography variant="body1">Card Number: {account.card_number} </Typography>
+                                    <Typography variant="body1">Account Expiration: {account.expiration} </Typography>
+                                </div>
+                             }
+                           </div>
+                           </ExpansionPanelDetails>
+                         </ExpansionPanel>
 
                     );
                 })
@@ -159,15 +245,16 @@ class Accounts extends React.Component {
                              <Grid item>
                              Account Type:
                               <Select
-                                       value={this.state.addAccount}
-                                       onChange={this.handleAccount}
-                                     >
-                                       <MenuItem  value={'bank'}>Bank Account</MenuItem>
-                                       <MenuItem value={'credit'}>Credit Card</MenuItem>
-                                     </Select>
+                                name="type"
+                                value={type}
+                                onChange={this.handleChange}
+                              >
+                                <MenuItem  value={'bank_account'}>Bank Account</MenuItem>
+                                <MenuItem value={'credit_card'}>Credit Card</MenuItem>
+                              </Select>
                              </Grid>
 
-                             {addAccount==='credit' &&    <Grid item>
+                             {type==='credit_card' &&    <Grid item>
                                   <h4> Credit Card </h4>
                                   <Cards
                                     cvc={this.state.cvc}
@@ -179,8 +266,19 @@ class Accounts extends React.Component {
                                   <form>
                                   <div>
                                   	<TextField
+                                      label="Account Name"
+                                      name="accountName"
+                                      required
+                                      onChange={this.handleChange}
+                                      onFocus={this.handleInputFocus}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                  	<TextField
                                       type="tel"
                                       label="Card Number"
+                                      name="number"
                                       required
                                       onChange={this.handleChange}
                                       onFocus={this.handleInputFocus}
@@ -192,7 +290,8 @@ class Accounts extends React.Component {
                                     <div>
                                     <TextField
                                       type="text"
-                                      label="Name"
+                                      label="Name on Card"
+                                      name="name"
                                       required
                                       onChange={this.handleChange}
                                       onFocus={this.handleInputFocus}
@@ -203,9 +302,8 @@ class Accounts extends React.Component {
                                     </div>
                                     <div>
                                      <TextField
-                                       type="tel"
-                                       label="CVC"
-                                       inputProps={{ pattern: "[0-9]{3,4}" }}
+                                       label="Expiration"
+                                       name="expiry"
                                        required
                                        onChange={this.handleChange}
                                        onFocus={this.handleInputFocus}
@@ -214,38 +312,61 @@ class Accounts extends React.Component {
                                       variant="outlined"
                                      />
                                      </div>
+                                    <div>
+                                     <TextField
+                                       type="tel"
+                                       label="CVC"
+                                       name="cvc"
+                                       inputProps={{ pattern: "[0-9]{3,4}" }}
+                                       required
+                                       onChange={this.handleChange}
+                                       onFocus={this.handleInputFocus}
+                                       fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                     />
+                                    </div>
                                   </form>
                                  </Grid>}
-                                {addAccount==='bank' && <Grid item>
+                                {type==='bank_account' && <Grid item>
                                   <h4> Bank Account</h4>
                                  <form>
                                     <div>
                                      <TextField
                                        type="text"
-                                       label="Bank"
+                                       label="Account Name"
+                                       name="name"
                                        fullWidth
-                                      margin="normal"
-                                      variant="outlined"
+                                       margin="normal"
+                                       variant="outlined"
+                                       required
+                                       onChange={this.handleChange}
                                      />
                                      </div>
                                     <div>
                                      <TextField
                                        type="text"
                                        label="Routing Number"
+                                       name="routing_number"
                                        inputProps={{ pattern: "[0-9]{9}" }}
                                        fullWidth
-                                      margin="normal"
-                                      variant="outlined"
+                                       margin="normal"
+                                       variant="outlined"
+                                       required
+                                       onChange={this.handleChange}
                                      />
                                      </div>
                                     <div>
                                      <TextField
                                        type="text"
                                        label="Account Number"
+                                       name="account_number"
                                        inputProps={{ pattern: "[0-9]{8,12}" }}
                                        fullWidth
-                                      margin="normal"
-                                      variant="outlined"
+                                       margin="normal"
+                                       variant="outlined"
+                                       required
+                                       onChange={this.handleChange}
                                      />
                                      </div>
                                  </form>
@@ -253,7 +374,7 @@ class Accounts extends React.Component {
                                 </Grid>
                      </DialogContent>
                      <DialogActions>
-                       <Button onClick={this.handleClose} color="primary">
+                       <Button onClick={this.addNewAccount} color="primary">
                          Add Account
                        </Button>
                        <Button onClick={this.handleClose} color="primary">
@@ -273,12 +394,7 @@ class Accounts extends React.Component {
                       name= "fromAccount"
                       className={classes.textField}
                       value={fromAccount}
-                      onChange={this.handleChange}
-//                      SelectProps={{
-//                        MenuProps: {
-//                          className: classes.menu,
-//                        },
-//                      }}
+                      onChange={(event, child) => this.handleInputChange(event, child, 'from_id')}
                       error={(toAccount === fromAccount && fromAccount !== '')}
                       helperText={toAccount === fromAccount && fromAccount !== '' ? "Must pick different to/from accounts": "Account to transfer money from"}
                       margin="normal"
@@ -286,12 +402,11 @@ class Accounts extends React.Component {
                       fullWidth
                     >
                       {this.state.accountData.map(accountOption => (
-                        <MenuItem key={accountOption.name} value={accountOption.name}>
+                        <MenuItem key={accountOption._id} value={accountOption.name}>
                             <Typography className={classes.heading}>{accountOption.name}</Typography>
-                             <Typography className={classes.secondaryHeading}>{accountOption.account_indicator}</Typography>
                         </MenuItem>
                       ))}
-                       <MenuItem key={'Hodl Balance'} value={'Hodl Balance'}>Hodl Balance</MenuItem>
+                       <MenuItem key={'balance'} value={'Hodl Balance'}>Hodl Balance</MenuItem>
                     </TextField>
                    <TextField
                       select
@@ -300,23 +415,17 @@ class Accounts extends React.Component {
                       error={toAccount === fromAccount && toAccount !== ''}
                       className={classes.textField}
                       value={toAccount}
-                      onChange={this.handleChange}
-//                      SelectProps={{
-//                        MenuProps: {
-//                          className: classes.menu,
-//                        },
-//                      }}
+                      onChange={(event, child) => this.handleInputChange(event, child, 'to_id')}
                       helperText={toAccount === fromAccount && toAccount !== '' ? "Must pick different to/from accounts": "Account to transfer money to"}
                       margin="normal"
                       variant="outlined"
                     >
                       {this.state.accountData.map(accountOption => (
-                        <MenuItem key={accountOption.name} value={accountOption.name}>
+                        <MenuItem key={accountOption._id} value={accountOption.name}>
                             <Typography className={classes.heading}>{accountOption.name}</Typography>
-                             <Typography className={classes.secondaryHeading}>{accountOption.account_indicator}</Typography>
                         </MenuItem>
                       ))}
-                      <MenuItem key={'Hodl Balance'} value={'Hodl Balance'}>Hodl Balance</MenuItem>
+                      <MenuItem key={'balance'} value={'Hodl Balance'}>Hodl Balance</MenuItem>
                     </TextField>
                         <TextField
                           type= "number"
@@ -324,7 +433,7 @@ class Accounts extends React.Component {
                           name= "amount"
                           margin="normal"
                           variant="outlined"
-                          helperText= {fromAccount==='Hodl Balance' && amount > parseFloat(hodlBalance)? "Unable to transfer more than Hodl Balance" : "Amount to transfer"}
+                          helperText= {fromAccount==='Hodl Balance' && amount > parseFloat(hodlBalance)? "Unable to transfer more than Hodl Balance" : "Amount to transfer ($)"}
                           onChange = {this.handleChange}
                           value={amount}
                           className= {classes.textField}
@@ -333,8 +442,6 @@ class Accounts extends React.Component {
                     </div>
                     <Button type="submit" variant="contained" color="primary">
                         Transfer Money
-
-
                     </Button>
                   </form>
                 </div>

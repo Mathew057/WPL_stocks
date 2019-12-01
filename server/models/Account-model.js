@@ -49,8 +49,8 @@ const accountSchema = new mongoose.Schema({
         required: function(){
               return this.type === "credit_card"
         },
-        minlength: 9,
-        maxlength: 12,
+        minlength: 0,
+        maxlength: 5,
         trim: true,
     },
     expiration: {
