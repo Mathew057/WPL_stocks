@@ -9,39 +9,41 @@
  */
 
 const routes = require('express').Router();
+const axios = require('axios');
+
 const auth = require('../middlewares/auth')
 const Account = require('../models/Account-model')
 const Stock = require('../models/Stock-model')
 const Schedule = require('../models/Schedule-model')
 const Balance = require('../models/Balance-model')
 
+const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
+const client = process.env.CLIENT || "localhost"
+const port = process.env.PORT || 5000
+const base_route = process.env.BASE_ROUTE || "/api"
+
+function precDiff(a, b) {
+ return  100 * ( a - b ) / ( (a+b)/2 );
+}
+
 routes.route('/stocks')
 .get(async (req, res) => {
-  // res.json([{
-  //   stock_indicator: "GOOGL",
-  //   company_name: "Google",
-  //   trend: "+1.5",
-  //   price: "10.22",
-  //   quantity: "200",
-  //   data: [65, 59, 80, 81, 56, 55, 40]
-  // },{
-  //   stock_indicator: "AMZN",
-  //   company_name: "Amazon",
-  //   trend: "-1.5",
-  //   price: "4100.22",
-  //   quantity: "500",
-  //   data: [25, 50, 25, 64, 99, 26, 72]
-  //   }
-  // ])
   try {
-    var stocks = await Stocks.find()
-    stocks.map((stock) => {
-      console.log(stock)
-      return stock
-    })
+    var stocks = await Stock.find()
+    for (var i = 0; i < stocks.length; i++) {
+      var stock = stocks[i]
+      const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${stock.stock_indicator}`)
+      const {graph} = response.data
+      stocks[i] = {
+        ...stock.toObject(),
+        ...{graph},
+        trend: precDiff(graph[graph.length-1].y, graph[graph.length-2].y)
+      }
+    }
     res.json(stocks)
   }
   catch (e) {
+    console.error(e)
       res.status(400).send(e)
   }
 })
@@ -67,19 +69,34 @@ routes.route('/stocks')
 routes.route('/stocks/:stock_id')
 .get(async (req, res) => {
   try {
-    var stocks = await Stocks.findOne({stock_indicator: req.params.stock_id})
-    res.json(Stocks)
+    var stock = await Stock.findOne({stock_indicator: req.params.stock_id})
+    const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${req.params.stock_id}`)
+    const {graph} = response.data
+    stock = {
+      ...stock.toObject(),
+      ...{graph},
+      trend: precDiff(graph[graph.length-1].y, graph[graph.length-2].y)
+    }
+    res.json(stock)
   }
   catch (e) {
     res.status(400).send(e)
   }
 })
 .put(async (req,res) => {
-  res.send('success')
+  const newStock = req.body
+  try {
+    const stock = await Stock(newStock);
+    await stock.save();
+    res.json({stock})
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 .delete(async (req,res) => {
   try {
-    var stocks = await Stocks.deleteOne({stock_indicator: req.params.stock_id})
+    var Stock = await Stock.deleteOne({stock_indicator: req.params.stock_id})
     res.send('success')
   }
   catch (e) {

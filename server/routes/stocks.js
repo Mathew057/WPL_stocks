@@ -12,7 +12,7 @@
  const auth = require('../middlewares/auth')
  const axios = require('axios')
 
-const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:3000/stock_api"
+const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
 
  routes.get('/', async (req, res) => {
    try {
@@ -20,8 +20,9 @@ const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:3000/st
      console.log(response.data.length)
      res.json(response.data)
    }
-   catch {
-     res.send('error')
+   catch (e) {
+     console.error(e)
+       res.status(400).send(e)
    }
  })
 
@@ -31,15 +32,17 @@ const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:3000/st
    try {
      var today = new Date().toISOString()
      var last_month =  new Date()
-     last_month = last_month.setMonth(last_month.getMonth() - 1).toISOString();
+     last_month.setMonth(last_month.getMonth() - 1)
+     last_month = last_month.toISOString()
      var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock_id}`, {
        start_datetime: last_month,
        end_datetime: today
      })
      res.json(response.data)
    }
-   catch {
-     res.send('error')
+   catch (e) {
+     console.error(e)
+       res.status(400).send(e)
    }
  })
  .post(async (req, res) => {
@@ -67,8 +70,9 @@ const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:3000/st
      })
      res.json(response.data)
    }
-   catch {
-     res.send('error')
+   catch (e) {
+     console.error(e)
+       res.status(400).send(e)
    }
  })
 
