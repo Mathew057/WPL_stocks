@@ -4,18 +4,18 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-30T13:07:14-06:00
+ * @Last modified time: 2019-12-01T15:06:53-06:00
  * @License: MIT
  */
 
 const routes = require('express').Router();
 const axios = require('axios');
 
-const Account = require('../../models/Account-model')
-const Stock = require('../../models/Stock-model')
-const Schedule = require('../../models/Schedule-model')
-const Balance = require('../../models/Balance-model')
-const Users = require('../../models/Users-model')
+const Account = require('../models/Account-model')
+const Stock = require('../models/Stock-model')
+const Schedule = require('../models/Schedule-model')
+const Balance = require('../models/Balance-model')
+const Users = require('../models/Users-model')
 
 const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
 const client = process.env.CLIENT || "localhost"
@@ -29,7 +29,7 @@ function precDiff(a, b) {
 routes.route('/stocks')
 .get(async (req, res) => {
   try {
-    var stocks = await Stock.find()
+    var stocks = await Stock.find({user_id: req.user._id})
     for (var i = 0; i < stocks.length; i++) {
       var stock = stocks[i]
       const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${stock.stock_indicator}`)
@@ -55,9 +55,13 @@ routes.route('/stocks')
   }
   try {
     for (var i = 0; i < newStocks.length; i++) {
+      const stock = {
+        ...newStocks[i],
+        user_id: req.user_id
+      }
       const newStock = await Stock(stock);
       await newStock.save();
-      payload.push({newStock})
+      payload.push(newStock.toObject())
     }
   }
   catch (e) {
@@ -69,7 +73,7 @@ routes.route('/stocks')
 routes.route('/stocks/:stock_id')
 .get(async (req, res) => {
   try {
-    var stock = await Stock.findOne({stock_indicator: req.params.stock_id})
+    var stock = await Stock.findOne({user_id: req.user._id, stock_indicator: req.params.stock_id})
     const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${req.params.stock_id}`)
     const {graph} = response.data
     stock = {
@@ -83,18 +87,12 @@ routes.route('/stocks/:stock_id')
     res.status(400).send(e)
   }
 })
-.put(async (req,res) => {
-  try {
-      const stock = await Stock.findByIdAndUpdate(req.params.stock_id, req.body)
-      res.json({stock})
-  }
-  catch (e) {
-      res.status(400).send(e)
-  }
-})
 .delete(async (req,res) => {
   try {
-    var result = await Stock.deleteOne({stock_indicator: req.params.stock_id})
+    var result = await Stock.deleteOne({
+      user_id: req.user._id,
+      stock_indicator: req.params.stock_id
+    })
     res.send(result)
   }
   catch (e) {
@@ -104,19 +102,13 @@ routes.route('/stocks/:stock_id')
 })
 
 routes.get('/profile', async (req, res) => {
-  try {
-    const user = await Users.findById(req.user._id)
-    res.json(user)
-  }
-  catch (e) {
-      res.status(400).send(e)
-  }
+  res.json(req.user)
 })
 
 routes.route('/accounts')
 .get(async (req,res) => {
   try {
-    const Accounts = await Account.find()
+    const Accounts = await Account.find({user_id: req.user._id})
     res.json(Accounts)
   }
   catch (e) {
@@ -124,7 +116,10 @@ routes.route('/accounts')
   }
 })
 .post(async (req,res) => {
-  const newAccount = req.body
+  const newAccount = {
+    ...req.body,
+    user_id: req.user._id
+  }
   try {
       const account = await Account(newAccount)
       await account.save()
@@ -138,8 +133,11 @@ routes.route('/accounts')
 routes.route('/accounts/:account_id')
 .get(async (req, res) => {
   try {
-      const account = await Account.findById(req.params.account_id)
-      res.json({account})
+      const account = await Account.find({
+        _id: req.params.account_id,
+        user_id: req.user._id
+      })
+      res.json(account.toObject())
   }
   catch (e) {
       res.status(400).send(e)
@@ -147,8 +145,11 @@ routes.route('/accounts/:account_id')
 })
 .put(async (req,res) => {
   try {
-      const account = await Account.findByIdAndUpdate(req.params.account_id, req.body)
-      res.json({account})
+      const account = await Account.findOneAndUpdate({
+        _id: req.params.account_id,
+        user_id: req.user._id
+      }, req.body)
+      res.json(account.toObject())
   }
   catch (e) {
       res.status(400).send(e)
@@ -156,7 +157,10 @@ routes.route('/accounts/:account_id')
 })
 .delete(async (req,res) => {
   try {
-      const account = await Account.findByIdAndDelete(req.params.account_id)
+      const account = await Account.findOneAndDelete({
+          _id: req.params.account_id,
+          user_id: req.user._id
+      })
       res.send('success')
   }
   catch (e) {
@@ -168,7 +172,7 @@ routes.route('/accounts/:account_id')
 routes.route('/schedules')
 .get(async (req,res) => {
   try {
-    const Schedules = await Schedule.find()
+    const Schedules = await Schedule.find({user_id: req.user._id})
     res.json(Schedules)
   }
   catch (e) {
@@ -176,7 +180,10 @@ routes.route('/schedules')
   }
 })
 .post(async (req,res) => {
-  const newSchedule = req.body
+  const newSchedule = {
+    ...req.body,
+    user_id: req.user._id
+  }
   try {
       const schedule = await Schedule(newSchedule)
       await schedule.save()
@@ -190,8 +197,11 @@ routes.route('/schedules')
 routes.route('/schedules/:schedule_id')
 .get(async (req, res) => {
   try {
-      const schedule = await Schedule.findById(req.params.schedule_id)
-      res.json({schedule})
+      const schedule = await Schedule.find({
+        _id: req.params.schedule_id,
+        user_id: req.user._id
+      })
+      res.json(schedule.toObject())
   }
   catch (e) {
       res.status(400).send(e)
@@ -199,8 +209,11 @@ routes.route('/schedules/:schedule_id')
 })
 .put(async (req,res) => {
   try {
-      const schedule = await Schedule.findByIdAndUpdate(req.params.schedule_id, req.body)
-      res.json({schedule})
+      const schedule = await Schedule.findOneAndUpdate({
+        _id: req.params.schedule_id,
+        user_id: req.user._id
+      }, req.body)
+      res.json(schedule.toObject())
   }
   catch (e) {
       res.status(400).send(e)
@@ -208,7 +221,10 @@ routes.route('/schedules/:schedule_id')
 })
 .delete(async (req,res) => {
   try {
-      const result = await Schedule.findByIdAndDelete(req.params.schedule_id)
+      const result = await Schedule.findOneAndDelete({
+          _id: req.params.schedule_id,
+          user_id: req.user._id
+      })
       res.send(result)
   }
   catch (e) {
@@ -218,7 +234,7 @@ routes.route('/schedules/:schedule_id')
 
 routes.get('/balance', async (req,res) => {
   try {
-    var balance = await Balance.findOne()
+    var balance = await Balance.findOne({user_id: req.user._id})
     res.json(balance)
   }
   catch (e) {
@@ -243,7 +259,7 @@ routes.post('/transfer', async (req,res) => {
     else {
       res.status(400).send('cannot transfer between accounts, only to and from the balance')
     }
-    const balance = await Balance.updateOne({user_id: req.user._id}, {
+    const balance = await Balance.findOneAndUpdate({user_id: req.user._id}, {
       amount: transfered_amount
     })
     res.json({...balance, new_amount: transfered_amount})

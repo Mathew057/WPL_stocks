@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-29T12:08:15-06:00
+ * @Last modified time: 2019-12-01T15:06:37-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
@@ -16,7 +16,7 @@ let cookieParser = require('cookie-parser')
 const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
-// const auth = require('../middlewares/auth')
+// const auth = require('../server/middlewares/auth')
 const mongoose = require('mongoose')
 
 const stock_routes = require('./routes/stocks')

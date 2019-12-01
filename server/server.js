@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-30T11:53:11-06:00
+ * @Last modified time: 2019-12-01T15:07:17-06:00
  * @License: MIT
  */
 
@@ -18,7 +18,7 @@ const login_routes = require('./routes/login')
 const user_routes = require('./routes/user')
 const error_routes = require('./routes/error-routes')
 const stock_routes = require('./routes/stocks')
-const auth = require('../middlewares/auth')
+const auth = require('./middlewares/auth')
 
 const mongoose = require('mongoose')
 let cookieParser = require('cookie-parser')

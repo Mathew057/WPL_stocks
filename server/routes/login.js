@@ -4,13 +4,13 @@
  * @Email:  dev@mathewblack.com
  * @Filename: login.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-02T14:51:42-05:00
+ * @Last modified time: 2019-12-01T15:07:03-06:00
  * @License: MIT
  */
 const routes = require('express').Router();
-const Users = require('../../models/Users-model')
-const Balance = require('../../models/Balance-model')
-const auth = require('../../middlewares/auth')
+const Users = require('../models/Users-model')
+const Balance = require('../models/Balance-model')
+const auth = require('../middlewares/auth')
 
 // User create (signup)
 routes.post('/signup', async (req, res) => {
