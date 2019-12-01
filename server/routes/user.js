@@ -85,11 +85,9 @@ routes.route('/stocks/:stock_id')
   }
 })
 .put(async (req,res) => {
-  const newStock = req.body
   try {
-    const stock = await Stock(newStock);
-    await stock.save();
-    res.json({stock})
+      const stock = await Stock.findByIdAndUpdate(req.params.stock_id, req.body)
+      res.json({stock})
   }
   catch (e) {
       res.status(400).send(e)
@@ -148,6 +146,15 @@ routes.route('/accounts/:account_id')
       res.status(400).send(e)
   }
 })
+.put(async (req,res) => {
+  try {
+      const account = await Account.findByIdAndUpdate(req.params.account_id, req.body)
+      res.json({account})
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+})
 .delete(async (req,res) => {
   try {
       const account = await Account.findByIdAndDelete(req.params.account_id)
@@ -191,6 +198,15 @@ routes.route('/schedules/:schedule_id')
       res.status(400).send(e)
   }
 })
+.put(async (req,res) => {
+  try {
+      const schedule = await Schedule.findByIdAndUpdate(req.params.schedule_id, req.body)
+      res.json({schedule})
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+})
 .delete(async (req,res) => {
   try {
       const result = await Schedule.findByIdAndDelete(req.params.schedule_id)
@@ -214,24 +230,27 @@ routes.get('/balance', async (req,res) => {
 routes.post('/transfer', async (req,res) => {
   const {from_id, to_id, amount} = req.body;
   try {
-    const old_balance = await Balance.findOne()
-    var transfer_amount = old_balance.amount
+    const old_balance = await Balance.findOne({user_id: req.user._id})
+    var transfered_amount = old_balance.amount
+    console.log(transfered_amount, typeof transfered_amount)
     if (from_id === "balance") {
       // transfer out
-      transfer_amount -= amount
+      transfered_amount -= parseFloat(amount)
     }
     else if (to_id === "balance") {
       // transfer in
-      transfer_amount += amount
+      transfered_amount += parseFloat(amount)
     }
     else {
-      res.start(400).send('cannot transfer between accounts, only to and from the balance')
+      res.status(400).send('cannot transfer between accounts, only to and from the balance')
     }
-    const balance = await Balance.updateOne({}, {
-      amount: transfer_amount
+    const balance = await Balance.updateOne({user_id: req.user._id}, {
+      amount: transfered_amount
     })
+    res.json({...balance, new_amount: transfered_amount})
   }
   catch (e) {
+    console.error(e)
     res.status(400).send(e)
   }
 })

@@ -9,6 +9,7 @@
  */
 const express = require('express')
 const cors = require('cors')
+// const auth = require('./middlewares/auth')
 
 const stock_routes = require('./routes/stocks')
 const app = express()

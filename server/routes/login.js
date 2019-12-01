@@ -64,8 +64,9 @@ routes.post('/login', async (req, res) => {
        const cookieOptions = {
            httpOnly: true,
        };
+       const {email,password} = req.body
 
-       const user = await Users.findByCredentials(req.body.email, req.body.password)
+       const user = await Users.findByCredentials(email, password)
 
        const token = await user.generateAuthToken()
 
