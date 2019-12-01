@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: jobs.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T16:51:20-06:00
+ * @Last modified time: 2019-12-01T17:15:43-06:00
  * @License: MIT
  */
 
@@ -34,6 +34,7 @@ var agenda = new Agenda({db: {address: agenda_db_url}})
    }
    catch (e) {
      console.error('could not find original stock', e)
+     job.fail(e)
    }
 
    old_stock.quantity += stock.quantity;
@@ -46,23 +47,40 @@ var agenda = new Agenda({db: {address: agenda_db_url}})
    }
    catch(e) {
      console.error('could not update stock', e)
+     job.fail(e)
    }
 
    console.log(result);
  });
 
  agenda.define('sellStock', async job => {
-   const stock = job.attrs.data
    console.log("selling stock!")
-   var old_stock = await Stock.find({
-     user_id: stock.user_id,
-     stock_indicator: stock.stock_indicator
-   })
-   old_stock.quantity -= stock.quantity;
-   const result = await Stock.findOneAndUpdate({
-     user_id: stock.user_id,
-     stock_indicator: stock.stock_indicator
-   }, old_stock);
+   const stock = job.attrs.data
+   console.log(stock)
+   try{
+     var old_stock = await Stock.findOne({
+       user_id: stock.user_id,
+       stock_indicator: stock.stock_indicator
+     })
+     console.log(old_stock)
+   }
+   catch (e) {
+     console.error('could not find original stock', e)
+     job.fail(e)
+   }
+
+   old_stock.quantity += stock.quantity;
+   console.log(old_stock)
+   try {
+     const result = await Stock.findOneAndUpdate({
+       user_id: stock.user_id,
+       stock_indicator: stock.stock_indicator
+     }, old_stock);
+   }
+   catch(e) {
+     console.error('could not update stock', e)
+     job.fail(e)
+   }
    console.log(result);
  });
 

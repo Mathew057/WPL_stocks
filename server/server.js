@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T16:16:54-06:00
+ * @Last modified time: 2019-12-01T17:27:25-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
@@ -24,7 +24,6 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 
-var Agendash = require('agendash')
 
 const agenda = require('./jobs/jobs')
 
@@ -45,8 +44,6 @@ app.use(helmet.contentSecurityPolicy({
         defaultSrc: ["'self'"],
     }
 }))
-
-app.use('/jobs', Agendash(agenda))
 
 app.get(base_route, (req, res) => {
   res.send('Hello World!')

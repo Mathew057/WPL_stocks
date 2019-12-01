@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T16:46:30-06:00
+ * @Last modified time: 2019-12-01T17:36:31-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
@@ -36,6 +36,9 @@ app.use(helmet.contentSecurityPolicy({
         defaultSrc: ["'self'"],
     }
 }))
+
+
+
 
 app.get(base_route, (req, res) => {
   res.send('Hello World!')
