@@ -3,6 +3,8 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+const saltRounds = 12
+
 const usersSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -77,4 +79,17 @@ usersSchema.methods.toJSON = function () {
 
 const Users = mongoose.model('Users', usersSchema)
 
+if (process.env.NODE_ENV !== "production") {
+  console.log('Adding default user')
+  Users.updateOne({_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7")},{
+    _id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
+    name: "cooldude",
+    email: "fake@fakethis.com",
+    password: bcrypt.hashSync("hodlme", saltRounds)
+  }, {upsert: true}).then((doc)=> {
+    if (doc.upserted) {
+      console.log('added default user', doc.upserted)
+    }
+  })
+}
 module.exports = Users

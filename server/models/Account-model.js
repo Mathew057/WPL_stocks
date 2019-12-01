@@ -2,6 +2,10 @@ const mongoose = require("mongoose")
 const validator = require('validator')
 
 const accountSchema = new mongoose.Schema({
+  user_id: {
+    type: mongoose.Schema.ObjectId,
+    index: true
+  },
     type: {
         type: String,
         required: true,
@@ -67,5 +71,20 @@ const accountSchema = new mongoose.Schema({
 })
 
 const Account = mongoose.model('Accounts', accountSchema)
+
+if (process.env.NODE_ENV !== "production") {
+  console.log('Adding default Account')
+  Account.updateOne({user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7")},{
+    user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
+    name: "Demo Account",
+    type: "bank_account",
+    account_number: "1111111111",
+    routing_number:"1111111111",
+  }, {upsert: true}).then((doc)=> {
+    if (doc.upserted) {
+      console.log('added default account', doc.upserted)
+    }
+  })
+}
 
 module.exports = Account
