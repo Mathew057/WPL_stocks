@@ -1,7 +1,21 @@
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const Users = require('../models/Users-model')
+const saltRounds = 12
 
 const auth = async (req, res, next) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.log("skipping login for dev setup")
+    req.token = ""
+    req.user = {
+      _id: "5de33c325777db3f7b96c7f7",
+      name: "cooldude",
+      email: "fake@fakethis.com",
+      password: bcrypt.hashSync("hodlme", saltRounds)
+    }
+    next()
+  }
+  else {
     try {
         const token = req.cookies['app-jt']
 
@@ -22,5 +36,6 @@ const auth = async (req, res, next) => {
     } catch (e) {
         res.status(401).send({ error: 'Please login first.' })
     }
+  }
 }
 module.exports = auth

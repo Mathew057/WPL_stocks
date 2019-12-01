@@ -16,6 +16,7 @@ const Account = require('../models/Account-model')
 const Stock = require('../models/Stock-model')
 const Schedule = require('../models/Schedule-model')
 const Balance = require('../models/Balance-model')
+const Users = require('../models/Users-model')
 
 const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
 const client = process.env.CLIENT || "localhost"
@@ -96,8 +97,8 @@ routes.route('/stocks/:stock_id')
 })
 .delete(async (req,res) => {
   try {
-    var Stock = await Stock.deleteOne({stock_indicator: req.params.stock_id})
-    res.send('success')
+    var result = await Stock.deleteOne({stock_indicator: req.params.stock_id})
+    res.send(result)
   }
   catch (e) {
       res.status(400).send(e)
@@ -105,14 +106,14 @@ routes.route('/stocks/:stock_id')
 
 })
 
-routes.get('/profile', (req, res) => {
-  res.json({
-    username: "blah",
-    first_name: "test",
-    last_name: "dummy",
-    address: "123 Potato Street",
-    email: "test@gmail.com",
-  })
+routes.get('/profile', async (req, res) => {
+  try {
+    const user = await Users.findById(req.user._id)
+    res.json(user)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 
 routes.route('/accounts')
@@ -192,8 +193,8 @@ routes.route('/schedules/:schedule_id')
 })
 .delete(async (req,res) => {
   try {
-      const schedule = await Schedule.findByIdAndDelete(req.params.schedule_id)
-      res.send('success')
+      const result = await Schedule.findByIdAndDelete(req.params.schedule_id)
+      res.send(result)
   }
   catch (e) {
       res.status(400).send(e)

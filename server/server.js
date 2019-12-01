@@ -24,6 +24,7 @@ mongoose.connect(mongodb_url, {
   const user_routes = require('./routes/user')
   const error_routes = require('./routes/error-routes')
   const stock_routes = require('./routes/stocks')
+  const auth = require('./middlewares/auth')
 
   let cookieParser = require('cookie-parser')
   const express = require('express')
@@ -56,8 +57,8 @@ mongoose.connect(mongodb_url, {
   // TODO VALIDATE API REQUESTS
 
   app.use(`${base_route}/login`, login_routes)
-  app.use(`${base_route}/user`,user_routes)
-  app.use(`${base_route}/stocks`,stock_routes)
+  app.use(`${base_route}/user`, auth, user_routes)
+  app.use(`${base_route}/stocks`, auth, stock_routes)
   app.use(base_route, error_routes)
 
   app.listen(port, () => console.log(`App listening on port ${port}!`))
