@@ -11,12 +11,11 @@
 const routes = require('express').Router();
 const axios = require('axios');
 
-const auth = require('../middlewares/auth')
-const Account = require('../models/Account-model')
-const Stock = require('../models/Stock-model')
-const Schedule = require('../models/Schedule-model')
-const Balance = require('../models/Balance-model')
-const Users = require('../models/Users-model')
+const Account = require('../../models/Account-model')
+const Stock = require('../../models/Stock-model')
+const Schedule = require('../../models/Schedule-model')
+const Balance = require('../../models/Balance-model')
+const Users = require('../../models/Users-model')
 
 const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
 const client = process.env.CLIENT || "localhost"

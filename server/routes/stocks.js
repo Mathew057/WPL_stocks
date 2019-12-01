@@ -9,7 +9,6 @@
  */
 
  const routes = require('express').Router();
- const auth = require('../middlewares/auth')
  const axios = require('axios')
 
 const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
