@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-29T12:23:01-06:00
+ * @Last modified time: 2019-12-01T17:04:52-06:00
  * @License: MIT
  */
 
@@ -14,6 +14,11 @@
  const fs = require('fs');
  let stocks = JSON.parse(fs.readFileSync('symbols.json'));
 
+
+ function precDiff(a, b) {
+  return  100 * ( a - b ) / ( (a+b)/2 );
+ }
+
  routes.route('/')
  .get((req,res) => {
    payload = []
@@ -21,9 +26,13 @@
    var last_month =  new Date()
    last_month = last_month.setMonth(last_month.getMonth() - 1);
    for (var symbol in stocks) {
+     const points = generatePoints(symbol, 'd', last_month, today)
      payload.push({
-       graph: generatePoints(symbol, 'd', last_month, today),
-       ...stocks[symbol]
+       ...stocks[symbol],
+       stock_indicator: symbol,
+       graph: points,
+       price: points[points.length-1].y,
+       trend: precDiff(points[points.length-1].y, points[points.length-2].y)
      })
    }
    res.json(payload)
@@ -35,9 +44,13 @@
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   const points = generatePoints(stock_id, 'm', start_datetime, end_datetime)
    res.json({
-     graph: generatePoints(stock_id, 'm', start_datetime, end_datetime),
-     ...stocks[stock_id]
+     ...stocks[stock_id],
+     stock_indicator: stock_id,
+     graph: points,
+     price: points[points.length-1].y,
+     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
    })
 
  })
@@ -48,11 +61,14 @@
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   const points = generatePoints(stock_id, 'h', start_datetime, end_datetime)
    res.json({
-     graph: generatePoints(stock_id, 'h', start_datetime, end_datetime),
-     ...stocks[stock_id]
+     ...stocks[stock_id],
+     stock_indicator: stock_id,
+     graph: points,
+     price: points[points.length-1].y,
+     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
    })
-
  })
 
  routes.route("/daily/:stock_id")
@@ -61,9 +77,13 @@
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   const points = generatePoints(stock_id, 'd', start_datetime, end_datetime)
    res.json({
-     graph: generatePoints(stock_id, 'd', start_datetime, end_datetime),
-     ...stocks[stock_id]
+     ...stocks[stock_id],
+     stock_indicator: stock_id,
+     graph: points,
+     price: points[points.length-1].y,
+     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
    })
  })
 
@@ -73,9 +93,13 @@
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   const points = generatePoints(stock_id, 'w', start_datetime, end_datetime)
    res.json({
-     graph: generatePoints(stock_id, 'w', start_datetime, end_datetime),
-     ...stocks[stock_id]
+     ...stocks[stock_id],
+     stock_indicator: stock_id,
+     graph: points,
+     price: points[points.length-1].y,
+     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
    })
  })
 

@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-11-29T11:52:15-06:00
+ * @Last modified time: 2019-12-01T17:06:27-06:00
  * @License: MIT
  */
  const crypto = require('crypto');
@@ -113,7 +113,7 @@
    }
    var steps = get_date_index(end_datetime)
    var start_index = get_date_index(start_datetime)
-   console.log("Generating graph of size", (steps-start_index)/interval)
+   console.log("Generating graph of size", (steps-start_index)/interval, "for symbol", symbol)
    var rnd = seedrandom.alea(symbol)
    return randomWalk(steps,rnd, rnd()*max_start, start_index, interval);
  }

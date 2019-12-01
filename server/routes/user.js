@@ -4,9 +4,14 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T15:06:53-06:00
+ * @Last modified time: 2019-12-01T17:01:39-06:00
  * @License: MIT
  */
+
+ const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
+ const client = process.env.CLIENT || "localhost"
+ const port = process.env.PORT || 5000
+ const base_route = process.env.BASE_ROUTE || "/api"
 
 const routes = require('express').Router();
 const axios = require('axios');
@@ -16,15 +21,7 @@ const Stock = require('../models/Stock-model')
 const Schedule = require('../models/Schedule-model')
 const Balance = require('../models/Balance-model')
 const Users = require('../models/Users-model')
-
-const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
-const client = process.env.CLIENT || "localhost"
-const port = process.env.PORT || 5000
-const base_route = process.env.BASE_ROUTE || "/api"
-
-function precDiff(a, b) {
- return  100 * ( a - b ) / ( (a+b)/2 );
-}
+const agenda = require('../jobs/jobs')
 
 routes.route('/stocks')
 .get(async (req, res) => {
@@ -33,11 +30,9 @@ routes.route('/stocks')
     for (var i = 0; i < stocks.length; i++) {
       var stock = stocks[i]
       const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${stock.stock_indicator}`)
-      const {graph} = response.data
       stocks[i] = {
-        ...stock.toObject(),
-        ...{graph},
-        trend: precDiff(graph[graph.length-1].y, graph[graph.length-2].y)
+        ...response.data,
+        ...stock.toObject()
       }
     }
     res.json(stocks)
@@ -47,6 +42,22 @@ routes.route('/stocks')
       res.status(400).send(e)
   }
 })
+.put(async (req, res) => {
+  const newStock = req.body
+  var stock = {
+    ...newStock,
+    user_id: req.user_id
+  }
+  if (stock.type === "buy") {
+    delete stock.type
+    agenda.now('buyStock', stock)
+  }
+  else if (stock.type === "sell") {
+    delete stock.type
+    agenda.now('sellStock', stock)
+  }
+  res.json(stock)
+})
 .post(async (req, res) => {
   const newStocks = req.body
   var payload = []
@@ -55,13 +66,19 @@ routes.route('/stocks')
   }
   try {
     for (var i = 0; i < newStocks.length; i++) {
-      const stock = {
+      var stock = {
         ...newStocks[i],
         user_id: req.user_id
       }
-      const newStock = await Stock(stock);
-      await newStock.save();
-      payload.push(newStock.toObject())
+      payload.push(stock)
+      if (stock.type === "buy") {
+        delete stock.type
+        agenda.now('buyStock', stock)
+      }
+      else if (stock.type === "sell") {
+        delete stock.type
+        agenda.now('sellStock', stock)
+      }
     }
   }
   catch (e) {
@@ -75,11 +92,9 @@ routes.route('/stocks/:stock_id')
   try {
     var stock = await Stock.findOne({user_id: req.user._id, stock_indicator: req.params.stock_id})
     const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${req.params.stock_id}`)
-    const {graph} = response.data
     stock = {
       ...stock.toObject(),
-      ...{graph},
-      trend: precDiff(graph[graph.length-1].y, graph[graph.length-2].y)
+      ...response.data,
     }
     res.json(stock)
   }

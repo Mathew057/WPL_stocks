@@ -4,15 +4,13 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T15:07:17-06:00
+ * @Last modified time: 2019-12-01T16:16:54-06:00
  * @License: MIT
  */
-
-const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
+ const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
 const client = process.env.CLIENT || "localhost"
 const port = process.env.PORT || 5000
 const base_route = process.env.BASE_ROUTE || "/api"
-const agenda_db_url = mongodb_url.substring(0, mongodb_url.lastIndexOf('/')) + "agenda";
 
 const login_routes = require('./routes/login')
 const user_routes = require('./routes/user')
@@ -26,10 +24,9 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 
-var Agenda = require('agenda')
 var Agendash = require('agendash')
 
-var agenda = new Agenda({db: {address: agenda_db_url}})
+const agenda = require('./jobs/jobs')
 
 const app = express()
 
