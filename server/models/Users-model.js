@@ -22,6 +22,14 @@ const usersSchema = new mongoose.Schema({
             }
         }
     },
+    address: {
+      type: String,
+      required: true
+    },
+    username: {
+      type: String,
+      required: true
+    },
     password: {
         type: String,
         required: true,
@@ -85,6 +93,8 @@ if (process.env.NODE_ENV !== "production") {
     _id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
     name: "cooldude",
     email: "fake@fakethis.com",
+    username: "sentient_koala",
+    address: "1733 Somewhere st, hello, KS, 82932",
     password: bcrypt.hashSync("hodlme", saltRounds)
   }, {upsert: true}).then((doc)=> {
     if (doc.upserted) {

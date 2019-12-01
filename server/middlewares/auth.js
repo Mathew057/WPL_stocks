@@ -11,6 +11,8 @@ const auth = async (req, res, next) => {
       _id: "5de33c325777db3f7b96c7f7",
       name: "cooldude",
       email: "fake@fakethis.com",
+      username: "sentient_koala",
+      address: "1733 Somewhere st, hello, KS, 82932",
       password: bcrypt.hashSync("hodlme", saltRounds)
     }
     next()

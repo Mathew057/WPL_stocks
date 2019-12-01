@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: login.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T15:07:03-06:00
+ * @Last modified time: 2019-12-01T17:09:24-06:00
  * @License: MIT
  */
 const routes = require('express').Router();
@@ -16,7 +16,7 @@ const auth = require('../middlewares/auth')
 routes.post('/signup', async (req, res) => {
    const newUser = req.body
    const fieldsToAdd = Object.keys(newUser)
-   const fieldsInModel = ['name', 'email', 'password']
+   const fieldsInModel = ['name', 'email', 'password', 'address', 'username']
    const isAdditionAllowed = fieldsToAdd.every((field) => fieldsInModel.includes(field))
 
    if (!isAdditionAllowed) {
