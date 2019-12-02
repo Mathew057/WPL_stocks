@@ -20,7 +20,7 @@ class ForgotPassword extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Forgot Password?</h2>
-                <p>Please provide the email address that you used when you signed up for your WPL account.
+                <p>Please provide the email address that you used when you signed up for your Hodl account.
                    We will send you an email that will allow you to reset your password.
                 </p>
                 <form>

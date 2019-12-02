@@ -4,23 +4,72 @@ import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
 import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import RemoveShoppingCart from '@material-ui/icons/RemoveShoppingCart';
+import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 
 class Home extends React.Component{
 
     state = {
-        stocks: []
+        stocks: [],
+        userStockIndicators:[]
     }
 
     componentDidMount() {
-    const url = process.env.REACT_APP_baseAPIURL + '/stocks'
-        fetch(url)
-            .then(res => res.json())
-            .catch(error => console.log('Error:', error))
-            .then(response => {
-                this.setState({
-                    stocks: response
-                })
-            });
+      if(this.state.stocks.length === 0)
+        this.getStockData();
+      if(this.state.userStockIndicators.length === 0)
+        this.getUserStockIndicators();
+    }
+
+    getStockData = () =>{
+     const url = process.env.REACT_APP_baseAPIURL + '/stocks'
+         fetch(url)
+         .then(res => res.json())
+         .catch(error => console.log('Error:', error))
+         .then(response => {
+             this.setState({
+                 stocks: response
+             })
+         });
+    }
+
+    getUserStockIndicators = () =>{
+     const url = process.env.REACT_APP_baseAPIURL + '/user/stocks'
+         fetch(url)
+         .then(res => res.json())
+         .catch(error => console.log('Error:', error))
+         .then(response => {
+             this.setState({
+                userStockIndicators: response.map(userStock => userStock.stock_indicator)
+             })
+         });
+    }
+
+
+    handleCart = (e, fieldName, rowData) =>{
+            var existingEntries = JSON.parse(sessionStorage.getItem('cart')) || [];
+            var newEntries = [];
+            rowData.map((row,index)=>{
+              var addEntry = {
+                "stock_indicator": row.stock_indicator,
+                "type": fieldName,
+                "quantity": row.shares_available,
+                "start_date": new Date().toLocaleDateString("en-US"),
+                "end_date": new Date().toLocaleDateString("en-US"),
+                "interval": "1",
+                "frequency": "day"
+            };
+              newEntries.push(addEntry)
+            })
+            var allEntries = existingEntries.concat(newEntries)
+            sessionStorage.setItem('cart', JSON.stringify(allEntries));
+        };
+
+    validateSell = (rowData) =>{
+        var selectedToSell = rowData.map(selected => selected.stock_indicator)
+        return(this.state.userStockIndicators.some(element=> selectedToSell.includes(element)))
     }
 
     getConfigData(stockData){
@@ -56,7 +105,7 @@ class Home extends React.Component{
 
     render(){
         const {classes} = this.props;
-        const {stocks} = this.state;
+        const {stocks, userStocks} = this.state;
 
         return(
             <div className={classes.contentContainer}>
@@ -79,29 +128,29 @@ class Home extends React.Component{
                     icons={tableIcons}
                     actions={[
                       {
-                        icon: 'add',
-                        tooltip: 'Buy',
-                        onClick: (event, rowData) => alert("You saved " + rowData.name)
+                        icon: AddShoppingCart,
+                        tooltip: 'Buy Stocks',
+                        onClick: (event, rowData) => {this.handleCart(event, 'buy', rowData)}
                       },
-                      {
-                        icon: 'delete',
-                        tooltip: 'Sell',
-                        onClick: (event, rowData) => alert("You want to delete " + rowData.name)
-                      }
+                      rowData=> ({
+                        icon: RemoveShoppingCart,
+                        tooltip: 'Sell Stocks',
+                        onClick: (event, rowData) => {this.handleCart(event, 'sell', rowData)},
+                        hidden: this.validateSell(rowData)
+                      }),
+                      rowData=>({
+                        icon: ScheduleIcon,
+                        tooltip: 'Schedule Stocks',
+                        onClick: (event, rowData) => alert("You want to schedule " + rowData),
+                        hidden: rowData.length > 1
+                      }),
+                       {
+                         icon: RefreshIcon,
+                         tooltip: 'Refresh Stocks',
+                         isFreeAction: true,
+                         onClick:()=>{this.getStockData()}
+                       }
                     ]}
-//                    components={{
-//                      Action: props => (
-//                        <Button
-//                          onClick={(event) => props.action.onClick(event, props.data)}
-//                          color="primary"
-//                          variant="contained"
-//                          style={{textTransform: 'none'}}
-//                          size="small"
-//                        >
-//                          Buy/Sell
-//                        </Button>
-//                      ),
-//                    }}
                      detailPanel={rowData => {
                           return (
                             <div>

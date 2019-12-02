@@ -104,7 +104,6 @@ class MyStocks extends React.Component{
                      title="My Schedules"
                      icons={tableIcons}
                      columns={[
-                       { title: 'Schedule ID', field: 'id',editable: 'never' },
                        { title: 'Stock Indicator', field: 'stock_indicator', editable: 'never' },
                        { title: 'Type', field: 'type', lookup: { buy: 'Buy', sell: 'Sell' }},
                        { title: 'Quantity', field: 'quantity', type: 'numeric' },

@@ -11,15 +11,11 @@ class Cart extends React.Component{
     }
 
     componentDidMount() {
-    const url = process.env.REACT_APP_baseAPIURL + '/user/schedules'
-        fetch(url)
-            .then(res => res.json())
-            .catch(error => console.log('Error:', error))
-            .then(response => {
-                this.setState({
-                    cart: response
-                })
-            });
+        var retrievedObject = sessionStorage.getItem('cart');
+        var cart = JSON.parse(retrievedObject) || []
+        this.setState({
+            cart: cart
+    })
     }
 
     render(){
@@ -51,6 +47,7 @@ class Cart extends React.Component{
                                  const data = this.state.cart;
                                  const index = data.indexOf(oldData);
                                  data[index] = newData;
+                                 sessionStorage.setItem('cart', JSON.stringify(data));
                                  this.setState({ data }, () => resolve());
                                }
                                resolve()
@@ -63,6 +60,7 @@ class Cart extends React.Component{
                                  let data = this.state.cart;
                                  const index = data.indexOf(oldData);
                                  data.splice(index, 1);
+                                 sessionStorage.setItem('cart', JSON.stringify(data));
                                  this.setState({ data }, () => resolve());
                                }
                                resolve()
