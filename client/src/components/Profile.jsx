@@ -12,8 +12,7 @@ class Profile extends React.Component{
     constructor(){
         super();
         this.state={
-            firstName: "",
-            lastName: "",
+            name:"",
             physAddr: "",
             email: "",
             user: "",
@@ -28,8 +27,7 @@ class Profile extends React.Component{
         .catch(error => console.log('Error:',error))
 //        .then(response => console.log ('Success:', response))
         .then(response => {this.setState({
-             firstName: response.first_name,
-             lastName: response.last_name,
+             name: response.name,
              physAddr: response.address,
              email: response.email,
              user: response.username,
@@ -44,8 +42,7 @@ class Profile extends React.Component{
     }
 
     handleUpdate = e =>{
-        console.log("firstName: " + this.state.firstName)
-        console.log("lastName: " + this.state.lastName)
+        console.log("name: " + this.state.name)
         console.log("physAddr: " + this.state.physAddr)
         console.log("email: " + this.state.email)
         console.log("user: " + this.state.user)
@@ -67,22 +64,12 @@ class Profile extends React.Component{
                 <form onSubmit={this.handleUpdate}>
                     <div>
                         <TextField
-                          label="First Name"
-                          name= "firstName"
+                          label="Name"
+                          name= "name"
                           margin="normal"
                           fullWidth
                           onChange = {this.handleChange}
-                          value={this.state.firstName}
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                          label="Last Name"
-                          name = "lastName"
-                          margin="normal"
-                          fullWidth
-                          onChange = {this.handleChange}
-                          value= {this.state.lastName}
+                          value={this.state.name}
                         />
                     </div>
                     <div>

@@ -128,7 +128,7 @@ class Accounts extends React.Component {
             body: encodeFormData(transferInfo)
         })
         .then(response => console.log(response))
-        .catch(error => console.log(error))
+        .catch(error => alert(error.message))
         this.getBalance();
     }
 
@@ -160,8 +160,10 @@ class Accounts extends React.Component {
             },
             body: encodeFormData(formData)
         })
-        .then(response => console.log(response))
-        .catch(error => console.log(error))
+        .then(res => res.json())
+        .then(response => {
+            response.message ? alert(response.message) : console.log(response.message)
+        });
         this.setState({ open: false });
         this.getAccounts();
     };
