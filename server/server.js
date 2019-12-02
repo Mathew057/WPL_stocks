@@ -17,6 +17,7 @@ let cookieParser = require('cookie-parser')
 const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
+const compression = require('compression')
 
 const login_routes = require('./routes/login')
 const user_routes = require('./routes/user')
@@ -33,6 +34,7 @@ app.use(cors({
     credentials: true
 }))
 
+app.use(compression())
 app.use(cookieParser())
 
 app.use(helmet())
