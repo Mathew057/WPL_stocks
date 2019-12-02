@@ -20,8 +20,8 @@ jobs:
 
       - name: Build image
         run: |
-          cd server
-          docker build . --file Dockerfile --tag hodl-server
+          cd servers
+          docker build . --file server.Dockerfile --tag hodl-server
 
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u mathew0057 --password-stdin
@@ -54,10 +54,8 @@ jobs:
 
       - name: Build image
         run: |
-          cd stock_server
-          mkdir server
-          cp -r ../server/*/ ./server
-          docker build . --file Dockerfile --tag hodl-stock-server
+          cd servers
+          docker build . --file stock_server.Dockerfile --tag hodl-stock-server
 
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u mathew0057 --password-stdin

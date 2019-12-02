@@ -16,12 +16,12 @@
 const routes = require('express').Router();
 const axios = require('axios');
 
-const Account = require('../models/Account-model')
-const Stock = require('../models/Stock-model')
-const Schedule = require('../models/Schedule-model')
-const Balance = require('../models/Balance-model')
-const Users = require('../models/Users-model')
-const agenda = require('../jobs/jobs')
+const Account = require('../../models/Account-model')
+const Stock = require('../../models/Stock-model')
+const Schedule = require('../../models/Schedule-model')
+const Balance = require('../../models/Balance-model')
+const Users = require('../../models/Users-model')
+const agenda = require('../../jobs/jobs')
 
 routes.route('/stocks')
 .get(async (req, res) => {

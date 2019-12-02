@@ -13,8 +13,19 @@ RUN npm install
 # RUN npm ci --only=production
 
 # Bundle app source
-COPY . .
-COPY ./server ../server
+COPY ./jobs ./jobs
+COPY ./middlewares ./middlewares
+COPY ./models ./models
+
+WORKDIR /usr/src/app/server
+
+COPY ./stock_server/package*.json ./
+
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
+
+COPY ./stock_server .
 
 EXPOSE 4000
 CMD [ "node", "server.js" ]
