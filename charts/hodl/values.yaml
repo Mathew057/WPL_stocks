@@ -21,7 +21,7 @@ server:
     tag: latest
     pullPolicy: IfNotPresent
 
-server:
+stock_server:
   image:
     repository: mathew0057/hodl-stock-server
     tag: latest
@@ -64,7 +64,7 @@ service:
     externalPort: 5000
     protocol: TCP
     annotations: {}
-  stock-server:
+  stock_server:
     enabled: true
     type: NodePort
     internalPort: 4000

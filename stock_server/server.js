@@ -15,6 +15,7 @@ let cookieParser = require('cookie-parser')
 const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
+const compression = require('compression')
 // const auth = require('../server/middlewares/auth')
 const mongoose = require('mongoose')
 

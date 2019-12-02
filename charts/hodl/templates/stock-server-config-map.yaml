@@ -10,3 +10,4 @@ metadata:
 data:
   PORT: "4000"
   MONGODB_URL: mongodb://mongo-service:27017/hodl
+  BASE_ROUTE: "/"

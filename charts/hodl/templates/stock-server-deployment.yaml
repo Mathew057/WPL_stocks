@@ -25,8 +25,8 @@ spec:
     spec:
       containers:
         - name: stock-server
-          image: "{{ .Values.stock-server.image.repository }}:{{ .Values.stock-server.image.tag }}"
-          imagePullPolicy: {{ .Values.stock-server.image.pullPolicy }}
+          image: "{{ .Values.stock_server.image.repository }}:{{ .Values.stock_server.image.tag }}"
+          imagePullPolicy: {{ .Values.stock_server.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 5000
@@ -43,7 +43,7 @@ spec:
             - configMapRef:
                 name: {{ include "hodl.fullname" . }}-stock-server-config
           resources:
-{{ toYaml .Values.stock-server.resources | indent 12 }}
+{{ toYaml .Values.stock_server.resources | indent 12 }}
       {{- if hasKey .Values "imagePullSecret"}}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}

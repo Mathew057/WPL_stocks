@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "hodl.fullname" . }}-frontend
+  name: {{ include "hodl.fullname" . }}-client
   labels:
     app.kubernetes.io/name: {{ include "hodl.name" . }}
     helm.sh/chart: {{ include "hodl.chart" . }}
