@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:01:39-06:00
+ * @Last modified time: 2019-12-01T17:43:37-06:00
  * @License: MIT
  */
 
@@ -50,11 +50,11 @@ routes.route('/stocks')
   }
   if (stock.type === "buy") {
     delete stock.type
-    agenda.now('buyStock', stock)
+    agenda.now('buyStock', {stock})
   }
   else if (stock.type === "sell") {
     delete stock.type
-    agenda.now('sellStock', stock)
+    agenda.now('sellStock', {stock})
   }
   res.json(stock)
 })
@@ -73,11 +73,11 @@ routes.route('/stocks')
       payload.push(stock)
       if (stock.type === "buy") {
         delete stock.type
-        agenda.now('buyStock', stock)
+        agenda.now('buyStock', {stock})
       }
       else if (stock.type === "sell") {
         delete stock.type
-        agenda.now('sellStock', stock)
+        agenda.now('sellStock', {stock})
       }
     }
   }
@@ -116,8 +116,20 @@ routes.route('/stocks/:stock_id')
 
 })
 
-routes.get('/profile', async (req, res) => {
+routes.route('/profile')
+.get(async (req, res) => {
   res.json(req.user)
+})
+.put(async (req,res) => {
+  try {
+      const result = await User.findByIdAndUpdate({
+        _id: req.user._id
+      }, req.body)
+      res.json(result)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
 })
 
 routes.route('/accounts')
@@ -138,7 +150,7 @@ routes.route('/accounts')
   try {
       const account = await Account(newAccount)
       await account.save()
-      res.json({ account })
+      res.json(account)
   }
   catch (e) {
       res.status(400).send(e)
@@ -160,11 +172,11 @@ routes.route('/accounts/:account_id')
 })
 .put(async (req,res) => {
   try {
-      const account = await Account.findOneAndUpdate({
+      const result = await Account.findOneAndUpdate({
         _id: req.params.account_id,
         user_id: req.user._id
       }, req.body)
-      res.json(account.toObject())
+      res.json(account)
   }
   catch (e) {
       res.status(400).send(e)
@@ -172,11 +184,11 @@ routes.route('/accounts/:account_id')
 })
 .delete(async (req,res) => {
   try {
-      const account = await Account.findOneAndDelete({
+      const result = await Account.findOneAndDelete({
           _id: req.params.account_id,
           user_id: req.user._id
       })
-      res.send('success')
+      res.send(result)
   }
   catch (e) {
       res.status(400).send(e)
@@ -199,9 +211,37 @@ routes.route('/schedules')
     ...req.body,
     user_id: req.user._id
   }
+  var job;
   try {
-      const schedule = await Schedule(newSchedule)
+    const stock = {
+      user_id: req.user._id,
+      stock_indicator: newSchedule.stock_indicator,
+      quantity: parseFloat(newSchedule.quantity)
+    }
+    if (newSchedule.type === "buy") {
+      job = agenda.create('buyStock',{stock, end_datetime: newSchedule.end_datetime})
+      job.schedule(newSchedule.start_datetime)
+      .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+      await job.save()
+    }
+    else if (newSchedule.type === "sell") {
+      job = agenda.create('sellStock',{stock, end_datetime: newSchedule.end_datetime})
+      job.schedule(newSchedule.start_datetime)
+      .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+      await job.save()
+    }
+    console.log(job)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+  try {
+      const schedule = await Schedule({
+        ...newSchedule,
+        job_id: job.attrs._id
+      })
       await schedule.save()
+
       res.json({ schedule })
   }
   catch (e) {

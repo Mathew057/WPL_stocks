@@ -4,11 +4,10 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T16:46:30-06:00
+ * @Last modified time: 2019-12-01T17:36:31-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
- const client = process.env.CLIENT || "localhost"
  const port = process.env.PORT || 4000
  const base_route = process.env.BASE_ROUTE || "/stock_api"
 
@@ -16,11 +15,12 @@ let cookieParser = require('cookie-parser')
 const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
+const compression = require('compression')
 // const auth = require('../server/middlewares/auth')
-const agenda = require('../server/jobs/jobs')
 const mongoose = require('mongoose')
 
 const stock_routes = require('./routes/stocks')
+
 
 const app = express()
 
@@ -28,6 +28,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
+app.use(compression())
 app.use(cookieParser())
 
 app.use(helmet())
@@ -55,13 +56,15 @@ app.get(base_route, (req, res) => {
     process.exit(1)
   }
 
+  const agenda = require('../server/jobs/jobs')
   await agenda.start()
-  console.log('Adding stock job')
-  await agenda.now('buyStock',{
-    user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
-    stock_indicator: "GOOG",
-    quantity: 1
-  })
+  // console.log('Adding stock job')
+  // const stock = {
+  //   user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
+  //   stock_indicator: "GOOG",
+  //   quantity: 1
+  // }
+  // await agenda.now('buyStock',{stock})
 
   app.use(`${base_route}/stocks`, stock_routes)
   app.listen(port, () => console.log(`App listening on port ${port}!`))

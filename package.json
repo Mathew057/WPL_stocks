@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Mathew057/hodl#readme",
   "dependencies": {
+    "agendash": "^1.0.0",
     "concurrently": "^5.0.0"
   }
 }
