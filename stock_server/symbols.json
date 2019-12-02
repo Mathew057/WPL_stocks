@@ -1,1 +1,410 @@
-{"ATVI":{"company_name":"Activision Blizzard"},"ADBE":{"company_name":"Adobe Inc."},"AMD":{"company_name":"Advanced Micro Devices"},"ALXN":{"company_name":"Alexion Pharmaceuticals"},"ALGN":{"company_name":"Align Technology Inc."},"GOOG":{"company_name":"Alphabet Inc. (Class C)"},"AMZN":{"company_name":"Amazon.com"},"AAL":{"company_name":"American Airlines Group"},"AMGN":{"company_name":"Amgen Inc."},"ADI":{"company_name":"Analog Devices"},"AAPL":{"company_name":"Apple Inc."},"AMAT":{"company_name":"Applied Materials Inc."},"ASML":{"company_name":"ASML Holding"},"ADSK":{"company_name":"Autodesk Inc."},"ADP":{"company_name":"Automatic Data Processing Inc."},"BIDU":{"company_name":"Baidu.com Inc."},"BIIB":{"company_name":"Biogen Inc"},"BMRN":{"company_name":"BioMarin Pharmaceutical Inc."},"BKNG":{"company_name":"Booking Holdings"},"AVGO":{"company_name":"Broadcom Inc."},"CDNS":{"company_name":"Cadence Design Systems"},"CERN":{"company_name":"Cerner Corporation"},"CHTR":{"company_name":"Charter Communications Inc."},"CHKP":{"company_name":"Check Point Software Technologies Ltd."},"CTAS":{"company_name":"Cintas Corporation"},"CSCO":{"company_name":"Cisco Systems"},"CTXS":{"company_name":"Citrix Systems"},"CTSH":{"company_name":"Cognizant Technology Solutions Corporation"},"CMCSA":{"company_name":"Comcast Corporation"},"COST":{"company_name":"Costco Wholesale Corporation"},"CSX":{"company_name":"CSX Corporation"},"TCOM":{"company_name":"Ctrip International"},"DLTR":{"company_name":"Dollar Tree Inc."},"EBAY":{"company_name":"eBay Inc."},"EA":{"company_name":"Electronic Arts"},"EXC":{"company_name":"Exelon Corporation"},"EXPE":{"company_name":"Expedia Group"},"FB":{"company_name":"Facebook Inc."},"FAST":{"company_name":"Fastenal Company"},"FISV":{"company_name":"Fiserv Inc."},"FOXA":{"company_name":"Fox Corporation (Class A)"},"FOX":{"company_name":"Fox Corporation (Class B)"},"GILD":{"company_name":"Gilead Sciences Inc."},"HAS":{"company_name":"Hasbro Inc."},"HSIC":{"company_name":"Henry Schein Inc."},"IDXX":{"company_name":"IDEXX Laboratories"},"ILMN":{"company_name":"Illumina Inc."},"INCY":{"company_name":"Incyte Corporation"},"INTC":{"company_name":"Intel Corporation"},"INTU":{"company_name":"Intuit Inc."},"ISRG":{"company_name":"Intuitive Surgical Inc."},"JBHT":{"company_name":"J.B. Hunt Transport Services Inc."},"JD":{"company_name":"JD.com"},"KLAC":{"company_name":"KLA Corporation"},"KHC":{"company_name":"Kraft Heinz"},"LRCX":{"company_name":"Lam Research Inc."},"LBTYA":{"company_name":"Liberty Global (Class A)"},"LBTYK":{"company_name":"Liberty Global (Class C)"},"LULU":{"company_name":"Lululemon athletica"},"MAR":{"company_name":"Marriott International Inc."},"MXIM":{"company_name":"Maxim Integrated Products"},"MELI":{"company_name":"MercadoLibre"},"MCHP":{"company_name":"Microchip Technology"},"MU":{"company_name":"Micron Technology Inc."},"MSFT":{"company_name":"Microsoft Corporation"},"MDLZ":{"company_name":"Mondelēz International"},"MNST":{"company_name":"Monster Beverage Corporation"},"MYL":{"company_name":"Mylan N.V."},"NTAP":{"company_name":"NetApp"},"NTES":{"company_name":"NetEase Inc."},"NFLX":{"company_name":"Netflix"},"NLOK":{"company_name":"NortonLifeLock"},"NVDA":{"company_name":"NVIDIA Corporation"},"NXPI":{"company_name":"NXP Semiconductors N.V."},"ORLY":{"company_name":"O'Reilly Automotive Inc."},"PCAR":{"company_name":"PACCAR Inc."},"PAYX":{"company_name":"Paychex Inc."},"PYPL":{"company_name":"PayPal Holdings Inc."},"PEP":{"company_name":"PepsiCo Inc."},"QCOM":{"company_name":"QUALCOMM Incorporated"},"REGN":{"company_name":"Regeneron Pharmaceuticals"},"ROST":{"company_name":"Ross Stores Inc."},"SIRI":{"company_name":"Sirius XM Radio Inc."},"SWKS":{"company_name":"Skyworks Solutions Inc."},"SBUX":{"company_name":"Starbucks Corporation"},"SNPS":{"company_name":"Synopsys Inc."},"TMUS":{"company_name":"T-Mobile US"},"TTWO":{"company_name":"Take-Two Interactive Inc."},"TSLA":{"company_name":"Tesla Inc."},"TXN":{"company_name":"Texas Instruments Inc."},"ULTA":{"company_name":"Ulta Beauty"},"UAL":{"company_name":"United Airlines Holdings"},"VRSN":{"company_name":"VeriSign"},"VRSK":{"company_name":"Verisk Analytics"},"VRTX":{"company_name":"Vertex Pharmaceuticals"},"WBA":{"company_name":"Walgreen Boots Alliance Inc."},"WDAY":{"company_name":"Workday Inc."},"WDC":{"company_name":"Western Digital"},"WLTW":{"company_name":"Willis Towers Watson"},"WYNN":{"company_name":"Wynn Resorts"},"XEL":{"company_name":"Xcel Energy Inc."},"XLNX":{"company_name":"Xilinx Inc."}}
+{
+  "ATVI": {
+    "company_name": "Activision Blizzard",
+    "shares_available": 1184043
+  },
+  "ADBE": {
+    "company_name": "Adobe Inc.",
+    "shares_available": 657969
+  },
+  "AMD": {
+    "company_name": "Advanced Micro Devices",
+    "shares_available": 1019185
+  },
+  "ALXN": {
+    "company_name": "Alexion Pharmaceuticals",
+    "shares_available": 126022
+  },
+  "ALGN": {
+    "company_name": "Align Technology Inc.",
+    "shares_available": "381227"
+  },
+  "GOOG": {
+    "company_name": "Alphabet Inc. (Class C)",
+    "shares_available": 1334295
+  },
+  "AMZN": {
+    "company_name": "Amazon.com",
+    "shares_available": 168415
+  },
+  "AAL": {
+    "company_name": "American Airlines Group",
+    "shares_available": 520156
+  },
+  "AMGN": {
+    "company_name": "Amgen Inc.",
+    "shares_available": 1140512
+  },
+  "ADI": {
+    "company_name": "Analog Devices",
+    "shares_available": 1198535
+  },
+  "AAPL": {
+    "company_name": "Apple Inc.",
+    "shares_available": 640243
+  },
+  "AMAT": {
+    "company_name": "Applied Materials Inc.",
+    "shares_available": 624135
+  },
+  "ASML": {
+    "company_name": "ASML Holding",
+    "shares_available": 965777
+  },
+  "ADSK": {
+    "company_name": "Autodesk Inc.",
+    "shares_available": 14856
+  },
+  "ADP": {
+    "company_name": "Automatic Data Processing Inc.",
+    "shares_available": 42620
+  },
+  "BIDU": {
+    "company_name": "Baidu.com Inc.",
+    "shares_available": 1230633
+  },
+  "BIIB": {
+    "company_name": "Biogen Inc",
+    "shares_available": 398964
+  },
+  "BMRN": {
+    "company_name": "BioMarin Pharmaceutical Inc.",
+    "shares_available": 905504
+  },
+  "BKNG": {
+    "company_name": "Booking Holdings",
+    "shares_available": 814029
+  },
+  "AVGO": {
+    "company_name": "Broadcom Inc.",
+    "shares_available": 1069600
+  },
+  "CDNS": {
+    "company_name": "Cadence Design Systems",
+    "shares_available": 614214
+  },
+  "CERN": {
+    "company_name": "Cerner Corporation",
+    "shares_available": 1165911
+  },
+  "CHTR": {
+    "company_name": "Charter Communications Inc.",
+    "shares_available": 686140
+  },
+  "CHKP": {
+    "company_name": "Check Point Software Technologies Ltd.",
+    "shares_available": 1291497
+  },
+  "CTAS": {
+    "company_name": "Cintas Corporation",
+    "shares_available": 586558
+  },
+  "CSCO": {
+    "company_name": "Cisco Systems",
+    "shares_available": 107809
+  },
+  "CTXS": {
+    "company_name": "Citrix Systems",
+    "shares_available": 249864
+  },
+  "CTSH": {
+    "company_name": "Cognizant Technology Solutions Corporation",
+    "shares_available": 912075
+  },
+  "CMCSA": {
+    "company_name": "Comcast Corporation",
+    "shares_available": 437004
+  },
+  "COST": {
+    "company_name": "Costco Wholesale Corporation",
+    "shares_available": 274022
+  },
+  "CSX": {
+    "company_name": "CSX Corporation",
+    "shares_available": 923887
+  },
+  "TCOM": {
+    "company_name": "Ctrip International",
+    "shares_available": 356081
+  },
+  "DLTR": {
+    "company_name": "Dollar Tree Inc.",
+    "shares_available": 545615
+  },
+  "EBAY": {
+    "company_name": "eBay Inc.",
+    "shares_available": 1087007
+  },
+  "EA": {
+    "company_name": "Electronic Arts",
+    "shares_available": 1379004
+  },
+  "EXC": {
+    "company_name": "Exelon Corporation",
+    "shares_available": 519333
+  },
+  "EXPE": {
+    "company_name": "Expedia Group",
+    "shares_available": 60931
+  },
+  "FB": {
+    "company_name": "Facebook Inc.",
+    "shares_available": 1410344
+  },
+  "FAST": {
+    "company_name": "Fastenal Company",
+    "shares_available": 400573
+  },
+  "FISV": {
+    "company_name": "Fiserv Inc.",
+    "shares_available": 269047
+  },
+  "FOXA": {
+    "company_name": "Fox Corporation (Class A)",
+    "shares_available": 490075
+  },
+  "FOX": {
+    "company_name": "Fox Corporation (Class B)",
+    "shares_available": 795101
+  },
+  "GILD": {
+    "company_name": "Gilead Sciences Inc.",
+    "shares_available": 261788
+  },
+  "HAS": {
+    "company_name": "Hasbro Inc.",
+    "shares_available": 1194040
+  },
+  "HSIC": {
+    "company_name": "Henry Schein Inc.",
+    "shares_available": 998193
+  },
+  "IDXX": {
+    "company_name": "IDEXX Laboratories",
+    "shares_available": 1097853
+  },
+  "ILMN": {
+    "company_name": "Illumina Inc.",
+    "shares_available": 1039372
+  },
+  "INCY": {
+    "company_name": "Incyte Corporation",
+    "shares_available": 595267
+  },
+  "INTC": {
+    "company_name": "Intel Corporation",
+    "shares_available": 202971
+  },
+  "INTU": {
+    "company_name": "Intuit Inc.",
+    "shares_available": 518110
+  },
+  "ISRG": {
+    "company_name": "Intuitive Surgical Inc.",
+    "shares_available": 1289663
+  },
+  "JBHT": {
+    "company_name": "J.B. Hunt Transport Services Inc.",
+    "shares_available": 1077642
+  },
+  "JD": {
+    "company_name": "JD.com",
+    "shares_available": 60409
+  },
+  "KLAC": {
+    "company_name": "KLA Corporation",
+    "shares_available": 1053765
+  },
+  "KHC": {
+    "company_name": "Kraft Heinz",
+    "shares_available": 1099578
+  },
+  "LRCX": {
+    "company_name": "Lam Research Inc.",
+    "shares_available": 1267510
+  },
+  "LBTYA": {
+    "company_name": "Liberty Global (Class A)",
+    "shares_available": 1330491
+  },
+  "LBTYK": {
+    "company_name": "Liberty Global (Class C)",
+    "shares_available": 499430
+  },
+  "LULU": {
+    "company_name": "Lululemon athletica",
+    "shares_available": 1103370
+  },
+  "MAR": {
+    "company_name": "Marriott International Inc.",
+    "shares_available": 166579
+  },
+  "MXIM": {
+    "company_name": "Maxim Integrated Products",
+    "shares_available": 1013377
+  },
+  "MELI": {
+    "company_name": "MercadoLibre",
+    "shares_available": 1195777
+  },
+  "MCHP": {
+    "company_name": "Microchip Technology",
+    "shares_available": 78063
+  },
+  "MU": {
+    "company_name": "Micron Technology Inc.",
+    "shares_available": 940272
+  },
+  "MSFT": {
+    "company_name": "Microsoft Corporation",
+    "shares_available": 744364
+  },
+  "MDLZ": {
+    "company_name": "Mondelēz International",
+    "shares_available": 1137432
+  },
+  "MNST": {
+    "company_name": "Monster Beverage Corporation",
+    "shares_available": 598788
+  },
+  "MYL": {
+    "company_name": "Mylan N.V.",
+    "shares_available": 900255
+  },
+  "NTAP": {
+    "company_name": "NetApp",
+    "shares_available": 439173
+  },
+  "NTES": {
+    "company_name": "NetEase Inc.",
+    "shares_available": 1494951
+  },
+  "NFLX": {
+    "company_name": "Netflix",
+    "shares_available": 846852
+  },
+  "NLOK": {
+    "company_name": "NortonLifeLock",
+    "shares_available": 400550
+  },
+  "NVDA": {
+    "company_name": "NVIDIA Corporation",
+    "shares_available": 304668
+  },
+  "NXPI": {
+    "company_name": "NXP Semiconductors N.V.",
+    "shares_available": 541156
+  },
+  "ORLY": {
+    "company_name": "O'Reilly Automotive Inc.",
+    "shares_available": "250304"
+  },
+  "PCAR": {
+    "company_name": "PACCAR Inc.",
+    "shares_available": 989584
+  },
+  "PAYX": {
+    "company_name": "Paychex Inc.",
+    "shares_available": 970970
+  },
+  "PYPL": {
+    "company_name": "PayPal Holdings Inc.",
+    "shares_available": 176147
+  },
+  "PEP": {
+    "company_name": "PepsiCo Inc.",
+    "shares_available": 709812
+  },
+  "QCOM": {
+    "company_name": "QUALCOMM Incorporated",
+    "shares_available": 1020783
+  },
+  "REGN": {
+    "company_name": "Regeneron Pharmaceuticals",
+    "shares_available": 379606
+  },
+  "ROST": {
+    "company_name": "Ross Stores Inc.",
+    "shares_available": 271561
+  },
+  "SIRI": {
+    "company_name": "Sirius XM Radio Inc.",
+    "shares_available": 557871
+  },
+  "SWKS": {
+    "company_name": "Skyworks Solutions Inc.",
+    "shares_available": 1037362
+  },
+  "SBUX": {
+    "company_name": "Starbucks Corporation",
+    "shares_available": 783014
+  },
+  "SNPS": {
+    "company_name": "Synopsys Inc.",
+    "shares_available": 954460
+  },
+  "TMUS": {
+    "company_name": "T-Mobile US",
+    "shares_available": 1162016
+  },
+  "TTWO": {
+    "company_name": "Take-Two Interactive Inc.",
+    "shares_available": 609935
+  },
+  "TSLA": {
+    "company_name": "Tesla Inc.",
+    "shares_available": 1456158
+  },
+  "TXN": {
+    "company_name": "Texas Instruments Inc.",
+    "shares_available": 749221
+  },
+  "ULTA": {
+    "company_name": "Ulta Beauty",
+    "shares_available": 466351
+  },
+  "UAL": {
+    "company_name": "United Airlines Holdings",
+    "shares_available": 1153070
+  },
+  "VRSN": {
+    "company_name": "VeriSign",
+    "shares_available": 882359
+  },
+  "VRSK": {
+    "company_name": "Verisk Analytics",
+    "shares_available": 1423300
+  },
+  "VRTX": {
+    "company_name": "Vertex Pharmaceuticals",
+    "shares_available": 337650
+  },
+  "WBA": {
+    "company_name": "Walgreen Boots Alliance Inc.",
+    "shares_available": 325685
+  },
+  "WDAY": {
+    "company_name": "Workday Inc.",
+    "shares_available": 1073346
+  },
+  "WDC": {
+    "company_name": "Western Digital",
+    "shares_available": 485174
+  },
+  "WLTW": {
+    "company_name": "Willis Towers Watson",
+    "shares_available": 507001
+  },
+  "WYNN": {
+    "company_name": "Wynn Resorts",
+    "shares_available": 1276092
+  },
+  "XEL": {
+    "company_name": "Xcel Energy Inc.",
+    "shares_available": 1437862
+  },
+  "XLNX": {
+    "company_name": "Xilinx Inc.",
+    "shares_available": 1154379
+  }
+}
