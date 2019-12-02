@@ -50,11 +50,11 @@ routes.route('/stocks')
   }
   if (stock.type === "buy") {
     delete stock.type
-    agenda.now('buyStock', stock)
+    agenda.now('buyStock', {stock})
   }
   else if (stock.type === "sell") {
     delete stock.type
-    agenda.now('sellStock', stock)
+    agenda.now('sellStock', {stock})
   }
   res.json(stock)
 })
@@ -73,11 +73,11 @@ routes.route('/stocks')
       payload.push(stock)
       if (stock.type === "buy") {
         delete stock.type
-        agenda.now('buyStock', stock)
+        agenda.now('buyStock', {stock})
       }
       else if (stock.type === "sell") {
         delete stock.type
-        agenda.now('sellStock', stock)
+        agenda.now('sellStock', {stock})
       }
     }
   }
@@ -211,9 +211,37 @@ routes.route('/schedules')
     ...req.body,
     user_id: req.user._id
   }
+  var job;
   try {
-      const schedule = await Schedule(newSchedule)
+    const stock = {
+      user_id: req.user._id,
+      stock_indicator: newSchedule.stock_indicator,
+      quantity: parseFloat(newSchedule.quantity)
+    }
+    if (newSchedule.type === "buy") {
+      job = agenda.create('buyStock',{stock, end_datetime: newSchedule.end_datetime})
+      job.schedule(newSchedule.start_datetime)
+      .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+      await job.save()
+    }
+    else if (newSchedule.type === "sell") {
+      job = agenda.create('sellStock',{stock, end_datetime: newSchedule.end_datetime})
+      job.schedule(newSchedule.start_datetime)
+      .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+      await job.save()
+    }
+    console.log(job)
+  }
+  catch (e) {
+      res.status(400).send(e)
+  }
+  try {
+      const schedule = await Schedule({
+        ...newSchedule,
+        job_id: job.attrs._id
+      })
       await schedule.save()
+
       res.json({ schedule })
   }
   catch (e) {

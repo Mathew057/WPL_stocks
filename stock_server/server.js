@@ -17,10 +17,10 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 // const auth = require('../server/middlewares/auth')
-const agenda = require('../server/jobs/jobs')
 const mongoose = require('mongoose')
 
 const stock_routes = require('./routes/stocks')
+
 
 const app = express()
 
@@ -36,9 +36,6 @@ app.use(helmet.contentSecurityPolicy({
         defaultSrc: ["'self'"],
     }
 }))
-
-
-
 
 app.get(base_route, (req, res) => {
   res.send('Hello World!')
@@ -58,13 +55,15 @@ app.get(base_route, (req, res) => {
     process.exit(1)
   }
 
+  const agenda = require('../server/jobs/jobs')
   await agenda.start()
-  console.log('Adding stock job')
-  await agenda.now('buyStock',{
-    user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
-    stock_indicator: "GOOG",
-    quantity: 1
-  })
+  // console.log('Adding stock job')
+  // const stock = {
+  //   user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
+  //   stock_indicator: "GOOG",
+  //   quantity: 1
+  // }
+  // await agenda.now('buyStock',{stock})
 
   app.use(`${base_route}/stocks`, stock_routes)
   app.listen(port, () => console.log(`App listening on port ${port}!`))

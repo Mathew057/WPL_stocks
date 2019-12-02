@@ -4,6 +4,12 @@ const validator = require('validator')
 const scheduleSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.ObjectId,
+    required: true,
+    index: true
+  },
+  job_id: {
+    required: true,
+    type: mongoose.Schema.ObjectId,
     index: true
   },
     name: {
@@ -34,11 +40,11 @@ const scheduleSchema = new mongoose.Schema({
       type: Number,
       required: true
     },
-    start_date: {
+    start_datetime: {
       type: Date,
       required: true
     },
-    end_date: {
+    end_datetime: {
       type: Date,
       required: true
     }
@@ -58,8 +64,8 @@ if (process.env.NODE_ENV !== "production") {
     interval:1,
     stock_indicator: "GOOG",
     quantity: 1,
-    start_date: new Date().toISOString(),
-    end_date: new Date().toISOString()
+    start_datetime: new Date().toISOString(),
+    end_datetime: new Date().toISOString()
   }, {upsert: true}).then((doc)=> {
     if (doc.upserted) {
       console.log('added default schedule', doc.upserted)
