@@ -9,5 +9,5 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
   PORT: "4000"
-  MONGODB_URL: mongodb://mongo-service:27017/hodl
+  MONGODB_URL: "mongodb://hodl-mongodb:27017/hodl"
   BASE_ROUTE: "/"

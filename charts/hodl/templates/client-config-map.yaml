@@ -17,19 +17,6 @@ data:
       gzip on;
       gzip_types text/plain application/xml;
       gunzip on;
-      location /api {
-          proxy_pass http://hodl-server:5000/;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-      }
-
-      location /stock_api {
-          proxy_pass http://hodl-stock-server:4000/;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-      }
 
       location / {
           root   /usr/share/nginx/html;
