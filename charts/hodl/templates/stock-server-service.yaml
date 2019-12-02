@@ -1,0 +1,25 @@
+{{- if .Values.service.stock-server.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hodl.fullname" . }}-stock-server
+  labels:
+    app.kubernetes.io/name: {{ include "hodl.name" . }}
+    helm.sh/chart: {{ include "hodl.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.service.stock-server.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.service.stock-server.type }}
+  ports:
+    - port: {{ .Values.service.stock-server.externalPort }}
+      targetPort: {{ .Values.service.stock-server.internalPort }}
+      protocol: {{ .Values.service.stock-server.protocol }}
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "hodl.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

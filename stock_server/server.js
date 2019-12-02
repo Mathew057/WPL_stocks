@@ -8,7 +8,6 @@
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
- const client = process.env.CLIENT || "localhost"
  const port = process.env.PORT || 4000
  const base_route = process.env.BASE_ROUTE || "/stock_api"
 
