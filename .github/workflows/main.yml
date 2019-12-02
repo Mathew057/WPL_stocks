@@ -55,7 +55,7 @@ jobs:
       - name: Build image
         run: |
           cd stock_server
-          cp ../server/*/ .
+          cp -r ../server/*/ .
           docker build . --file Dockerfile --tag hodl-stock-server
 
       - name: Log into registry
