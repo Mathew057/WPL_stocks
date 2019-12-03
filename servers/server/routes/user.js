@@ -122,7 +122,14 @@ res.status(400).send(e)
 
 routes.route('/profile')
 .get(async (req, res) => {
-  res.json(req.user)
+  try {
+      const user = await Users.findOne({_id: req.user._id})
+      res.json(user)
+  }
+  catch (e) {
+      console.error(e)
+      res.status(400).send(e)
+  }
 })
 .put(async (req,res) => {
   try {
