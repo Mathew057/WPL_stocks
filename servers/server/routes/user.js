@@ -126,7 +126,7 @@ routes.route('/profile')
 })
 .put(async (req,res) => {
   try {
-      const result = await Users.findByIdAndUpdate({
+      const result = await Users.updateOne({
         _id: req.user._id
       }, req.body)
       res.json(result)
