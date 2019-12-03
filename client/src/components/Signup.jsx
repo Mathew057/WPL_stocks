@@ -8,15 +8,14 @@ import {withStyles} from '@material-ui/core/styles/index';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
-
+import {encodeFormData} from './functions';
 
 class Signup extends React.Component{
 
     constructor(){
         super();
         this.state={
-            firstName: "",
-            lastName: "",
+            name: "",
             physAddr: "",
             email: "",
             user: "",
@@ -29,27 +28,21 @@ class Signup extends React.Component{
     }
 
     handleSubmit = e =>{
-        console.log("firstName: " + this.state.firstName)
-        console.log("lastName: " + this.state.lastName)
-        console.log("physAddr: " + this.state.physAddr)
-        console.log("email: " + this.state.email)
-        console.log("user: " + this.state.user)
-        console.log("password: " + this.state.password)
-
         const url =  process.env.REACT_APP_baseAPIURL + '/login/signup'
-        const data = {
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            physAddr: this.state.physAddr,
-            email: this.state.email,
-            user: this.state.user,
-            password: this.state.password
+        const{name, physAddr, email, user, password} = this.state;
+        let data = {
+            name: name,
+            email: email,
+            username: user,
+            address: physAddr,
+            password: password
         }
         fetch( url,
             {method: 'POST',
-            body: JSON.stringify(data),
+            body: encodeFormData(data),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
             }
         })
         .then(res => res.json())
@@ -73,18 +66,8 @@ class Signup extends React.Component{
                 <form onSubmit= {this.handleSubmit}>
                     <div>
                         <TextField
-                          label="First Name"
-                          name="firstName"
-                          margin="normal"
-                          variant="outlined"
-                          onChange = {this.handleChange}
-                          fullWidth
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                          label="Last Name"
-                          name="lastName"
+                          label="Name"
+                          name="name"
                           margin="normal"
                           variant="outlined"
                           onChange = {this.handleChange}

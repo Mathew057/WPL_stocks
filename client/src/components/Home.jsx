@@ -8,12 +8,33 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import RemoveShoppingCart from '@material-ui/icons/RemoveShoppingCart';
 import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
+import MenuItem from '@material-ui/core/MenuItem';
+import {encodeFormData} from './functions';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 class Home extends React.Component{
 
     state = {
         stocks: [],
-        userStockIndicators:[]
+        userStockIndicators:[],
+        open: false,
+        schedule_name: '',
+        type: '',
+        frequency: '',
+        interval: '',
+        stock_indicator: '',
+        quantity: '',
+        start_datetime: '',
+        end_datetime: ''
+
+
     }
 
     componentDidMount() {
@@ -72,6 +93,68 @@ class Home extends React.Component{
         return(this.state.userStockIndicators.some(element=> selectedToSell.includes(element)))
     }
 
+    handleClickOpen = (event, stockIndicator) => {
+        this.setState({ open: true, stock_indicator: stockIndicator });
+    };
+
+    handleClose = () => {
+        this.setState({ open: false });
+    };
+
+    handleChange = e =>{
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+    }
+
+    handleInputChange = (e, child, fieldName) =>{
+        this.setState({
+            [e.target.name]: e.target.value,
+            [fieldName]: child.key
+        });
+    }
+
+    addNewSchedule = () =>{
+       const {schedule_name, type, frequency, interval, stock_indicator, quantity, start_datetime, end_datetime} = this.state;
+       let scheduleData =   {name: schedule_name,
+                            type: type,
+                            frequency: frequency,
+                            interval: interval,
+                            stock_indicator: stock_indicator,
+                            quantity: quantity,
+                            start_datetime: start_datetime,
+                            end_datetime: end_datetime
+                            };
+        const url = process.env.REACT_APP_baseAPIURL + '/user/schedules'
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: encodeFormData(scheduleData)
+        })
+        .then(res => res.json())
+        .then(response => {
+            response.message ? alert(response.message) : console.log(response.message)
+        });
+        this.handleClose();
+        this.clearScheduleData();
+    };
+
+    clearScheduleData = () =>{
+        this.setState({
+            schedule_name: '',
+            type: '',
+            frequency: '',
+            interval: '',
+            stock_indicator: '',
+            quantity: '',
+            start_datetime: '',
+            end_datetime: ''
+        });
+    }
+
     getConfigData(stockData){
         const data = {
           labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -105,7 +188,7 @@ class Home extends React.Component{
 
     render(){
         const {classes} = this.props;
-        const {stocks, userStocks} = this.state;
+        const {stocks, schedule_name, type, frequency, interval, stock_indicator,quantity, start_datetime, end_datetime} = this.state;
 
         return(
             <div className={classes.contentContainer}>
@@ -141,7 +224,7 @@ class Home extends React.Component{
                       rowData=>({
                         icon: ScheduleIcon,
                         tooltip: 'Schedule Stocks',
-                        onClick: (event, rowData) => alert("You want to schedule " + rowData),
+                        onClick: (event, rowData)=>{this.handleClickOpen(event, rowData[0].stock_indicator)},
                         hidden: rowData.length > 1
                       }),
                        {
@@ -159,7 +242,133 @@ class Home extends React.Component{
                           )
                         }}
                    />
+  <div>
+                 <Dialog
+                     open={this.state.open}
+                     onClose={this.handleClose}
+                     aria-labelledby="form-dialog-title"
+                   >
+                     <DialogTitle id="form-dialog-title">Add Schedule</DialogTitle>
+                     <DialogContent>
+                       <DialogContentText>
+                            To add a new schedule, please fill out the following information.
+                       </DialogContentText>
+                          <Grid container justify="center"spacing={10}>
+                                <Grid item>
+                                  <form>
+                                  <div>
+                                  	<TextField
+                                  	  label="Stock Indicator"
+                                      name="stock_indicator"
+                                      required
+                                      value={stock_indicator}
+                                        InputProps={{
+                                          readOnly: true,
+                                        }}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                  	<TextField
+                                      label="Schedule Name"
+                                      name="schedule_name"
+                                      required
+                                      value={schedule_name}
+                                      onChange={this.handleChange}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
 
+                                 <TextField
+                                    select
+                                    label="Type"
+                                    name= "type"
+                                    value={type}
+                                    onChange={this.handleChange}
+                                    margin="normal"
+                                    variant="outlined"
+                                    fullWidth
+                                  >
+                                <MenuItem value={'buy'}>Buy</MenuItem>
+                                <MenuItem value={'sell'}>Sell</MenuItem>
+                                  </TextField>
+
+                                 <TextField
+                                    select
+                                    label="Frequency"
+                                    name= "frequency"
+                                    value={frequency}
+                                    onChange={this.handleChange}
+                                    margin="normal"
+                                    variant="outlined"
+                                    fullWidth
+                                  >
+                                <MenuItem value={'second'}>Second</MenuItem>
+                                <MenuItem value={'minute'}>Minute</MenuItem>
+                                <MenuItem value={'hour'}>Hour</MenuItem>
+                                <MenuItem value={'day'}>Day</MenuItem>
+                                <MenuItem value={'week'}>Week</MenuItem>
+                                <MenuItem value={'month'}>Month</MenuItem>
+                                <MenuItem value={'year'}>Year</MenuItem>
+
+                                  </TextField>
+                                  	<TextField
+                                  	  type= "number"
+                                      label="Interval"
+                                      name="interval"
+                                      required
+                                      value={interval}
+                                      onChange={this.handleChange}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                  	<TextField
+                                  	  type= "number"
+                                      label="Quantity"
+                                      name="quantity"
+                                      required
+                                      value={quantity}
+                                      onChange={this.handleChange}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                  	<TextField
+                                  	  type= "datetime-local"
+                                      label="Start Date"
+                                      name="start_datetime"
+                                      required
+                                      value={start_datetime}
+                                      onChange={this.handleChange}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                  	<TextField
+                                  	  type= "datetime-local"
+                                      label="End Date"
+                                      name="end_datetime"
+                                      required
+                                      value={end_datetime}
+                                      onChange={this.handleChange}
+                                      fullWidth
+                                      margin="normal"
+                                      variant="outlined"
+                                    />
+                                </div>
+                                  </form>
+                                 </Grid>
+                                </Grid>
+                     </DialogContent>
+                     <DialogActions>
+                       <Button onClick={this.addNewSchedule} color="primary">
+                         Add Schedule
+                       </Button>
+                     </DialogActions>
+                   </Dialog>
+           </div>
             </div>
         );
     }

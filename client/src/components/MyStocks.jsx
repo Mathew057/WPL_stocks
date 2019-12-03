@@ -4,6 +4,7 @@ import {withStyles} from  '@material-ui/core/styles/index';
 import MaterialTable from 'material-table';
 import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
+import {encodeFormData} from './functions';
 
 class MyStocks extends React.Component{
 
@@ -34,7 +35,44 @@ class MyStocks extends React.Component{
             });
     }
 
-    handleTypeChange = () => {
+    handleDeleteSchedule(oldData){
+        console.log(oldData)
+        const url = process.env.REACT_APP_baseAPIURL + '/user/schedules/' + oldData._id
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => console.log(response))
+        .catch(error => alert(error.message))
+    }
+
+    handleUpdateSchedule(rowData){
+       console.log(rowData)
+       let scheduleData =   {name: rowData.name,
+                            type: rowData.type,
+                            frequency: rowData.frequency,
+                            interval: rowData.interval,
+                            stock_indicator: rowData.stock_indicator,
+                            quantity: rowData.quantity,
+                            start_datetime: rowData.start_datetime,
+                            end_datetime: rowData.end_datetime
+                            };
+        const url = process.env.REACT_APP_baseAPIURL + '/user/schedules/' + rowData._id
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: encodeFormData(scheduleData)
+        })
+        .then(res => res.json())
+        .then(response => {
+            response.message ? alert(response.message) : console.log(response.message)
+        });
 
     };
 
@@ -104,11 +142,12 @@ class MyStocks extends React.Component{
                      title="My Schedules"
                      icons={tableIcons}
                      columns={[
+                       { title: 'Schedule Name', field: 'name' },
                        { title: 'Stock Indicator', field: 'stock_indicator', editable: 'never' },
                        { title: 'Type', field: 'type', lookup: { buy: 'Buy', sell: 'Sell' }},
                        { title: 'Quantity', field: 'quantity', type: 'numeric' },
-                       { title: 'Start Date', field: "start_date", type: 'date'},
-                       { title: 'End Date', field: "end_date", type: 'date'},
+                       { title: 'Start Date', field: "start_datetime", type: 'date'},
+                       { title: 'End Date', field: "end_datetime", type: 'date'},
                        { title: 'Interval', field: 'interval', type: 'numeric' },
                        { title: 'Frequency', field: 'frequency',lookup: { day: 'Day', week: 'Week', month: 'Month', year: 'Year' } },
                     ]}
@@ -124,6 +163,7 @@ class MyStocks extends React.Component{
                                 const data = this.state.schedules;
                                 const index = data.indexOf(oldData);
                                 data[index] = newData;
+                                this.handleUpdateSchedule(newData);
                                 this.setState({ data }, () => resolve());
                               }
                               resolve()
@@ -136,6 +176,7 @@ class MyStocks extends React.Component{
                                 let data = this.state.schedules;
                                 const index = data.indexOf(oldData);
                                 data.splice(index, 1);
+                                this.handleDeleteSchedule(oldData);
                                 this.setState({ data }, () => resolve());
                               }
                               resolve()

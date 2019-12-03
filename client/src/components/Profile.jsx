@@ -7,11 +7,13 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
+import {encodeFormData} from './functions';
 
 class Profile extends React.Component{
     constructor(){
         super();
         this.state={
+            _id:"",
             name:"",
             physAddr: "",
             email: "",
@@ -25,8 +27,8 @@ class Profile extends React.Component{
         fetch(url)
         .then(res => res.json())
         .catch(error => console.log('Error:',error))
-//        .then(response => console.log ('Success:', response))
         .then(response => {this.setState({
+             _id: response._id,
              name: response.name,
              physAddr: response.address,
              email: response.email,
@@ -42,12 +44,27 @@ class Profile extends React.Component{
     }
 
     handleUpdate = e =>{
-        console.log("name: " + this.state.name)
-        console.log("physAddr: " + this.state.physAddr)
-        console.log("email: " + this.state.email)
-        console.log("user: " + this.state.user)
-        console.log("password: " + this.state.password)
-        //TODO: DO THINGS ON UPDATE OF FIELDS
+        //TODO: Figure out how to do the put
+        const{name, physAddr, email, user, password, _id} = this.state;
+        let profileData = {
+            _id: _id,
+            name: name,
+            email: email,
+            username: user,
+            address: physAddr,
+            password: password
+        }
+        const url = process.env.REACT_APP_baseAPIURL + '/user/profile/' + _id
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: encodeFormData(profileData)
+        })
+        .then(response => console.log(response))
+        .catch(error => alert(error.message))
     }
 
     render(){
@@ -61,7 +78,7 @@ class Profile extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Profile</h2>
-                <form onSubmit={this.handleUpdate}>
+                <form>
                     <div>
                         <TextField
                           label="Name"
@@ -114,7 +131,7 @@ class Profile extends React.Component{
                           value={this.state.password}
                         />
                     </div>
-                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                    <Button variant="contained" color="primary" fullWidth onClick={this.handleUpdate}>
                         Update
                     </Button>
                   </form>

@@ -21,7 +21,6 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import {encodeFormData} from './functions';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 
 class Accounts extends React.Component {
@@ -184,7 +183,7 @@ class Accounts extends React.Component {
 
     render() {
         const {classes} = this.props;
-        const {expanded, accountData, type, toAccount, fromAccount, hodlBalance, amount, from_id, to_id} = this.state;
+        const {expanded, accountData, type, toAccount, fromAccount, hodlBalance, amount} = this.state;
         return (
         <div>
             <div className={classes.contentContainer} id="AccountForm">
