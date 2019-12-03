@@ -15,6 +15,7 @@
 
 const routes = require('express').Router();
 const axios = require('axios');
+const mongoose = require('mongoose')
 
 const Account = require('../../models/Account-model')
 const Stock = require('../../models/Stock-model')
@@ -38,8 +39,8 @@ routes.route('/stocks')
     res.json(stocks)
   }
   catch (e) {
-    console.error(e)
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .put(async (req, res) => {
@@ -82,7 +83,8 @@ routes.route('/stocks')
     }
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
   res.json(payload)
 })
@@ -99,7 +101,8 @@ routes.route('/stocks/:stock_id')
     res.json(stock)
   }
   catch (e) {
-    res.status(400).send(e)
+    console.error(e)
+res.status(400).send(e)
   }
 })
 .delete(async (req,res) => {
@@ -111,7 +114,8 @@ routes.route('/stocks/:stock_id')
     res.send(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 
 })
@@ -122,13 +126,14 @@ routes.route('/profile')
 })
 .put(async (req,res) => {
   try {
-      const result = await User.findByIdAndUpdate({
+      const result = await Users.findByIdAndUpdate({
         _id: req.user._id
       }, req.body)
       res.json(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -139,7 +144,8 @@ routes.route('/accounts')
     res.json(Accounts)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .post(async (req,res) => {
@@ -153,7 +159,8 @@ routes.route('/accounts')
       res.json(account)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -167,7 +174,8 @@ routes.route('/accounts/:account_id')
       res.json(account.toObject())
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .put(async (req,res) => {
@@ -179,7 +187,8 @@ routes.route('/accounts/:account_id')
       res.json(account)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .delete(async (req,res) => {
@@ -191,7 +200,8 @@ routes.route('/accounts/:account_id')
       res.send(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -203,7 +213,8 @@ routes.route('/schedules')
     res.json(Schedules)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .post(async (req,res) => {
@@ -233,7 +244,8 @@ routes.route('/schedules')
     console.log(job)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
   try {
       const schedule = await Schedule({
@@ -245,7 +257,8 @@ routes.route('/schedules')
       res.json({ schedule })
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -259,7 +272,8 @@ routes.route('/schedules/:schedule_id')
       res.json(schedule.toObject())
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .put(async (req,res) => {
@@ -271,7 +285,8 @@ routes.route('/schedules/:schedule_id')
       res.json(schedule.toObject())
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .delete(async (req,res) => {
@@ -283,7 +298,8 @@ routes.route('/schedules/:schedule_id')
       res.send(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -293,7 +309,8 @@ routes.get('/balance', async (req,res) => {
     res.json(balance)
   }
   catch (e) {
-    res.status(400).send(e)
+    console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -321,7 +338,8 @@ routes.post('/transfer', async (req,res) => {
   }
   catch (e) {
     console.error(e)
-    res.status(400).send(e)
+    console.error(e)
+res.status(400).send(e)
   }
 })
 module.exports = routes;
