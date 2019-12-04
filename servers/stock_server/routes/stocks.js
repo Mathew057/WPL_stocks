@@ -4,34 +4,60 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T21:21:42-06:00
+ * @Last modified time: 2019-12-04T01:21:58-06:00
  * @License: MIT
  */
 
  const routes = require('express').Router();
-
- const fs = require('fs');
- let stocks = JSON.parse(fs.readFileSync('symbols.json'));
-
+ const {
+   Stocks_Weekly,
+   Stocks_Daily,
+   Stocks_Hourly,
+   Stocks_5min
+ } = require('../models/Stock-model')
 
  function precDiff(a, b) {
   return  100 * ( a - b ) / ( (a+b)/2 );
  }
 
  routes.route('/')
- .get((req,res) => {
-   payload = []
-   var today = new Date()
+ .get(async (req,res) => {
    var last_month =  new Date()
-   last_month = last_month.setMonth(last_month.getMonth() - 1);
-   for (var symbol in stocks) {
-     const points = generatePoints(symbol, 'd', last_month, today)
+   last_month.setMonth(last_month.getMonth() - 1);
+   var stocks = await Stocks_Hourly.aggregate([
+     {
+       $match: {
+         datetime: {
+           $gte: last_month
+         }
+       }
+     },
+     {
+      $sort: {
+          datetime: 1
+      }
+  }, {
+      $group: {
+          _id: "$stock_indicator",
+          company_name: {
+              "$first": "$company_name"
+          },
+          graph: {
+              "$push": {
+                  t: "$datetime",
+                  y: "$price"
+              }
+          }
+      }
+  }])
+
+   payload = []
+
+   for (var i = 0; i < stocks.length; i++) {
      payload.push({
-       ...stocks[symbol],
-       stock_indicator: symbol,
-       graph: points,
-       price: points[points.length-1].y,
-       trend: precDiff(points[points.length-1].y, points[points.length-2].y)
+       ...stocks[i],
+       price: stocks[i].graph[stocks[i].graph.length-1].y,
+       trend: precDiff(stocks[i].graph[stocks[i].graph.length-1].y, stocks[i].graph[stocks[i].graph.length-2].y)
      })
    }
    res.json(payload)

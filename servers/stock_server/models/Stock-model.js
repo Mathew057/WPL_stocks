@@ -30,6 +30,14 @@ const stockSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const Stock = mongoose.model('Stocks', stockSchema)
+const Stocks_Weekly = mongoose.model('Stocks_Weekly', stockSchema)
+const Stocks_Daily = mongoose.model('Stocks_Daily', stockSchema)
+const Stocks_Hourly = mongoose.model('Stocks_Hourly', stockSchema)
+const Stocks_5min = mongoose.model('Stocks_5min', stockSchema)
 
-module.exports = Stock
+module.exports = {
+  Stocks_Weekly,
+  Stocks_Daily,
+  Stocks_Hourly,
+  Stocks_5min
+}
