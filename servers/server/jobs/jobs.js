@@ -23,10 +23,10 @@ const Users = require('../models/Users-model')
 
 function auth (token) {
   try {
-      const decoded_token = jwt.verify(req.token, process.env.JWT_SECRET || "replaceme")
-      console.log(decoded_token)
+      const decoded_token = jwt.verify(token, process.env.JWT_SECRET || "replaceme")
       return decoded_token
   } catch (e) {
+      console.error('could not login')
       return null
   }
 }
@@ -34,7 +34,7 @@ function auth (token) {
  agenda.define('buyStock', async (job) => {
    console.log('buying stock')
    var token = auth(job.attrs.data.token)
-   if (token) {
+   if (!token) {
      job.fail("could not login")
      await job.remove()
      return;
@@ -89,7 +89,8 @@ function auth (token) {
    console.log("selling stock!")
    var stock = job.attrs.data.stock
    var token = auth(job.attrs.data.token)
-   if (token) {
+   if (!token) {
+     console.error('could not login')
      job.fail("could not login")
      await job.remove()
      return;

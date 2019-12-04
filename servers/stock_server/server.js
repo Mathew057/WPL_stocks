@@ -70,7 +70,6 @@ async function update_stocks (Model, interval, base_date) {
 
 
     var start_time = last_stock[0] ? last_stock[0].datetime : base_date
-    console.log(start_time)
     const points = generatePoints(symbol, interval, start_time)
 
     for (var i = 0; i < points.length; i ++) {
@@ -133,7 +132,7 @@ async function update_stocks (Model, interval, base_date) {
   await update_stocks(Stocks_Weekly, "w", new Date(base_epoch_time))
   console.log("Finished generating stocks")
 
-  app.use(`${base_route}/stocks`, stock_routes)
+  app.use(`${base_route}/stocks`, auth, stock_routes)
   app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 })()

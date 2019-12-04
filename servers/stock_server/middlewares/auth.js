@@ -4,12 +4,13 @@ const saltRounds = 12
 
 const auth = async (req, res, next) => {
     try {
-        const decoded_token = jwt.verify(req.token, process.env.JWT_SECRET || "replaceme")
-        console.log(decoded_token)
+      const {token} = req.body
+        const decoded_token = jwt.verify(token, process.env.JWT_SECRET || "replaceme")
         req.user = decoded_token
 
         next()
     } catch (e) {
+        console.error("login token was invalid")
         res.status(401).send({ error: 'Token Invalid' })
     }
 }
