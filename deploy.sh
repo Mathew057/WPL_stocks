@@ -49,8 +49,8 @@ fi
 
 if [ ${DEPLOYS}  -eq 0 ]; then
   echo "Creating helm deployment"
-  helm install ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE"
+  helm install ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE" --wait
 else
   echo "Upgrading helm deployment"
-  helm upgrade ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE"
+  helm upgrade ${RELEASE_NAME} $CHART_PATH -n "$KUBE_NAMESPACE" --wait
 fi
