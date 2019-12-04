@@ -35,8 +35,6 @@ const usersSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 7,
-        trim: true,
     },
     tokens: [{
         token: {
@@ -84,6 +82,14 @@ usersSchema.methods.toJSON = function () {
 
     return publicUserData
 }
+
+usersSchema.pre("save", function(next) {
+    if(!this.isModified("password")) {
+        return next();
+    }
+    this.password = bcrypt.hashSync(this.password, saltRounds);
+    next();
+});
 
 const Users = mongoose.model('Users', usersSchema)
 
