@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const Users = require('../server/models/Users-model')
+const Users = require('../models/Users-model')
 const saltRounds = 12
 
 const auth = async (req, res, next) => {

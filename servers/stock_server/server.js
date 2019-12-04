@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-04T14:46:08-06:00
+ * @Last modified time: 2019-12-04T15:29:53-06:00
  * @License: MIT
  */
 
@@ -21,7 +21,7 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const compression = require('compression')
-// const auth = require('../middlewares/auth')
+const auth = require('./middlewares/auth')
 const mongoose = require('mongoose')
 
 var morgan = require('morgan')

@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-04T01:21:58-06:00
+ * @Last modified time: 2019-12-04T15:47:05-06:00
  * @License: MIT
  */
 
@@ -21,7 +21,7 @@
  }
 
  routes.route('/')
- .get(async (req,res) => {
+ .post(async (req,res) => {
    var last_month =  new Date()
    last_month.setMonth(last_month.getMonth() - 1);
    var stocks = await Stocks_Hourly.aggregate([
@@ -66,7 +66,7 @@
    res.json(payload)
  })
 
- routes.get("/latest",async (req, res) => {
+ routes.post("/latest",async (req, res) => {
    var stocks = await Stocks_5min.aggregate([
      {
       $sort: {
@@ -97,7 +97,7 @@
    res.json(stocks)
  })
 
- routes.get("/latest/:stock_id",async (req,res) => {
+ routes.post("/latest/:stock_id",async (req,res) => {
    const stock_id = req.params.stock_id
    var stock = await Stocks_5min.aggregate([
      {

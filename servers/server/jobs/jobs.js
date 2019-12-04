@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: jobs.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-04T14:42:35-06:00
+ * @Last modified time: 2019-12-04T15:36:41-06:00
  * @License: MIT
  */
 
@@ -13,6 +13,7 @@ const mongoose = require('mongoose')
 const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
 const agenda_db_url = mongodb_url.substring(0, mongodb_url.lastIndexOf('/')) + "/agenda";
 var agenda = new Agenda({db: {address: agenda_db_url}})
+const jwt = require('jsonwebtoken')
 
 const Account = require('../models/Account-model')
 const Stock = require('../models/Stock-model')
@@ -20,8 +21,24 @@ const Schedule = require('../models/Schedule-model')
 const Balance = require('../models/Balance-model')
 const Users = require('../models/Users-model')
 
+function auth (token) {
+  try {
+      const decoded_token = jwt.verify(req.token, process.env.JWT_SECRET || "replaceme")
+      console.log(decoded_token)
+      return decoded_token
+  } catch (e) {
+      return null
+  }
+}
+
  agenda.define('buyStock', async (job) => {
    console.log('buying stock')
+   var token = auth(job.attrs.data.token)
+   if (token) {
+     job.fail("could not login")
+     await job.remove()
+     return;
+   }
    var stock = job.attrs.data.stock
    stock.quantity  = parseFloat(stock.quantity)
    if (job.attrs.data.end_datetime) {
@@ -71,6 +88,12 @@ const Users = require('../models/Users-model')
  agenda.define('sellStock', async (job) => {
    console.log("selling stock!")
    var stock = job.attrs.data.stock
+   var token = auth(job.attrs.data.token)
+   if (token) {
+     job.fail("could not login")
+     await job.remove()
+     return;
+   }
    stock.quantity  = parseFloat(stock.quantity)
    if (job.attrs.data.end_datetime) {
      const end_datetime = new Date(job.attrs.data.end_datetime).getTime()

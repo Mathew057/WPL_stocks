@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T21:12:06-06:00
+ * @Last modified time: 2019-12-04T15:45:44-06:00
  * @License: MIT
  */
 
@@ -36,7 +36,8 @@ routes.route('/stocks')
       last_month = last_month.toISOString()
       var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock.stock_indicator}`, {
         start_datetime: last_month,
-        end_datetime: today
+        end_datetime: today,
+        token: req.token
       })
       stocks[i] = {
         ...response.data,
@@ -58,11 +59,11 @@ res.status(400).send(e)
   }
   if (stock.type === "buy") {
     delete stock.type
-    agenda.now('buyStock', {stock})
+    agenda.now('buyStock', {stock, token: req.token})
   }
   else if (stock.type === "sell") {
     delete stock.type
-    agenda.now('sellStock', {stock})
+    agenda.now('sellStock', {stock, token: req.token})
   }
   res.json(stock)
 })
@@ -81,11 +82,11 @@ res.status(400).send(e)
       payload.push(stock)
       if (stock.type === "buy") {
         delete stock.type
-        agenda.now('buyStock', {stock})
+        agenda.now('buyStock', {stock, token: req.token})
       }
       else if (stock.type === "sell") {
         delete stock.type
-        agenda.now('sellStock', {stock})
+        agenda.now('sellStock', {stock, token: req.token})
       }
     }
   }
@@ -107,7 +108,8 @@ routes.route('/stocks/:stock_id')
     last_month = last_month.toISOString()
     var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock_id}`, {
       start_datetime: last_month,
-      end_datetime: today
+      end_datetime: today,
+      token: req.token
     })
     stock = {
       ...stock.toObject(),
@@ -252,13 +254,13 @@ res.status(400).send(e)
       quantity: newSchedule.quantity
     }
     if (newSchedule.type === "buy") {
-      job = agenda.create('buyStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+      job = agenda.create('buyStock',{stock, token: req.token, end_datetime: new Date(newSchedule.end_datetime)})
       job.schedule(new Date(newSchedule.start_datetime))
       .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
       await job.save()
     }
     else if (newSchedule.type === "sell") {
-      job = agenda.create('sellStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+      job = agenda.create('sellStock',{stock, token: req.token, end_datetime: new Date(newSchedule.end_datetime)})
       job.schedule(new Date(newSchedule.start_datetime))
       .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
       await job.save()
@@ -321,13 +323,13 @@ res.status(400).send(e)
         quantity: newSchedule.quantity
       }
       if (newSchedule.type === "buy") {
-        job = agenda.create('buyStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+        job = agenda.create('buyStock',{stock, token: req.token, end_datetime: new Date(newSchedule.end_datetime)})
         job.schedule(new Date(newSchedule.start_datetime))
         .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
         await job.save()
       }
       else if (newSchedule.type === "sell") {
-        job = agenda.create('sellStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+        job = agenda.create('sellStock',{stock, token: req.token, end_datetime: new Date(newSchedule.end_datetime)})
         job.schedule(new Date(newSchedule.start_datetime))
         .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
         await job.save()

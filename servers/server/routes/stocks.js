@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T18:21:06-06:00
+ * @Last modified time: 2019-12-04T15:45:01-06:00
  * @License: MIT
  */
 
@@ -15,7 +15,7 @@ const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/st
 
 routes.get('/latest', async (req, res) => {
   try {
-    var response = await axios.get(`${base_exchange_url}/stocks/latest`)
+    var response = await axios.post(`${base_exchange_url}/stocks/latest`,{token:req.token})
     console.log(response.data.length)
     res.json(response.data)
   }
@@ -28,7 +28,7 @@ routes.get('/latest', async (req, res) => {
 routes.get('/latest/:stock_id', async (req, res) => {
   var stock_id = req.params.stock_id
   try {
-    var response = await axios.get(`${base_exchange_url}/stocks/latest/${stock_id}`)
+    var response = await axios.post(`${base_exchange_url}/stocks/latest/${stock_id}`,{token:req.token})
     res.json(response.data)
   }
   catch (e) {
@@ -39,7 +39,7 @@ routes.get('/latest/:stock_id', async (req, res) => {
 
  routes.get('/', async (req, res) => {
    try {
-     var response = await axios.get(`${base_exchange_url}/stocks`)
+     var response = await axios.post(`${base_exchange_url}/stocks`,{token:req.token})
      console.log(response.data.length)
      res.json(response.data)
    }
