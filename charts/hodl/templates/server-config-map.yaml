@@ -10,4 +10,5 @@ metadata:
 data:
   PORT: "{{ .Values.service.server.internalPort }}"
   MONGODB_URL: "mongodb://hodl-mongodb:27017/hodl"
-  BASE_ROUTE: "/"
+  BASE_ROUTE: "/api"
+  EXCHANGE_URL: "https://localhost/stock_api"
