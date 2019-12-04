@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: jobs.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T19:02:56-06:00
+ * @Last modified time: 2019-12-03T19:11:06-06:00
  * @License: MIT
  */
 
@@ -36,8 +36,9 @@ const Users = require('../models/Users-model')
        }
      }
    }
+   var old_stock;
    try{
-     var old_stock = await Stock.findOne({
+     old_stock = await Stock.findOne({
        user_id: stock.user_id,
        stock_indicator: stock.stock_indicator
      })
@@ -46,7 +47,7 @@ const Users = require('../models/Users-model')
      console.error('could not find original stock', e)
      job.fail(e)
    }
-   const quantity = "quantity" in old_stock ? old_stock.quantity + stock.quantity : stock.quantity
+   const quantity = old_stock ? old_stock.quantity + stock.quantity : stock.quantity
    try {
      const result = await Stock.updateOne({
        user_id: stock.user_id,
@@ -92,7 +93,7 @@ const Users = require('../models/Users-model')
    }
 
    console.log(old_stock)
-   const quantity = "quantity" in old_stock ? old_stock.quantity - stock.quantity : stock.quantity
+   const quantity = old_stock ? old_stock.quantity - stock.quantity : stock.quantity
    try {
      const result = await Stock.updateOne({
        user_id: stock.user_id,
