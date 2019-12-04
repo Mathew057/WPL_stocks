@@ -16,7 +16,6 @@ const stockSchema = new mongoose.Schema({
     },
     company_name: {
         type: String,
-        required: true,
         maxlength: 100,
     },
     quantity: {
