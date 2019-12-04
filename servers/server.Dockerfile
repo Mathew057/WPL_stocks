@@ -13,9 +13,7 @@ RUN npm install
 # RUN npm ci --only=production
 
 # Bundle app source
-COPY ./jobs ./jobs
 COPY ./middlewares ./middlewares
-COPY ./models ./models
 
 WORKDIR /usr/src/app/server
 
@@ -28,4 +26,4 @@ RUN npm install
 COPY ./server .
 
 EXPOSE 5000
-CMD [ "node", "server.js" ]
+CMD [ "npm", "run", "start"]

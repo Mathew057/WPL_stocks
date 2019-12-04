@@ -58,8 +58,6 @@ app.get(base_route, (req, res) => {
     process.exit(1)
   }
 
-  const agenda = require('../jobs/jobs')
-
   app.use(`${base_route}/login`, login_routes)
   app.use(`${base_route}/user`, auth, user_routes)
   app.use(`${base_route}/stocks`, auth, stock_routes)
