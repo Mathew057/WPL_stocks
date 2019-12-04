@@ -4,13 +4,14 @@ const validator = require('validator')
 const stockSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.ObjectId,
+    required: true,
     index: true
   },
+
     stock_indicator: {
         type: String,
         required: true,
         maxlength: 5,
-        unique: true,
         index: true
     },
     company_name: {

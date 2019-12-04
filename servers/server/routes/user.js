@@ -15,13 +15,14 @@
 
 const routes = require('express').Router();
 const axios = require('axios');
+const mongoose = require('mongoose')
 
-const Account = require('../models/Account-model')
-const Stock = require('../models/Stock-model')
-const Schedule = require('../models/Schedule-model')
-const Balance = require('../models/Balance-model')
-const Users = require('../models/Users-model')
-const agenda = require('../jobs/jobs')
+const Account = require('../../models/Account-model')
+const Stock = require('../../models/Stock-model')
+const Schedule = require('../../models/Schedule-model')
+const Balance = require('../../models/Balance-model')
+const Users = require('../../models/Users-model')
+const agenda = require('../../jobs/jobs')
 
 routes.route('/stocks')
 .get(async (req, res) => {
@@ -38,8 +39,8 @@ routes.route('/stocks')
     res.json(stocks)
   }
   catch (e) {
-    console.error(e)
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .put(async (req, res) => {
@@ -50,11 +51,11 @@ routes.route('/stocks')
   }
   if (stock.type === "buy") {
     delete stock.type
-    agenda.now('buyStock', stock)
+    agenda.now('buyStock', {stock})
   }
   else if (stock.type === "sell") {
     delete stock.type
-    agenda.now('sellStock', stock)
+    agenda.now('sellStock', {stock})
   }
   res.json(stock)
 })
@@ -73,16 +74,17 @@ routes.route('/stocks')
       payload.push(stock)
       if (stock.type === "buy") {
         delete stock.type
-        agenda.now('buyStock', stock)
+        agenda.now('buyStock', {stock})
       }
       else if (stock.type === "sell") {
         delete stock.type
-        agenda.now('sellStock', stock)
+        agenda.now('sellStock', {stock})
       }
     }
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
   res.json(payload)
 })
@@ -99,7 +101,8 @@ routes.route('/stocks/:stock_id')
     res.json(stock)
   }
   catch (e) {
-    res.status(400).send(e)
+    console.error(e)
+res.status(400).send(e)
   }
 })
 .delete(async (req,res) => {
@@ -111,24 +114,33 @@ routes.route('/stocks/:stock_id')
     res.send(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 
 })
 
 routes.route('/profile')
 .get(async (req, res) => {
-  res.json(req.user)
+  try {
+      const user = await Users.findOne({_id: req.user._id})
+      res.json(user)
+  }
+  catch (e) {
+      console.error(e)
+      res.status(400).send(e)
+  }
 })
 .put(async (req,res) => {
   try {
-      const result = await User.findByIdAndUpdate({
+      const result = await Users.updateOne({
         _id: req.user._id
       }, req.body)
       res.json(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -139,7 +151,8 @@ routes.route('/accounts')
     res.json(Accounts)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .post(async (req,res) => {
@@ -153,7 +166,8 @@ routes.route('/accounts')
       res.json(account)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -167,7 +181,8 @@ routes.route('/accounts/:account_id')
       res.json(account.toObject())
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .put(async (req,res) => {
@@ -179,7 +194,8 @@ routes.route('/accounts/:account_id')
       res.json(account)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .delete(async (req,res) => {
@@ -191,7 +207,8 @@ routes.route('/accounts/:account_id')
       res.send(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -203,7 +220,8 @@ routes.route('/schedules')
     res.json(Schedules)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .post(async (req,res) => {
@@ -211,13 +229,43 @@ routes.route('/schedules')
     ...req.body,
     user_id: req.user._id
   }
+  var job;
   try {
-      const schedule = await Schedule(newSchedule)
+    const stock = {
+      user_id: req.user._id,
+      stock_indicator: newSchedule.stock_indicator,
+      quantity: parseFloat(newSchedule.quantity)
+    }
+    if (newSchedule.type === "buy") {
+      job = agenda.create('buyStock',{stock, end_datetime: newSchedule.end_datetime})
+      job.schedule(newSchedule.start_datetime)
+      .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+      await job.save()
+    }
+    else if (newSchedule.type === "sell") {
+      job = agenda.create('sellStock',{stock, end_datetime: newSchedule.end_datetime})
+      job.schedule(newSchedule.start_datetime)
+      .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+      await job.save()
+    }
+    console.log(job)
+  }
+  catch (e) {
+      console.error(e)
+res.status(400).send(e)
+  }
+  try {
+      const schedule = await Schedule({
+        ...newSchedule,
+        job_id: job.attrs._id
+      })
       await schedule.save()
+
       res.json({ schedule })
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -231,7 +279,8 @@ routes.route('/schedules/:schedule_id')
       res.json(schedule.toObject())
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .put(async (req,res) => {
@@ -243,7 +292,8 @@ routes.route('/schedules/:schedule_id')
       res.json(schedule.toObject())
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 .delete(async (req,res) => {
@@ -255,7 +305,8 @@ routes.route('/schedules/:schedule_id')
       res.send(result)
   }
   catch (e) {
-      res.status(400).send(e)
+      console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -265,7 +316,8 @@ routes.get('/balance', async (req,res) => {
     res.json(balance)
   }
   catch (e) {
-    res.status(400).send(e)
+    console.error(e)
+res.status(400).send(e)
   }
 })
 
@@ -293,7 +345,8 @@ routes.post('/transfer', async (req,res) => {
   }
   catch (e) {
     console.error(e)
-    res.status(400).send(e)
+    console.error(e)
+res.status(400).send(e)
   }
 })
 module.exports = routes;

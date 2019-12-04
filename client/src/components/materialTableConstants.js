@@ -15,8 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import RemoveShoppingCart from '@material-ui/icons/RemoveShoppingCart';
-import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
+
 
    export const tableIcons = {
         Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -36,5 +35,4 @@ import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
         SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
         ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
         ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-        AddToCart: forwardRef((props, ref) => <AddShoppingCart {...props} ref={ref} />)
         };

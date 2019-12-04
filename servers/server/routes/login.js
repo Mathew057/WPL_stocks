@@ -8,9 +8,9 @@
  * @License: MIT
  */
 const routes = require('express').Router();
-const Users = require('../models/Users-model')
-const Balance = require('../models/Balance-model')
-const auth = require('../middlewares/auth')
+const Users = require('../../models/Users-model')
+const Balance = require('../../models/Balance-model')
+const auth = require('../../middlewares/auth')
 
 // User create (signup)
 routes.post('/signup', async (req, res) => {

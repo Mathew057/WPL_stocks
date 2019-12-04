@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hodl.fullname" . }}-stock-server
+  labels:
+    app.kubernetes.io/name: {{ include "hodl.name" . }}
+    helm.sh/chart: {{ include "hodl.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    {{- range $key, $value := .Values.deployment.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "hodl.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels: # labels to select/identify the deployment
+        app.kubernetes.io/name: {{ template "hodl.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: stock-server
+          image: "{{ .Values.stock_server.image.repository }}:{{ .Values.stock_server.image.tag }}"
+          imagePullPolicy: {{ .Values.stock_server.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          envFrom:
+            - configMapRef:
+                name: {{ include "hodl.fullname" . }}-stock-server-config
+          resources:
+{{ toYaml .Values.stock_server.resources | indent 12 }}
+      {{- if hasKey .Values "imagePullSecret"}}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret}}
+      {{- end }}

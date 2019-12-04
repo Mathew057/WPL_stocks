@@ -6,6 +6,7 @@ replicaCount: 1
 
 mongodb:
   enabled: true
+  usePassword: false
   persistence:
     enabled: false
 
@@ -13,14 +14,19 @@ client:
   image:
     repository: mathew0057/hodl-client
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
 server:
   image:
     repository: mathew0057/hodl-server
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
+stock_server:
+  image:
+    repository: mathew0057/hodl-stock-server
+    tag: latest
+    pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
@@ -57,6 +63,13 @@ service:
     type: NodePort
     internalPort: 5000
     externalPort: 5000
+    protocol: TCP
+    annotations: {}
+  stock_server:
+    enabled: true
+    type: NodePort
+    internalPort: 4000
+    externalPort: 4000
     protocol: TCP
     annotations: {}
 
