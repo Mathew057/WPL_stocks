@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:43:37-06:00
+ * @Last modified time: 2019-12-03T19:37:00-06:00
  * @License: MIT
  */
 
@@ -237,16 +237,19 @@ res.status(400).send(e)
       quantity: parseFloat(newSchedule.quantity)
     }
     if (newSchedule.type === "buy") {
-      job = agenda.create('buyStock',{stock, end_datetime: newSchedule.end_datetime})
-      job.schedule(newSchedule.start_datetime)
+      job = agenda.create('buyStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+      job.schedule(new Date(newSchedule.start_datetime))
       .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
       await job.save()
     }
     else if (newSchedule.type === "sell") {
-      job = agenda.create('sellStock',{stock, end_datetime: newSchedule.end_datetime})
-      job.schedule(newSchedule.start_datetime)
+      job = agenda.create('sellStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+      job.schedule(new Date(newSchedule.start_datetime))
       .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
       await job.save()
+    }
+    else {
+      res.status(400).send(`Schedule type of ${type} doesn't make sense`)
     }
     console.log(job)
   }
