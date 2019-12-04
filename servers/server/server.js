@@ -12,6 +12,8 @@ const port = process.env.PORT || 5000
 const base_route = process.env.BASE_ROUTE || "/api"
 
 const mongoose = require('mongoose')
+mongoose.set('debug', true);
+
 let cookieParser = require('cookie-parser')
 const express = require('express')
 const cors = require('cors')

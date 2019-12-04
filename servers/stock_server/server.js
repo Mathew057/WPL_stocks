@@ -23,6 +23,8 @@ const helmet = require('helmet')
 const compression = require('compression')
 const auth = require('./middlewares/auth')
 const mongoose = require('mongoose')
+mongoose.set('debug', true);
+
 
 var morgan = require('morgan')
 

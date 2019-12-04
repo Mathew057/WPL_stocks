@@ -11,6 +11,7 @@
 
  // const auth = require('../middlewares/auth')
  const mongoose = require('mongoose')
+ mongoose.set('debug', true);
 
  ;(async function() {
    try {

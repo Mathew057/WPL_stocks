@@ -9,21 +9,24 @@
  */
 
 var Agenda = require('agenda')
-const mongoose = require('mongoose')
+
 const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
+const mongoose = require('mongoose')
+ mongoose.set('debug', true);
 const agenda_db_url = mongodb_url.substring(0, mongodb_url.lastIndexOf('/')) + "/agenda";
 var agenda = new Agenda({db: {address: agenda_db_url}})
 const jwt = require('jsonwebtoken')
 
-const Account = require('../models/Account-model')
 const Stock = require('../models/Stock-model')
-const Schedule = require('../models/Schedule-model')
-const Balance = require('../models/Balance-model')
 const Users = require('../models/Users-model')
 
-function auth (token) {
+async function auth (token) {
   try {
       const decoded_token = jwt.verify(token, process.env.JWT_SECRET || "replaceme")
+      const user = await Users.findOne({ _id: decoded_token._id, 'tokens.token': token })
+      if (!user) {
+          return null
+      }
       return decoded_token
   } catch (e) {
       console.error('could not login')
@@ -33,7 +36,7 @@ function auth (token) {
 
  agenda.define('buyStock', async (job) => {
    console.log('buying stock')
-   var token = auth(job.attrs.data.token)
+   var token = await auth(job.attrs.data.token)
    if (!token) {
      job.fail("could not login")
      await job.remove()
@@ -88,7 +91,7 @@ function auth (token) {
  agenda.define('sellStock', async (job) => {
    console.log("selling stock!")
    var stock = job.attrs.data.stock
-   var token = auth(job.attrs.data.token)
+   var token = await auth(job.attrs.data.token)
    if (!token) {
      console.error('could not login')
      job.fail("could not login")
