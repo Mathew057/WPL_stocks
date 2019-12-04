@@ -17,12 +17,15 @@ class Profile extends React.Component{
             name:"",
             physAddr: "",
             email: "",
-            user: "",
-            password: ""
+            user: ""
         }
     }
 
     componentDidMount(){
+        this.getUserProfile();
+    }
+
+    getUserProfile(){
         const url =  process.env.REACT_APP_baseAPIURL + '/user/profile'
         fetch(url)
         .then(res => res.json())
@@ -32,29 +35,25 @@ class Profile extends React.Component{
              name: response.name,
              physAddr: response.address,
              email: response.email,
-             user: response.username,
-             password: response.password
+             user: response.username
             }
         )})
         ;
-    }
+     }
 
     handleChange = e => {
         this.setState({[e.target.name]: e.target.value})
     }
 
     handleUpdate = e =>{
-        //TODO: Figure out how to do the put
-        const{name, physAddr, email, user, password, _id} = this.state;
+        const{name, physAddr, email, user} = this.state;
         let profileData = {
-            _id: _id,
             name: name,
             email: email,
             username: user,
-            address: physAddr,
-            password: password
+            address: physAddr
         }
-        const url = process.env.REACT_APP_baseAPIURL + '/user/profile/' + _id
+        const url = process.env.REACT_APP_baseAPIURL + '/user/profile'
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -65,6 +64,7 @@ class Profile extends React.Component{
         })
         .then(response => console.log(response))
         .catch(error => alert(error.message))
+        this.getUserProfile();
     }
 
     render(){
@@ -118,17 +118,6 @@ class Profile extends React.Component{
                           fullWidth
                           onChange = {this.handleChange}
                           value= {this.state.user}
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                          label="Password"
-                          name="password"
-                          margin="normal"
-                          type="password"
-                          fullWidth
-                          onChange = {this.handleChange}
-                          value={this.state.password}
                         />
                     </div>
                     <Button variant="contained" color="primary" fullWidth onClick={this.handleUpdate}>

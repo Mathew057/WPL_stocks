@@ -18,6 +18,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {encodeFormData} from './functions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+const axios = require('axios');
+
 
 class Home extends React.Component{
 
@@ -37,7 +39,21 @@ class Home extends React.Component{
 
     }
 
+    checkLoggedIn = () =>{
+        var self = this;
+        const url = process.env.REACT_APP_baseAPIURL + '/login/init'
+        axios.post(url)
+          .then(function (response) {
+            console.log(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    };
+
+
     componentDidMount() {
+      this.checkLoggedIn();
       if(this.state.stocks.length === 0)
         this.getStockData();
       if(this.state.userStockIndicators.length === 0)
@@ -75,12 +91,9 @@ class Home extends React.Component{
             rowData.map((row,index)=>{
               var addEntry = {
                 "stock_indicator": row.stock_indicator,
+                "company_name": row.company_name,
                 "type": fieldName,
-                "quantity": row.shares_available,
-                "start_date": new Date().toLocaleDateString("en-US"),
-                "end_date": new Date().toLocaleDateString("en-US"),
-                "interval": "1",
-                "frequency": "day"
+                "quantity": row.shares_available
             };
               newEntries.push(addEntry)
             })
@@ -91,6 +104,15 @@ class Home extends React.Component{
     validateSell = (rowData) =>{
         var selectedToSell = rowData.map(selected => selected.stock_indicator)
         return(this.state.userStockIndicators.some(element=> selectedToSell.includes(element)))
+    }
+
+    validateTime = () =>{
+        var start =  8 * 60;
+        var end   = 17 * 6 ;
+        var now = new Date();
+        var time = now.getHours() * 60 + now.getMinutes();
+        var day= now.getDay()
+        return (time >= start && time <= end && day >=1 && day<=5);
     }
 
     handleClickOpen = (event, stockIndicator) => {
@@ -191,6 +213,7 @@ class Home extends React.Component{
         const {stocks, schedule_name, type, frequency, interval, stock_indicator,quantity, start_datetime, end_datetime} = this.state;
 
         return(
+            //TODO: Uncomment out time validation check for actions
             <div className={classes.contentContainer}>
                   <MaterialTable
                      title="Stock Market"
@@ -213,19 +236,22 @@ class Home extends React.Component{
                       {
                         icon: AddShoppingCart,
                         tooltip: 'Buy Stocks',
-                        onClick: (event, rowData) => {this.handleCart(event, 'buy', rowData)}
+                        onClick: (event, rowData) => {this.handleCart(event, 'buy', rowData)},
+//                        hidden: !this.validateTime()
                       },
                       rowData=> ({
                         icon: RemoveShoppingCart,
                         tooltip: 'Sell Stocks',
                         onClick: (event, rowData) => {this.handleCart(event, 'sell', rowData)},
-                        hidden: this.validateSell(rowData)
+                        hidden: !this.validateSell(rowData)
+//                        && !this.validateTime()
                       }),
                       rowData=>({
                         icon: ScheduleIcon,
                         tooltip: 'Schedule Stocks',
                         onClick: (event, rowData)=>{this.handleClickOpen(event, rowData[0].stock_indicator)},
                         hidden: rowData.length > 1
+//                        || !this.validateTime()
                       }),
                        {
                          icon: RefreshIcon,

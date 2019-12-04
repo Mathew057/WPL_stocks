@@ -10,7 +10,7 @@ import MyStocks from './components/MyStocks.jsx';
 import ForgotPassword from './components/ForgotPassword.jsx';
 import Error from './components/Error.jsx';
 import Cart from './components/Cart.jsx';
-import {Route} from 'react-router-dom';
+import {Route, Redirect} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import styles from './components/routeStyles';
 
@@ -31,8 +31,9 @@ class App extends Component{
                     <Route path="/signup" component={Signup}/>
                     <Route path="/mystocks" component={MyStocks}/>
                     <Route path="/forgotpassword" component={ForgotPassword}/>
-                    <Route path="/error" component={Error}/>
                     <Route path="/cart" component={Cart}/>
+                    <Route path="/404" component={Error} />
+                    <Redirect to="/404" />
                 </main>
             </div>
         );

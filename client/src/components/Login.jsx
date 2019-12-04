@@ -8,6 +8,7 @@ import {withStyles} from '@material-ui/core/styles/index';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
+const axios = require('axios');
 
 class Login extends React.Component{
 
@@ -24,9 +25,20 @@ class Login extends React.Component{
     }
 
     handleSubmit = e =>{
-        console.log("user: " + this.state.user)
-        console.log("password: " + this.state.password)
-    }
+        var self = this;
+        const url = process.env.REACT_APP_baseAPIURL + '/login/login'
+        axios.post(url,{
+            username: this.state.user,
+            password: this.state.password
+            }
+          )
+          .then(function (response) {
+            console.log(response)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    };
 
     render(){
         const {classes} = this.props;
@@ -39,7 +51,7 @@ class Login extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Login</h2>
-                <form onSubmit={this.handleSubmit}>
+                <form>
                     <div>
                         <TextField
                           label="Username"
@@ -61,7 +73,7 @@ class Login extends React.Component{
                           fullWidth
                         />
                     </div>
-                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                    <Button onClick={this.handleSubmit} variant="contained" color="primary" fullWidth>
                         Login
                     </Button>
                   </form>

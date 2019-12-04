@@ -126,8 +126,9 @@ class Accounts extends React.Component {
             },
             body: encodeFormData(transferInfo)
         })
-        .then(response => console.log(response))
-        .catch(error => alert(error.message))
+        .then(response => Promise.all([response.status, response.text()]))
+        .then(data => data[0]===400 ? alert("Error: " + data[1]) : console.log(data[1]))
+
         this.getBalance();
     }
 
@@ -387,7 +388,7 @@ class Accounts extends React.Component {
           </div>
               <div className={classes.contentContainer}>
                 <h3 className= {classes.leftText}>Transfer Money</h3>
-                <form onSubmit={this.handleTransfer} className= {classes.leftText}>
+                <form className= {classes.leftText}>
                     <div>
                    <TextField
                       select
@@ -441,7 +442,7 @@ class Accounts extends React.Component {
                           error= {fromAccount==='Hodl Balance' && amount > parseFloat(hodlBalance)}
                         />
                     </div>
-                    <Button type="submit" variant="contained" color="primary">
+                    <Button onClick={this.handleTransfer} variant="contained" color="primary">
                         Transfer Money
                     </Button>
                   </form>
