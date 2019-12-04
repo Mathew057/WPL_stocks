@@ -4,12 +4,11 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T18:19:03-06:00
+ * @Last modified time: 2019-12-03T21:21:42-06:00
  * @License: MIT
  */
 
  const routes = require('express').Router();
- const generatePoints = require('../generator/stocks')
 
  const fs = require('fs');
  let stocks = JSON.parse(fs.readFileSync('symbols.json'));
@@ -41,7 +40,7 @@
  routes.get("/latest", (req, res) => {
    payload = []
    for (var symbol in stocks) {
-     
+
      const points = generatePoints(symbol, 'm', new Date())
      payload.push({
        ...stocks[symbol],

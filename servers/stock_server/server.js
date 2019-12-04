@@ -4,10 +4,10 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:36:31-06:00
+ * @Last modified time: 2019-12-03T21:21:58-06:00
  * @License: MIT
  */
- const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
+ const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl-exchange"
  const port = process.env.PORT || 4000
  const base_route = process.env.BASE_ROUTE || "/stock_api"
 
@@ -21,6 +21,7 @@ const mongoose = require('mongoose')
 
 const stock_routes = require('./routes/stocks')
 
+const generatePoints = require('./generator/stocks')
 
 const app = express()
 
@@ -39,7 +40,7 @@ app.use(helmet.contentSecurityPolicy({
 }))
 
 app.get(base_route, (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello exchange!')
 })
 
 ;(async function() {
@@ -55,16 +56,6 @@ app.get(base_route, (req, res) => {
     console.error("could not connect to mongodb", mongodb_url,e)
     process.exit(1)
   }
-
-  const agenda = require('../jobs/jobs')
-  await agenda.start()
-  // console.log('Adding stock job')
-  // const stock = {
-  //   user_id: mongoose.Types.ObjectId("5de33c325777db3f7b96c7f7"),
-  //   stock_indicator: "GOOG",
-  //   quantity: 1
-  // }
-  // await agenda.now('buyStock',{stock})
 
   app.use(`${base_route}/stocks`, stock_routes)
   app.listen(port, () => console.log(`App listening on port ${port}!`))

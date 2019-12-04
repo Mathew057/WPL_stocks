@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T20:46:21-06:00
+ * @Last modified time: 2019-12-03T21:12:06-06:00
  * @License: MIT
  */
 
@@ -17,12 +17,12 @@ const routes = require('express').Router();
 const axios = require('axios');
 const mongoose = require('mongoose')
 
-const Account = require('../../models/Account-model')
-const Stock = require('../../models/Stock-model')
-const Schedule = require('../../models/Schedule-model')
-const Balance = require('../../models/Balance-model')
-const Users = require('../../models/Users-model')
-const agenda = require('../../jobs/jobs')
+const Account = require('../models/Account-model')
+const Stock = require('../models/Stock-model')
+const Schedule = require('../models/Schedule-model')
+const Balance = require('../models/Balance-model')
+const Users = require('../models/Users-model')
+const agenda = require('../jobs/jobs')
 
 routes.route('/stocks')
 .get(async (req, res) => {

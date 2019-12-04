@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:27:25-06:00
+ * @Last modified time: 2019-12-03T21:13:06-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
@@ -41,7 +41,7 @@ app.use(helmet.contentSecurityPolicy({
 }))
 
 app.get(base_route, (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello brockerage!')
 })
 
 ;(async function() {
