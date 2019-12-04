@@ -59,7 +59,8 @@ routes.get('/latest/:stock_id', async (req, res) => {
      last_month = last_month.toISOString()
      var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock_id}`, {
        start_datetime: last_month,
-       end_datetime: today
+       end_datetime: today,
+       token:req.token
      })
      res.json(response.data)
    }
@@ -89,7 +90,8 @@ routes.get('/latest/:stock_id', async (req, res) => {
      }
      var response = await axios.post(`${base_exchange_url}/stocks/${url}/${stock_id}`, {
        start_datetime: start_datetime,
-       end_datetime: end_datetime
+       end_datetime: end_datetime,
+       token:req.token
      })
      res.json(response.data)
    }
