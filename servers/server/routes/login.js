@@ -38,6 +38,7 @@ routes.post('/signup', async (req, res) => {
        res.send({ user })
    }
    catch (e) {
+     console.log(e)
        res.status(400).send(e)
    }
 })
@@ -54,7 +55,8 @@ routes.post('/init', auth, async (req, res) => {
            res.cookie('app-jt', req.token, cookieOptions).send({ user, token })
        }
    } catch (e) {
-       res.status(400).send()
+     console.log(e)
+       res.status(400).send(e)
    }
 })
 
@@ -73,7 +75,8 @@ routes.post('/login', async (req, res) => {
        res.cookie('app-jt', token, cookieOptions).send({ user, token })
 
    } catch (e) {
-       res.status(400).send()
+      console.log(e)
+       res.status(400).send(e)
    }
 })
 
@@ -89,7 +92,8 @@ routes.post('/logout', auth, async (req, res) => {
 
        res.send()
    } catch (e) {
-       res.status(400).send()
+     console.log(e)
+       res.status(400).send(e)
    }
 })
 
