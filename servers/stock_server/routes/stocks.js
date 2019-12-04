@@ -39,6 +39,9 @@
   }, {
       $group: {
           _id: "$stock_indicator",
+          stock_indicator: {
+              "$first": "$stock_indicator"
+          },
           company_name: {
               "$first": "$company_name"
           },
@@ -63,94 +66,255 @@
    res.json(payload)
  })
 
- routes.get("/latest", (req, res) => {
-   payload = []
-   for (var symbol in stocks) {
-
-     const points = generatePoints(symbol, 'm', new Date())
-     payload.push({
-       ...stocks[symbol],
-       stock_indicator: symbol,
-       price: points[0].y,
-     })
-   }
-   res.json(payload)
+ routes.get("/latest",async (req, res) => {
+   var stocks = await Stocks_5min.aggregate([
+     {
+      $sort: {
+          datetime: -1
+      }
+    },
+    {
+        $group: {
+            _id: "$stock_indicator",
+            stock_indicator: {
+                "$first": "$stock_indicator"
+            },
+            company_name: {
+                "$first": "$company_name"
+            },
+            quantity: {
+                "$first": "$quantity"
+            },
+            datetime: {
+                "$first": "$datetime"
+            },
+            price: {
+                "$first": "$price"
+            }
+        }
+    }
+  ])
+   res.json(stocks)
  })
 
- routes.get("/latest/:stock_id", (req,res) => {
+ routes.get("/latest/:stock_id",async (req,res) => {
    const stock_id = req.params.stock_id
-   const points = generatePoints(stock_id, 'm', new Date())
-   console.log(points)
-   res.json({
-     ...stocks[stock_id],
-     stock_indicator: stock_id,
-     price: points[0].y,
-   })
+   var stock = await Stocks_5min.aggregate([
+     {
+       $match: {
+         stock_indicator: stock_id
+       }
+     },
+     {
+      $sort: {
+          datetime: -1
+      }
+    },
+    {
+        $group: {
+            _id: "$stock_indicator",
+            stock_indicator: {
+                "$first": "$stock_indicator"
+            },
+            company_name: {
+                "$first": "$company_name"
+            },
+            quantity: {
+                "$first": "$quantity"
+            },
+            price: {
+                "$first": "$price"
+            }
+        }
+    }
+  ])
+  stock = stock[0]
+   res.json(stock)
 
  })
 
  routes.route("/5min/:stock_id")
- .post((req,res) => {
+ .post(async (req,res) => {
    var {start_datetime, end_datetime} = req.body
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
-   const points = generatePoints(stock_id, 'm', start_datetime, end_datetime)
+   var stock = await Stocks_5min.aggregate([
+     {
+       $match: {
+         datetime: {
+           $gte: start_datetime,
+           $lte: end_datetime
+         },
+         stock_indicator: stock_id
+       }
+     },
+     {
+      $sort: {
+          datetime: 1
+      }
+  }, {
+      $group: {
+          _id: "$stock_indicator",
+          stock_indicator: {
+              "$first": "$stock_indicator"
+          },
+          company_name: {
+              "$first": "$company_name"
+          },
+          graph: {
+              "$push": {
+                  t: "$datetime",
+                  y: "$price"
+              }
+          }
+      }
+  }])
+
+  stock = stock[0]
+
+  console.log(stock)
+
    res.json({
-     ...stocks[stock_id],
-     stock_indicator: stock_id,
-     graph: points,
-     price: points[points.length-1].y,
-     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
+     ...stock,
+     price: stock.graph[stock.graph.length-1].y,
+     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
    })
 
  })
 
  routes.route("/hourly/:stock_id")
- .post((req,res) => {
+ .post(async (req,res) => {
    var {start_datetime, end_datetime} = req.body
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
-   const points = generatePoints(stock_id, 'h', start_datetime, end_datetime)
+   var stock = await Stocks_Hourly.aggregate([
+     {
+       $match: {
+         datetime: {
+           $gte: start_datetime,
+           $lte: end_datetime
+         },
+         stock_indicator: stock_id
+       }
+     },
+     {
+      $sort: {
+          datetime: 1
+      }
+  }, {
+      $group: {
+          _id: "$stock_indicator",
+          stock_indicator: {
+              "$first": "$stock_indicator"
+          },
+          company_name: {
+              "$first": "$company_name"
+          },
+          graph: {
+              "$push": {
+                  t: "$datetime",
+                  y: "$price"
+              }
+          }
+      }
+  }])
+stock = stock[0]
    res.json({
-     ...stocks[stock_id],
-     stock_indicator: stock_id,
-     graph: points,
-     price: points[points.length-1].y,
-     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
+     ...stock,
+     price: stock.graph[stock.graph.length-1].y,
+     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
    })
  })
 
  routes.route("/daily/:stock_id")
- .post((req,res) => {
+ .post(async (req,res) => {
    var {start_datetime, end_datetime} = req.body
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
-   const points = generatePoints(stock_id, 'd', start_datetime, end_datetime)
+   var stock = await Stocks_Daily.aggregate([
+     {
+       $match: {
+         datetime: {
+           $gte: start_datetime,
+           $lte: end_datetime
+         },
+         stock_indicator: stock_id
+       }
+     },
+     {
+      $sort: {
+          datetime: 1
+      }
+  }, {
+      $group: {
+          _id: "$stock_indicator",
+          stock_indicator: {
+              "$first": "$stock_indicator"
+          },
+          company_name: {
+              "$first": "$company_name"
+          },
+          graph: {
+              "$push": {
+                  t: "$datetime",
+                  y: "$price"
+              }
+          }
+      }
+  }])
+stock = stock[0]
    res.json({
-     ...stocks[stock_id],
-     stock_indicator: stock_id,
-     graph: points,
-     price: points[points.length-1].y,
-     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
+     ...stock,
+     price: stock.graph[stock.graph.length-1].y,
+     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
    })
  })
 
  routes.route("/weekly/:stock_id")
- .post((req,res) => {
+ .post(async (req,res) => {
    var {start_datetime, end_datetime} = req.body
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
-   const points = generatePoints(stock_id, 'w', start_datetime, end_datetime)
+   var stock = await Stocks_Weekly.aggregate([
+     {
+       $match: {
+         datetime: {
+           $gte: start_datetime,
+           $lte: end_datetime
+         },
+         stock_indicator: stock_id
+       }
+     },
+     {
+      $sort: {
+          datetime: 1
+      }
+  }, {
+      $group: {
+          _id: "$stock_indicator",
+          stock_indicator: {
+              "$first": "$stock_indicator"
+          },
+          company_name: {
+              "$first": "$company_name"
+          },
+          graph: {
+              "$push": {
+                  t: "$datetime",
+                  y: "$price"
+              }
+          }
+      }
+  }])
+stock = stock[0]
    res.json({
-     ...stocks[stock_id],
-     stock_indicator: stock_id,
-     graph: points,
-     price: points[points.length-1].y,
-     trend: precDiff(points[points.length-1].y, points[points.length-2].y)
+     ...stock,
+     price: stock.graph[stock.graph.length-1].y,
+     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
    })
  })
 

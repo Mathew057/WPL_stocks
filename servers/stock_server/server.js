@@ -71,12 +71,19 @@ async function update_stocks (Model, interval, base_date) {
 
     for (var i = 0; i < points.length; i ++) {
       write_ops.push({
-        insertOne: {
-          datetime: points[i].t,
-          price: points[i].y,
-          stock_indicator: symbol,
-          company_name: stocks[symbol].company_name,
-          quantity: stocks[symbol].shares_available
+        updateOne: {
+          filter: {
+            datetime: points[i].t,
+            stock_indicator: symbol
+          },
+          update: {
+            datetime: points[i].t,
+            price: points[i].y,
+            stock_indicator: symbol,
+            company_name: stocks[symbol].company_name,
+            quantity: stocks[symbol].shares_available
+          },
+          upsert: true
         }
       })
     }
@@ -126,3 +133,8 @@ async function update_stocks (Model, interval, base_date) {
   app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 })()
+
+setInterval(async () => {
+  var last_5min = new Date(Date.now() - 300000)
+  await update_stocks(Stocks_5min, "m", last_5min)
+}, 300000)
