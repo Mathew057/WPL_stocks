@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:04:52-06:00
+ * @Last modified time: 2019-12-03T18:19:03-06:00
  * @License: MIT
  */
 
@@ -36,6 +36,32 @@
      })
    }
    res.json(payload)
+ })
+
+ routes.get("/latest", (req, res) => {
+   payload = []
+   for (var symbol in stocks) {
+     
+     const points = generatePoints(symbol, 'm', new Date())
+     payload.push({
+       ...stocks[symbol],
+       stock_indicator: symbol,
+       price: points[0].y,
+     })
+   }
+   res.json(payload)
+ })
+
+ routes.get("/latest/:stock_id", (req,res) => {
+   const stock_id = req.params.stock_id
+   const points = generatePoints(stock_id, 'm', new Date())
+   console.log(points)
+   res.json({
+     ...stocks[stock_id],
+     stock_indicator: stock_id,
+     price: points[0].y,
+   })
+
  })
 
  routes.route("/5min/:stock_id")

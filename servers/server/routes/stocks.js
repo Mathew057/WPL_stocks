@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T16:55:59-06:00
+ * @Last modified time: 2019-12-03T18:21:06-06:00
  * @License: MIT
  */
 
@@ -12,6 +12,30 @@
  const axios = require('axios')
 
 const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
+
+routes.get('/latest', async (req, res) => {
+  try {
+    var response = await axios.get(`${base_exchange_url}/stocks/latest`)
+    console.log(response.data.length)
+    res.json(response.data)
+  }
+  catch (e) {
+    console.error(e)
+      res.status(400).send(e)
+  }
+})
+
+routes.get('/latest/:stock_id', async (req, res) => {
+  var stock_id = req.params.stock_id
+  try {
+    var response = await axios.get(`${base_exchange_url}/stocks/latest/${stock_id}`)
+    res.json(response.data)
+  }
+  catch (e) {
+    console.error(e)
+      res.status(400).send(e)
+  }
+})
 
  routes.get('/', async (req, res) => {
    try {
