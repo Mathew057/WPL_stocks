@@ -4,12 +4,12 @@
  * @Email:  dev@mathewblack.com
  * @Filename: login.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:09:24-06:00
+ * @Last modified time: 2019-12-03T21:12:26-06:00
  * @License: MIT
  */
 const routes = require('express').Router();
-const Users = require('../../models/Users-model')
-const Balance = require('../../models/Balance-model')
+const Users = require('../models/Users-model')
+const Balance = require('../models/Balance-model')
 const auth = require('../../middlewares/auth')
 
 // User create (signup)
@@ -38,6 +38,7 @@ routes.post('/signup', async (req, res) => {
        res.send({ user })
    }
    catch (e) {
+     console.log(e)
        res.status(400).send(e)
    }
 })
@@ -54,7 +55,8 @@ routes.post('/init', auth, async (req, res) => {
            res.cookie('app-jt', req.token, cookieOptions).send({ user, token })
        }
    } catch (e) {
-       res.status(400).send()
+     console.log(e)
+       res.status(400).send(e)
    }
 })
 
@@ -73,7 +75,8 @@ routes.post('/login', async (req, res) => {
        res.cookie('app-jt', token, cookieOptions).send({ user, token })
 
    } catch (e) {
-       res.status(400).send()
+      console.log(e)
+       res.status(400).send(e)
    }
 })
 
@@ -89,7 +92,8 @@ routes.post('/logout', auth, async (req, res) => {
 
        res.send()
    } catch (e) {
-       res.status(400).send()
+     console.log(e)
+       res.status(400).send(e)
    }
 })
 

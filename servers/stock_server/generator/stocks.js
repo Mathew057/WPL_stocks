@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T18:19:01-06:00
+ * @Last modified time: 2019-12-03T22:08:49-06:00
  * @License: MIT
  */
  const crypto = require('crypto');
@@ -80,6 +80,26 @@
    return points;
  }
 
+ function randomStep(randFunc, prev_point) {
+   var {t, y} = prev_point
+   var value = y
+   if (typeof randFunc === 'function') {
+     randFunc = boxMullerRandom(randFunc)
+   } else {
+     randFunc = boxMullerRandom()
+   }
+   var random_value = randFunc()*start_value;
+   if (value + random_value < 0) {
+     value -= random_value;
+   } else {
+     value += random_value;
+   }
+   return{
+       "t": new Date(t.getTime() + 1/unit),
+       "y": value
+   }
+ }
+
  function get_date_index(epoch_time) {
    var index = Math.ceil((epoch_time-base_epoch_time)*unit)
    return Math.floor(index/288)*108 + (index%288) - 96
@@ -118,4 +138,7 @@
    return randomWalk(steps,rnd, rnd()*max_start, start_index, interval);
  }
 
- module.exports = generatePoints
+ module.exports = {
+   generatePoints,
+   randomStep
+ }

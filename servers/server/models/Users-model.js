@@ -16,6 +16,7 @@ const usersSchema = new mongoose.Schema({
         lowercase: true,
         unique: true,
         required: true,
+        index: true,
         validate(value) {
             if (!validator.isEmail(value)) {
                 throw new Error("Invalid email format")
@@ -28,6 +29,7 @@ const usersSchema = new mongoose.Schema({
     },
     username: {
       type: String,
+      index: true,
       required: true
     },
     password: {
@@ -47,14 +49,12 @@ const usersSchema = new mongoose.Schema({
 })
 
 usersSchema.statics.findByCredentials = async (email, password) => {
-    const user = await Users.findOne({ email })
-
+    const user = await Users.findOne({ email: email })
     if (!user) {
         throw new Error('Unable to login')
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
-
     if (!isMatch) {
         throw new Error('Unable to login')
     }
@@ -66,7 +66,7 @@ usersSchema.methods.generateAuthToken = async function () {
 
     const user = this
 
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET || "replaceme")
 
     user.tokens = user.tokens.concat({ token })
 
