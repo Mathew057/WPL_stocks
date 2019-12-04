@@ -30,7 +30,14 @@ routes.route('/stocks')
     var stocks = await Stock.find({user_id: req.user._id})
     for (var i = 0; i < stocks.length; i++) {
       var stock = stocks[i]
-      const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${stock.stock_indicator}`)
+      var today = new Date().toISOString()
+      var last_month =  new Date()
+      last_month.setMonth(last_month.getMonth() - 1)
+      last_month = last_month.toISOString()
+      var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock.stock_indicator}`, {
+        start_datetime: last_month,
+        end_datetime: today
+      })
       stocks[i] = {
         ...response.data,
         ...stock.toObject()
@@ -91,9 +98,17 @@ res.status(400).send(e)
 
 routes.route('/stocks/:stock_id')
 .get(async (req, res) => {
+  var stock_id = req.params.stock_id
   try {
-    var stock = await Stock.findOne({user_id: req.user._id, stock_indicator: req.params.stock_id})
-    const response = await axios.get(`http://${client}:${port}${base_route}/stocks/${req.params.stock_id}`)
+    var stock = await Stock.findOne({user_id: req.user._id, stock_indicator: stock_id})
+    var today = new Date().toISOString()
+    var last_month =  new Date()
+    last_month.setMonth(last_month.getMonth() - 1)
+    last_month = last_month.toISOString()
+    var response = await axios.post(`${base_exchange_url}/stocks/daily/${stock_id}`, {
+      start_datetime: last_month,
+      end_datetime: today
+    })
     stock = {
       ...stock.toObject(),
       ...response.data,
