@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: stocks.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-01T17:06:27-06:00
+ * @Last modified time: 2019-12-03T18:19:01-06:00
  * @License: MIT
  */
  const crypto = require('crypto');
@@ -62,7 +62,7 @@
    } else {
      randFunc = boxMullerRandom()
    }
-   for (t = 0; t < steps; t += 1) {
+   for (t = 0; t <= steps; t += 1) {
      var random_value = randFunc()*start_value;
      if (value + random_value < 0) {
        value -= random_value;
