@@ -72,6 +72,7 @@ res.status(400).send(e)
   var payload = []
   if (!(newStocks instanceof Array)) {
     res.status(400).send('request is not a list of stocks!')
+    return
   }
   try {
     for (var i = 0; i < newStocks.length; i++) {
@@ -89,12 +90,14 @@ res.status(400).send(e)
         agenda.now('sellStock', {stock, token: req.token})
       }
     }
+    res.json(payload)
   }
   catch (e) {
       console.error(e)
 res.status(400).send(e)
+
   }
-  res.json(payload)
+
 })
 
 routes.route('/stocks/:stock_id')
