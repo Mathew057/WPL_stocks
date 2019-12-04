@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-ENV REACT_APP_baseAPIURL=http://localhost:5000
+ENV REACT_APP_baseAPIURL=https://localhost/api
 
 RUN npm run-script build
 

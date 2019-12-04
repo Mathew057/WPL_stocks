@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T21:13:06-06:00
+ * @Last modified time: 2019-12-04T14:46:37-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
@@ -17,6 +17,7 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const compression = require('compression')
+var morgan = require('morgan')
 
 const login_routes = require('./routes/login')
 const user_routes = require('./routes/user')
@@ -25,6 +26,7 @@ const stock_routes = require('./routes/stocks')
 const auth = require('../middlewares/auth')
 
 const app = express()
+app.use(morgan('combined'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

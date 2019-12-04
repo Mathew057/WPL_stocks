@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T23:22:52-06:00
+ * @Last modified time: 2019-12-04T14:46:08-06:00
  * @License: MIT
  */
 
@@ -24,6 +24,8 @@ const compression = require('compression')
 // const auth = require('../middlewares/auth')
 const mongoose = require('mongoose')
 
+var morgan = require('morgan')
+
 const stock_routes = require('./routes/stocks')
 const {
   Stocks_Weekly,
@@ -35,6 +37,8 @@ const {
 const {generatePoints, randomStep} = require('./generator/stocks')
 
 const app = express()
+
+app.use(morgan('combined'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

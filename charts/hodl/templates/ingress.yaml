@@ -1,3 +1,5 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "hodl.fullname" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -7,23 +9,36 @@ metadata:
     helm.sh/chart: {{ include "hodl.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+{{- if .Values.ingress.tls }}
+  tls:
+    - hosts:
+      {{- range .Values.ingress.tls.hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+{{- end }}
   rules:
-  - host: hodl.internal
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: {{ include "hodl.fullname" . }}-client
-          servicePort: 80
-      - path: /api
-        backend:
-          serviceName: {{ include "hodl.fullname" . }}-server
-          servicePort: 5000
-      - path: /stock_api
-        backend:
-          serviceName: {{ include "hodl.fullname" . }}-stock-server
-          servicePort: 4000
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: {{ $fullName }}-client
+            servicePort: {{ $.Values.service.client.internalPort }}
+        - path: /api
+          backend:
+            serviceName: {{ $fullName }}-server
+            servicePort: {{ $.Values.service.server.internalPort }}
+        - path: /stock_api
+          backend:
+            serviceName: {{ $fullName }}-stock-server
+            servicePort: {{ $.Values.service.stock_server.internalPort }}
+
+    {{- end }}
+{{- end }}

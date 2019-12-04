@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: jobs.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T20:00:29-06:00
+ * @Last modified time: 2019-12-04T14:42:35-06:00
  * @License: MIT
  */
 
@@ -19,9 +19,6 @@ const Stock = require('../models/Stock-model')
 const Schedule = require('../models/Schedule-model')
 const Balance = require('../models/Balance-model')
 const Users = require('../models/Users-model')
-
-const fs = require('fs');
-let stocks = JSON.parse(fs.readFileSync('../stock_server/symbols.json'));
 
  agenda.define('buyStock', async (job) => {
    console.log('buying stock')
@@ -59,7 +56,6 @@ let stocks = JSON.parse(fs.readFileSync('../stock_server/symbols.json'));
      }, {
        user_id: stock.user_id,
        stock_indicator: stock.stock_indicator,
-       company_name: stocks[stock.stock_indicator].company_name,
        quantity: quantity
      }, {upsert:true});
      console.log(result);

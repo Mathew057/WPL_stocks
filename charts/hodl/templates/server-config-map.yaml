@@ -8,6 +8,6 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
-  PORT: "5000"
-  MONGODB_URL: mongodb://hodl-mongodb:27017/hodl
+  PORT: "{{ .Values.service.server.internalPort }}"
+  MONGODB_URL: "mongodb://hodl-mongodb:27017/hodl"
   BASE_ROUTE: "/"
