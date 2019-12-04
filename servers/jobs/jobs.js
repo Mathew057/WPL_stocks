@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: jobs.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T19:11:06-06:00
+ * @Last modified time: 2019-12-03T19:43:07-06:00
  * @License: MIT
  */
 
@@ -22,7 +22,8 @@ const Users = require('../models/Users-model')
 
  agenda.define('buyStock', async (job) => {
    console.log('buying stock')
-   const stock = job.attrs.data.stock
+   var stock = job.attrs.data.stock
+   stock.quantity  = parseFloat(stock.quantity)
    if (job.attrs.data.end_datetime) {
      const end_datetime = new Date(job.attrs.data.end_datetime).getTime()
      if (end_datetime < Date.now()) {
@@ -67,7 +68,8 @@ const Users = require('../models/Users-model')
 
  agenda.define('sellStock', async (job) => {
    console.log("selling stock!")
-   const stock = job.attrs.data.stock
+   var stock = job.attrs.data.stock
+   stock.quantity  = parseFloat(stock.quantity)
    if (job.attrs.data.end_datetime) {
      const end_datetime = new Date(job.attrs.data.end_datetime).getTime()
      if (end_datetime < Date.now()) {

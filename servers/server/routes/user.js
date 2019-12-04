@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T19:39:10-06:00
+ * @Last modified time: 2019-12-03T19:43:31-06:00
  * @License: MIT
  */
 
@@ -234,7 +234,7 @@ res.status(400).send(e)
     const stock = {
       user_id: req.user._id,
       stock_indicator: newSchedule.stock_indicator,
-      quantity: parseFloat(newSchedule.quantity)
+      quantity: newSchedule.quantity
     }
     if (newSchedule.type === "buy") {
       job = agenda.create('buyStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
