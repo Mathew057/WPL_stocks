@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T19:37:00-06:00
+ * @Last modified time: 2019-12-03T19:39:10-06:00
  * @License: MIT
  */
 
@@ -69,7 +69,7 @@ res.status(400).send(e)
     for (var i = 0; i < newStocks.length; i++) {
       var stock = {
         ...newStocks[i],
-        user_id: req.user_id
+        user_id: req.user._id
       }
       payload.push(stock)
       if (stock.type === "buy") {
