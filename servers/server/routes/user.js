@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: user.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-03T19:43:31-06:00
+ * @Last modified time: 2019-12-03T20:46:21-06:00
  * @License: MIT
  */
 
@@ -287,12 +287,49 @@ res.status(400).send(e)
   }
 })
 .put(async (req,res) => {
+  const newSchedule = req.body
   try {
-      const schedule = await Schedule.findOneAndUpdate({
+      const schedule = await Schedule.findOne({
+          _id: req.params.schedule_id,
+          user_id: req.user._id
+      })
+
+      var job = await agenda.jobs({_id: schedule.job_id});
+      job = job[0]
+      if (job && await job.remove()) {
+        console.log("Deleted Job from agenda")
+      }
+
+      const stock = {
+        user_id: req.user._id,
+        stock_indicator: newSchedule.stock_indicator,
+        quantity: newSchedule.quantity
+      }
+      if (newSchedule.type === "buy") {
+        job = agenda.create('buyStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+        job.schedule(new Date(newSchedule.start_datetime))
+        .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+        await job.save()
+      }
+      else if (newSchedule.type === "sell") {
+        job = agenda.create('sellStock',{stock, end_datetime: new Date(newSchedule.end_datetime)})
+        job.schedule(new Date(newSchedule.start_datetime))
+        .repeatEvery(`${newSchedule.interval} ${newSchedule.frequency}`)
+        await job.save()
+      }
+      else {
+        res.status(400).send(`Schedule type of ${type} doesn't make sense`)
+      }
+
+      const result = await Schedule.updateOne({
         _id: req.params.schedule_id,
         user_id: req.user._id
-      }, req.body)
-      res.json(schedule.toObject())
+      }, {
+        ...req.body,
+        job_id: job.attrs._id
+      })
+
+      res.json(result)
   }
   catch (e) {
       console.error(e)
@@ -301,7 +338,19 @@ res.status(400).send(e)
 })
 .delete(async (req,res) => {
   try {
-      const result = await Schedule.findOneAndDelete({
+      const schedule = await Schedule.findOne({
+          _id: req.params.schedule_id,
+          user_id: req.user._id
+      })
+      console.log(schedule)
+
+      var job = await agenda.jobs({_id: schedule.job_id});
+      job = job[0]
+      if (job && await job.remove()) {
+        console.log("Deleted Job from agenda")
+      }
+
+      const result = await Schedule.deleteOne({
           _id: req.params.schedule_id,
           user_id: req.user._id
       })
