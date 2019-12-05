@@ -60,7 +60,7 @@
      payload.push({
        ...stocks[i],
        price: stocks[i].graph[stocks[i].graph.length-1].y,
-       trend: stock.graph.length > 1 ? precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y): 0
+       trend: stocks[i].graph.length > 1 ? precDiff(stocks[i].graph[stocks[i].graph.length-1].y, stocks[i].graph[stocks[i].graph.length-2].y): 0
      })
    }
    res.json(payload)

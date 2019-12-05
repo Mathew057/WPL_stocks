@@ -73,34 +73,36 @@ async function update_stocks (Model, interval, base_date) {
 
     var start_time = last_stock[0] ? last_stock[0].datetime : base_date
     const points = generatePoints(symbol, interval, start_time)
+    console.log(points.length)
+    if (points.length !== 0) {
 
-    for (var i = 0; i < points.length; i ++) {
-      write_ops.push({
-        updateOne: {
-          filter: {
-            datetime: points[i].t,
-            stock_indicator: symbol
-          },
-          update: {
-            datetime: points[i].t,
-            price: points[i].y,
-            stock_indicator: symbol,
-            company_name: stocks[symbol].company_name,
-            quantity: stocks[symbol].shares_available
-          },
-          upsert: true
-        }
-      })
+      for (var i = 0; i < points.length; i ++) {
+        write_ops.push({
+          updateOne: {
+            filter: {
+              datetime: points[i].t,
+              stock_indicator: symbol
+            },
+            update: {
+              datetime: points[i].t,
+              price: points[i].y,
+              stock_indicator: symbol,
+              company_name: stocks[symbol].company_name,
+              quantity: stocks[symbol].shares_available
+            },
+            upsert: true
+          }
+        })
+      }
+    try {
+      const result = await Model.collection.bulkWrite(write_ops)
+      console.log("Finished bulk inserting", symbol)
     }
+    catch (e) {
+        console.error(e)
 
+    }
   }
-  try {
-    const result = await Model.collection.bulkWrite(write_ops)
-    console.log("Finished bulk inserting", symbol)
-  }
-  catch (e) {
-      console.error(e)
-
   }
 }
 

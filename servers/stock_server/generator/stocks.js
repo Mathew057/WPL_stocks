@@ -133,9 +133,13 @@
    }
    var steps = get_date_index(end_datetime)
    var start_index = get_date_index(start_datetime)
-   console.log("Generating graph of size", (steps-start_index)/interval, "for symbol", symbol)
-   var rnd = seedrandom.alea(symbol)
-   return randomWalk(steps,rnd, rnd()*max_start, start_index, interval);
+   if ((steps-start_index)/interval > 0) {
+     console.log("Generating graph of size", (steps-start_index)/interval, "for symbol", symbol)
+     var rnd = seedrandom.alea(symbol)
+     return randomWalk(steps,rnd, rnd()*max_start, start_index, interval);
+   }
+   return []
+
  }
 
  module.exports = {

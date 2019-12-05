@@ -16,9 +16,12 @@ const mongoose = require('mongoose')
 const agenda_db_url = mongodb_url.substring(0, mongodb_url.lastIndexOf('/')) + "/agenda";
 var agenda = new Agenda({db: {address: agenda_db_url}})
 const jwt = require('jsonwebtoken')
+const base_exchange_url =  process.env.EXCHANGE_URL || "http://localhost:4000/stock_api"
+const axios = require('axios')
 
 const Stock = require('../models/Stock-model')
 const Users = require('../models/Users-model')
+const Balance = require('../models/Balance-model')
 
 async function auth (token) {
   try {
@@ -56,6 +59,29 @@ async function auth (token) {
          job.fail(e)
        }
      }
+   }
+   try {
+     var balance = await Balance.findOne({
+       user_id: stock.user_id
+     })
+     var response = await axios.post(`${base_exchange_url}/stocks/latest/${stock.stock_indicator}`,{token:job.attrs.data.token})
+     const price = response.data.price
+     const new_amount = balance.amount - stock.quantity*price
+     if (new_amount < 0) {
+       console.log('Did not have enough money to make transaction')
+       await job.remove();
+       return;
+     }
+     var response = await Balance.updateOne({
+       user_id: stock.user_id
+     }, {
+       amount: new_amount
+     })
+   }
+   catch (e) {
+     console.error(e)
+     job.fail(e)
+     return;
    }
    var old_stock;
    try{
@@ -109,9 +135,35 @@ async function auth (token) {
        catch (e) {
          console.error(e)
          job.fail(e)
+         return;
        }
      }
    }
+   try {
+     var balance = await Balance.findOne({
+       user_id: stock.user_id
+     })
+     var response = await axios.post(`${base_exchange_url}/stocks/latest/${stock.stock_indicator}`,{token:job.attrs.data.token})
+     const price = response.data.price
+     const new_amount = balance.amount + stock.quantity*price
+     if (new_amount < 0) {
+       console.log('Did not have enough money to make transaction')
+       await job.remove();
+       return;
+     }
+     var response = await Balance.updateOne({
+       user_id: stock.user_id
+     }, {
+       amount: new_amount
+     })
+   }
+   catch (e) {
+     console.error(e)
+     job.fail(e)
+     return;
+   }
+
+
    try{
      var old_stock = await Stock.findOne({
        user_id: stock.user_id,
@@ -121,6 +173,7 @@ async function auth (token) {
    catch (e) {
      console.error('could not find original stock', e)
      job.fail(e)
+     return;
    }
 
    console.log(old_stock)
@@ -137,6 +190,7 @@ async function auth (token) {
    catch(e) {
      console.error('could not update stock', e)
      job.fail(e)
+     return;
    }
 
  });
