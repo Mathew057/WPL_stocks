@@ -8,6 +8,9 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import {encodeFormData} from './functions';
+import {Link} from 'react-router-dom';
+
+
 
 const axios = require('axios');
 
@@ -97,11 +100,21 @@ class Profile extends React.Component{
         return(
         <Container maxWidth="sm">
               <div className={classes.contentContainer}>
+              {/*!auth && <div>
+              <h2>Sorry you must be logged in to edit this page.</h2>
+              <img src="https://us.123rf.com/450wm/asiln/asiln1408/asiln140800037/30823194-stock-vector-access-denied-stamp.jpg?ver=6" alt="error"/>
+              <Link to="/login" >
+                    <h4>Return to Login Screen</h4>
+               </Link>
+                </div>  */ }
+
+
                 <Grid container justify="center" alignItems="center">
                 <Avatar className={classes.avatar}>
                     <PersonIcon fontSize="large"/>
                     </Avatar>
                 </Grid>
+
                 <h2>Profile</h2>
                 <form>
                     <div>
@@ -152,6 +165,8 @@ class Profile extends React.Component{
                         Logout
                     </Button>
                   </form>
+
+
                 </div>
               </Container>
         );

@@ -1,5 +1,9 @@
 const drawerMenuItems = [
     {
+        text: 'Home',
+        route: '/home'
+    },
+    {
         text: 'Profile',
         route: '/profile'
     },

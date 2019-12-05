@@ -22,6 +22,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {encodeFormData} from './functions';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+import {Link} from 'react-router-dom';
+
+
 
 const axios = require('axios');
 class Accounts extends React.Component {
@@ -57,15 +60,6 @@ class Accounts extends React.Component {
 
     getAccounts = () =>{
         const url = process.env.REACT_APP_baseAPIURL + '/user/accounts'
-        fetch(url)
-//        .then(res => res.json())
-//        .catch(error => console.log('Error:', error))
-//        .then(response => {
-//            this.setState({
-//                accountData: response
-//            })
-//        });
-
        var self = this;
        axios.get(url)
          .then(function (response) {
@@ -218,10 +212,17 @@ class Accounts extends React.Component {
 
     render() {
         const {classes} = this.props;
-        const {expanded, accountData, type, toAccount, fromAccount, hodlBalance, amount} = this.state;
+        const {expanded, accountData, type, toAccount, fromAccount, hodlBalance, amount, auth} = this.state;
         return (
         <div>
             <div className={classes.contentContainer} id="AccountForm">
+            {/*!auth && <div>
+            <h2>Sorry you must be logged in to edit this page.</h2>
+            <Link to="/login" >
+                  <h4>Return to Login Screen</h4>
+             </Link>
+             </div> */ }
+
            <h2>Accounts</h2>
            <div >
                 <div>
@@ -480,6 +481,8 @@ class Accounts extends React.Component {
                         Transfer Money
                     </Button>
                   </form>
+
+
                 </div>
           </div>
 

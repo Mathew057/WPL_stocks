@@ -110,14 +110,30 @@ class Home extends React.Component{
     getUserStockIndicators = () =>{
     this.checkLoggedIn();
      const url = process.env.REACT_APP_baseAPIURL + '/user/stocks'
-         fetch(url)
-         .then(res => res.json())
-         .catch(error => console.log('Error:', error))
-         .then(response => {
-             this.setState({
-                userStockIndicators: response.map(userStock => userStock.stock_indicator)
-             })
-         });
+//         fetch(url)
+//         .then(res => res.json())
+//         .catch(error => console.log('Error:', error))
+//         .then(response => {
+//             this.setState({
+//                userStockIndicators: response.map(userStock => userStock.stock_indicator)
+//             })
+//         });
+
+      var self = this;
+      axios.get(url)
+        .then(function (response) {
+          console.log(response)
+            self.setState({
+                userStockIndicators: response.data.map(userStock => userStock.stock_indicator)
+            }
+        )
+        })
+        .catch(function (error) {
+          console.log(error);
+           self.setState({
+            auth:false
+           })
+        });
     }
 
 
