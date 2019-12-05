@@ -25,17 +25,23 @@ const axios = require('axios');
 class Home extends React.Component{
 
     state = {
-        stocks: [],
+        stocks: {},
         userStockIndicators:[],
         open: false,
         schedule_name: '',
         type: '',
         frequency: '',
-        interval: '',
+        sched_interval: '',
         stock_indicator: '',
         quantity: '',
         start_datetime: '',
-        end_datetime: ''
+        end_datetime: '',
+        unit: 'day',
+        display_f: '',
+        stepSize: '1',
+        start_min:'',
+        end_max: '',
+        interval: 'daily'
     }
 
     checkLoggedIn = () =>{
@@ -55,24 +61,35 @@ class Home extends React.Component{
 
     componentDidMount() {
       this.checkLoggedIn();
-      if(this.state.stocks.length === 0 && Cookies.get('app-jt')!==null){
+//      if(this.state.stocks.length === 0 && Cookies.get('app-jt')!==null){
         this.getStockData();
-      }
-      if(this.state.userStockIndicators.length === 0 && Cookies.get('app-jt')!==null){
+//      }
+//      if(this.state.userStockIndicators.length === 0 && Cookies.get('app-jt')!==null){
          this.getUserStockIndicators();
-      }
+                  var default_start = new Date();
+                  var default_end =  new Date();
+                  this.setState({
+                     end_max: default_start.toISOString(),
+                     start_min:  new Date(default_end.setMonth(default_end.getMonth() -1)).toISOString()
+                  })
+//      }
     }
 
     getStockData = () =>{
      const url = process.env.REACT_APP_baseAPIURL + '/stocks'
-         fetch(url)
-         .then(res => res.json())
-         .catch(error => console.log('Error:', error))
-         .then(response => {
-             this.setState({
-                 stocks: response
-             })
-         });
+        var stocks = {}
+        var self = this;
+        axios.get(url)
+        .then(function(response){
+           response.data.forEach(element=> stocks[element.stock_indicator] = element)
+           self.setState({
+            stocks: stocks
+           })
+           console.log(stocks)
+        })
+        .catch(function (error){
+            console.log(error)
+        })
     }
 
     getUserStockIndicators = () =>{
@@ -141,11 +158,11 @@ class Home extends React.Component{
     }
 
     addNewSchedule = () =>{
-       const {schedule_name, type, frequency, interval, stock_indicator, quantity, start_datetime, end_datetime} = this.state;
+       const {schedule_name, type, frequency, sched_interval, stock_indicator, quantity, start_datetime, end_datetime} = this.state;
        let scheduleData =   {name: schedule_name,
                             type: type,
                             frequency: frequency,
-                            interval: interval,
+                            interval: sched_interval,
                             stock_indicator: stock_indicator,
                             quantity: quantity,
                             start_datetime: start_datetime,
@@ -173,7 +190,7 @@ class Home extends React.Component{
             schedule_name: '',
             type: '',
             frequency: '',
-            interval: '',
+            sched_interval: '',
             stock_indicator: '',
             quantity: '',
             start_datetime: '',
@@ -183,10 +200,9 @@ class Home extends React.Component{
 
     getConfigData(stockData){
         const data = {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
           datasets: [
             {
-              label: 'My First dataset',
+              label: stockData.stock_indicator,
               fill: false,
               lineTension: 0.1,
               backgroundColor: 'rgba(75,192,192,0.4)',
@@ -204,17 +220,144 @@ class Home extends React.Component{
               pointHoverBorderWidth: 2,
               pointRadius: 1,
               pointHitRadius: 10,
-              data: stockData
+              data: stockData.graph
             }
           ]
         };
         return data;
     }
 
+    changeHistory=(type, stockID)=>{
+        var start = new Date();
+        var end = new Date();
+
+        var end_max;
+        var start_min;
+        var unit;
+        var interval;
+        var stepSize=1;
+
+        switch(type) {
+          case 'day':
+                end_max = start;
+                start_min= new Date(end.setDate(end.getDate() - 1));
+                stepSize=5;
+                unit='minute';
+                interval= '5min';
+                break;
+
+          case 'week':
+                end_max= start;
+                start_min= new Date(end.setDate(end.getDate() - 7));
+                unit= 'hour';
+                interval= 'hourly';
+            break;
+           case 'lastweek':
+                end_max= new Date(end.setDate(end.getDate() - 14));
+                start_min= new Date(end.setDate(end.getDate() - 7));
+                unit= 'hour';
+                interval='hourly';
+            break;
+           case 'month':
+                end_max= start;
+                start_min= new Date(end.setMonth(end.getMonth() -1));
+                unit= 'day';
+                interval= 'daily';
+            break;
+           case 'year':
+                end_max= start;
+                start_min= new Date(end.setFullYear(end.getFullYear()-1));
+                unit= 'day';
+                interval= 'daily';
+            break;
+           case '5year':
+                end_max= start;
+                start_min= new Date(end.setFullYear(end.getFullYear()-5));
+                unit= 'week';
+                interval= 'weekly';
+            break;
+          default:
+                end_max= start;
+                start_min= new Date(end.setMonth(end.getMonth() -1));
+                unit= 'day';
+                interval= 'daily';
+            break;
+        }
+
+        start_min.setHours(32);
+        end_max.setHours(17);
+        this.setState({
+            end_max: end_max.toISOString(),
+            start_min: start_min.toISOString(),
+            unit: unit,
+            interval: interval,
+            stepSize: stepSize
+        })
+        this.updateStockGraph(stockID, start_min, end_max, interval, stepSize);
+    }
+
+    updateStockGraph(stockID, start_min, end_max, interval){
+        const url = process.env.REACT_APP_baseAPIURL + '/stocks/' + stockID;
+        var self = this;
+        const {stocks} = this.state;
+        axios.post(url,{
+             start_datetime: start_min,
+             end_datetime: end_max,
+             interval: interval
+            }
+          )
+          .then(function (response) {
+            console.log(response)
+            self.setState({
+                stocks: {...stocks, [response.data.stock_indicator]: {...stocks[response.data.stock_indicator], ...response.data}}
+            })
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
+
+    getTime=()=>{
+         var display_f={
+              'minute': 'h:mm a',
+              'hour': 'MMM D hA',
+              'day': 'MMM DD',
+              'month': 'MMM YYYY'
+           }
+         var time = {
+            unit: this.state.unit,
+            displayFormats: display_f,
+            stepSize: this.state.stepSize,
+            min: this.state.start_min,
+            max: this.state.end_max,
+//            parser: (date) => {console.log(typeof date); return moment.utc(date);}
+        }
+        return time;
+    }
+
+
+    getOptions(){
+        var time = this.getTime();
+         var options = {
+                scales: {
+                    xAxes: [{
+                        title: "time",
+                        type: 'time',
+                        time: time,
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'Date'
+                        }
+                    }]
+                }
+            }
+            return options;
+    }
+
 
     render(){
         const {classes} = this.props;
-        const {stocks, schedule_name, type, frequency, interval, stock_indicator,quantity, start_datetime, end_datetime} = this.state;
+        const {stocks, schedule_name, type, frequency, sched_interval, stock_indicator,quantity, start_datetime, end_datetime} = this.state;
 
         return(
             //TODO: Uncomment out time validation check for actions
@@ -228,7 +371,7 @@ class Home extends React.Component{
                        { title: 'Price', field: 'price', type: 'currency' },
                        { title: 'Shares Available', field: 'shares_available', type: 'numeric' }
                      ]}
-                     data= {stocks}
+                     data= {Object.values(stocks)}
                      options={{
                        sorting: true,
                        pageSize: 10,
@@ -267,7 +410,16 @@ class Home extends React.Component{
                      detailPanel={rowData => {
                           return (
                             <div>
-                                <Line data={this.getConfigData(rowData.data)} />
+                                <Line data={this.getConfigData(rowData)} options={this.getOptions()}/>
+                               <span>
+                                History
+                                <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={()=>this.changeHistory('day', rowData.stock_indicator)}>Day</Button>
+                                <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={()=>this.changeHistory('week', rowData.stock_indicator)}>Current Week</Button>
+                                <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={()=>this.changeHistory('lastweek', rowData.stock_indicator)}>Last Week</Button>
+                                <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={()=>this.changeHistory('month', rowData.stock_indicator)}>Month</Button>
+                                <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={()=>this.changeHistory('year', rowData.stock_indicator)}>Year</Button>
+                                <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={()=>this.changeHistory('5year', rowData.stock_indicator)}>Past 5 Years</Button>
+                                </span>
                             </div>
                           )
                         }}
@@ -346,9 +498,9 @@ class Home extends React.Component{
                                   	<TextField
                                   	  type= "number"
                                       label="Interval"
-                                      name="interval"
+                                      name="sched_interval"
                                       required
-                                      value={interval}
+                                      value={sched_interval}
                                       onChange={this.handleChange}
                                       fullWidth
                                       margin="normal"
