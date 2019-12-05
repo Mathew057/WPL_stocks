@@ -6,7 +6,6 @@ import {tableIcons} from './materialTableConstants';
 import {encodeFormData} from './functions';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
-moment.tz.setDefault('UTC');
 import {Line} from 'react-chartjs-2';
 
 const axios = require('axios');
