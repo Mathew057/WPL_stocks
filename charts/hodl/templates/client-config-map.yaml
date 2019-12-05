@@ -11,9 +11,6 @@ data:
   default.conf: |-
     server {
       listen 80;
-      server_name client;
-      root /usr/share/nginx/html;
-      autoindex on;
       gzip on;
       gzip_types text/plain application/xml;
       gunzip on;
@@ -21,7 +18,7 @@ data:
       location / {
           root   /usr/share/nginx/html;
           try_files $uri /index.html =404;
-          index  index.html;
+          index  index.html index.htm;
           autoindex on;
       }
     }
