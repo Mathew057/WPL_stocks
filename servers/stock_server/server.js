@@ -23,7 +23,6 @@ const helmet = require('helmet')
 const compression = require('compression')
 const auth = require('./middlewares/auth')
 const mongoose = require('mongoose')
-mongoose.set('debug', true);
 
 
 var morgan = require('morgan')
@@ -73,7 +72,6 @@ async function update_stocks (Model, interval, base_date) {
 
     var start_time = last_stock[0] ? last_stock[0].datetime : base_date
     const points = generatePoints(symbol, interval, start_time)
-    console.log(points.length)
     if (points.length !== 0) {
 
       for (var i = 0; i < points.length; i ++) {
@@ -135,6 +133,9 @@ async function update_stocks (Model, interval, base_date) {
   console.log('Generating all time')
   await update_stocks(Stocks_Weekly, "w", new Date(base_epoch_time))
   console.log("Finished generating stocks")
+
+  mongoose.set('debug', true);
+
 
   app.use(`${base_route}/stocks`, auth, stock_routes)
   app.listen(port, () => console.log(`App listening on port ${port}!`))
