@@ -26,7 +26,7 @@ class HodlNavigation extends React.Component{
     handleDrawerToggle = () => {
         this.setStart(prevState => ({mobileOpen: !prevState.mobileOpen}));
     }
-    
+
     render(){
         const {title, classes} = this.props;
         return(

@@ -31,6 +31,7 @@ class Logout extends React.Component{
             console.log(response)
             if(response.status===200){
                 console.log(response)
+                sessionStorage.removeItem('token')
             }
           })
           .catch(function (error) {

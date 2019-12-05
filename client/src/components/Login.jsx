@@ -35,7 +35,7 @@ class Login extends React.Component{
           .then(function (response) {
             console.log(response)
             if(response.status===200){
-                sessionStorage.setItem('token', response.data.token);
+                sessionStorage.setItem('token', 'check');
             }
           })
           .catch(function (error) {

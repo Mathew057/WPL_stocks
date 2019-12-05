@@ -9,6 +9,8 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import {encodeFormData} from './functions';
 
+const axios = require('axios');
+
 class Profile extends React.Component{
     constructor(){
         super();
@@ -17,7 +19,8 @@ class Profile extends React.Component{
             name:"",
             physAddr: "",
             email: "",
-            user: ""
+            user: "",
+            auth: ""
         }
     }
 
@@ -26,19 +29,27 @@ class Profile extends React.Component{
     }
 
     getUserProfile(){
-        const url =  process.env.REACT_APP_baseAPIURL + '/user/profile'
-        fetch(url)
-        .then(res => res.json())
-        .catch(error => console.log('Error:',error))
-        .then(response => {this.setState({
-             _id: response._id,
-             name: response.name,
-             physAddr: response.address,
-             email: response.email,
-             user: response.username
+      const url =  process.env.REACT_APP_baseAPIURL + '/user/profile'
+      var self = this;
+      axios.get(url)
+        .then(function (response) {
+          console.log(response)
+            self.setState({
+             _id: response.data._id,
+             name: response.data.name,
+             physAddr: response.data.address,
+             email: response.data.email,
+             user: response.data.username,
+             auth: true
             }
-        )})
-        ;
+        )
+        })
+        .catch(function (error) {
+          console.log(error);
+           self.setState({
+            auth:false
+           })
+        });
      }
 
     handleChange = e => {
@@ -67,12 +78,26 @@ class Profile extends React.Component{
         this.getUserProfile();
     }
 
+    handleLogout=()=>{
+            const url = process.env.REACT_APP_baseAPIURL + '/logout';
+            axios.post(url)
+              .then(function (response) {
+                sessionStorage.removeItem('token');
+                console.log(response)
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+        this.props.history.push('/login');
+    }
+
     render(){
         const {classes} = this.props;
+        const {auth} = this.props
         return(
         <Container maxWidth="sm">
               <div className={classes.contentContainer}>
-               <Grid container justify="center" alignItems="center">
+                <Grid container justify="center" alignItems="center">
                 <Avatar className={classes.avatar}>
                     <PersonIcon fontSize="large"/>
                     </Avatar>
@@ -123,8 +148,10 @@ class Profile extends React.Component{
                     <Button variant="contained" color="primary" fullWidth onClick={this.handleUpdate}>
                         Update
                     </Button>
+                   <Button variant="contained" color="primary" fullWidth onClick={this.handleLogout} className={classes.buttonPadding} >
+                        Logout
+                    </Button>
                   </form>
-
                 </div>
               </Container>
         );

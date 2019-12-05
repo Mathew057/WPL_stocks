@@ -11,7 +11,7 @@ import MyStocks from './components/MyStocks.jsx';
 import ForgotPassword from './components/ForgotPassword.jsx';
 import Error from './components/Error.jsx';
 import Cart from './components/Cart.jsx';
-import {Route, Redirect} from 'react-router-dom';
+import {Route, Redirect, Switch} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import styles from './components/routeStyles';
 
@@ -21,21 +21,22 @@ class App extends Component{
         const {classes} = this.props;
         return(
             <div className="App">
-                <HodlNavigation title="HODL Me"/>
+                <Route render={(props)=><HodlNavigation {...props} title="HODL Me"/>}/>
                 <main className={classes.content}>
                     <div className={classes.toolbar}/>
-                    <Route path="/" exact component={Home}/>
-                    <Route path="/home" component={Home}/>
-                    <Route path="/login" component={Login}/>
-                    <Route path="/logout" component={Logout}/>
-                    <Route path="/profile" component={Profile}/>
-                    <Route path="/accounts" component={Accounts}/>
-                    <Route path="/signup" component={Signup}/>
-                    <Route path="/mystocks" component={MyStocks}/>
-                    <Route path="/forgotpassword" component={ForgotPassword}/>
-                    <Route path="/cart" component={Cart}/>
-                    <Route path="/404" component={Error} />
-                    <Redirect to="/404" />
+                    <Switch>
+                        <Route path="/" exact component={Login}/>
+                        <Route path="/home" component={Home}/>
+                        <Route path="/login" component={Login}/>
+                        <Route path="/logout" component={Logout}/>
+                        <Route path="/profile" component={Profile}/>
+                        <Route path="/accounts" component={Accounts}/>
+                        <Route path="/signup" component={Signup}/>
+                        <Route path="/mystocks" component={MyStocks}/>
+                        <Route path="/forgotpassword" component={ForgotPassword}/>
+                        <Route path="/cart" component={Cart}/>
+                        <Route component={Error} />
+                    </Switch>
                 </main>
             </div>
         );

@@ -61,18 +61,18 @@ class Home extends React.Component{
 
     componentDidMount() {
       this.checkLoggedIn();
-//      if(this.state.stocks.length === 0 && Cookies.get('app-jt')!==null){
+      if(Cookies.get('app-jt')!==null){
         this.getStockData();
-//      }
-//      if(this.state.userStockIndicators.length === 0 && Cookies.get('app-jt')!==null){
+      }
+      if(Cookies.get('app-jt')!==null){
          this.getUserStockIndicators();
-                  var default_start = new Date();
-                  var default_end =  new Date();
-                  this.setState({
-                     end_max: default_start.toISOString(),
-                     start_min:  new Date(default_end.setMonth(default_end.getMonth() -1)).toISOString()
-                  })
-//      }
+      }
+      var default_start = new Date();
+      var default_end =  new Date();
+      this.setState({
+         end_max: default_start.toISOString(),
+         start_min:  new Date(default_end.setMonth(default_end.getMonth() -1)).toISOString()
+      })
     }
 
     getStockData = () =>{
@@ -90,6 +90,21 @@ class Home extends React.Component{
         .catch(function (error){
             console.log(error)
         })
+    }
+
+    getLatestData = () =>{
+        var stocks = {}
+        var self = this;
+        const url = process.env.REACT_APP_baseAPIURL + '/stocks/latest'
+        axios.get(url)
+        .then(function(response){
+           response.data.forEach(element=> stocks[element.stock_indicator] = element)
+           console.log(stocks)
+        })
+        .catch(function (error){
+            console.log(error)
+        })
+
     }
 
     getUserStockIndicators = () =>{
@@ -114,7 +129,7 @@ class Home extends React.Component{
                 "stock_indicator": row.stock_indicator,
                 "company_name": row.company_name,
                 "type": fieldName,
-                "quantity": row.shares_available
+                "quantity": ''
             };
               newEntries.push(addEntry)
             })
@@ -369,8 +384,7 @@ class Home extends React.Component{
                        { title: 'Company Name', field: 'company_name' },
                        { title: 'Trend', field: 'trend'},
                        { title: 'Price', field: 'price', type: 'currency' },
-                       { title: 'Shares Available', field: 'shares_available', type: 'numeric' }
-                     ]}
+                       ]}
                      data= {Object.values(stocks)}
                      options={{
                        sorting: true,
@@ -404,7 +418,7 @@ class Home extends React.Component{
                          icon: RefreshIcon,
                          tooltip: 'Refresh Stocks',
                          isFreeAction: true,
-                         onClick:()=>{this.getStockData()}
+                         onClick:()=>{this.getLatestData()}
                        }
                     ]}
                      detailPanel={rowData => {
@@ -550,7 +564,7 @@ class Home extends React.Component{
                        </Button>
                      </DialogActions>
                    </Dialog>
-           </div>}
+           </div>
             </div>
         );
     }

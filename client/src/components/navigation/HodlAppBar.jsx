@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +9,8 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import IconButton from '@material-ui/core/IconButton';
 import Cookies from 'js-cookie';
+const axios = require('axios');
+
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -50,8 +52,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const HodlAppBar = ({title}) => {
+
+
+const HodlAppBar = ({title, history}) => {
     const classes = useStyles();
+    const [auth, setAuth] = useState(sessionStorage.getItem('token')==='check' ? 'LOGOUT': 'LOGIN' ) ;
+
+    const checkLogoutUser=()=>{
+
+        console.log(Cookies.get('app-jt'))
+        if(sessionStorage.getItem('token')==='check'){
+            const url = process.env.REACT_APP_baseAPIURL + '/logout';
+            axios.post(url)
+              .then(function (response) {
+                sessionStorage.removeItem('token');
+//                setAuth('LOGIN');
+                console.log(response)
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+        }
+//        setAuth('LOGIN')
+        history.push('/login');
+    }
 
     return(
         <AppBar>
@@ -60,18 +84,19 @@ const HodlAppBar = ({title}) => {
                   <Grid item>
                   <Link style={{ textDecoration: 'none', color: 'white' }}  to="/home">
                      <Typography variant="h5">
-                             {title}
+                            {title}
                       </Typography>
                    </Link>
                   </Grid>
                   <Grid item>
-                    <span>
-                    <Link style={{textDecoration: 'none'}} to='/login'>
-                               <Button variant="contained" color="primary">
-                                   {Cookies.get('app-jt')!==null ? 'Logout': 'Login'}
+                 {/*   <span>
+                               <Button variant="contained" color="primary" onClick={checkLogoutUser}>
+                                   {Cookies.get('app-jt') ? 'Logout': 'Login'}
+                                   {sessionStorage.getItem('auth') ? sessionStorage.getItem('auth') : 'LOGIN'}
+                                   {auth}
                                 </Button>
-                            </Link>
-                    </span>
+
+                    </span> */}
                     <span>
                     <Link style={{textDecoration: 'none'}} to="/cart">
                                <IconButton color="secondary" >

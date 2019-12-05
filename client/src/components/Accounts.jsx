@@ -23,6 +23,7 @@ import {encodeFormData} from './functions';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 
+const axios = require('axios');
 class Accounts extends React.Component {
 
     state = {
@@ -40,10 +41,11 @@ class Accounts extends React.Component {
         fromAccount: '',
         from_id:'',
         toAccount: '',
-        to_id:"",
+        to_id:'',
         amount: '',
 
-        hodlBalance:''
+        hodlBalance:'',
+        auth: ''
     };
 
     componentDidMount() {
@@ -56,25 +58,51 @@ class Accounts extends React.Component {
     getAccounts = () =>{
         const url = process.env.REACT_APP_baseAPIURL + '/user/accounts'
         fetch(url)
-        .then(res => res.json())
-        .catch(error => console.log('Error:', error))
-        .then(response => {
-            this.setState({
-                accountData: response
+//        .then(res => res.json())
+//        .catch(error => console.log('Error:', error))
+//        .then(response => {
+//            this.setState({
+//                accountData: response
+//            })
+//        });
+
+       var self = this;
+       axios.get(url)
+         .then(function (response) {
+           console.log(response)
+             self.setState({
+              accountData: response.data,
+              auth: true
+             }
+         )
+         })
+         .catch(function (error) {
+           console.log(error);
+            self.setState({
+             auth:false
             })
-        });
+         });
     };
 
     getBalance= () =>{
-        const balance_url = process.env.REACT_APP_baseAPIURL + '/user/balance'
-        fetch(balance_url)
-        .then(res => res.json())
-        .catch(error => console.log('Error:', error))
-        .then(response => {
-            this.setState({
-                hodlBalance: response.amount
+       const balance_url = process.env.REACT_APP_baseAPIURL + '/user/balance'
+       var self = this;
+       axios.get(balance_url)
+         .then(function (response) {
+           console.log(response)
+             self.setState({
+              hodlBalance: response.data.amount,
+              auth: true
+             }
+         )
+         })
+         .catch(function (error) {
+           console.log(error);
+            self.setState({
+             auth:false
             })
-        });
+         });
+
     };
 
     handleInputFocus = (e) => {
@@ -128,8 +156,14 @@ class Accounts extends React.Component {
         })
         .then(response => Promise.all([response.status, response.text()]))
         .then(data => data[0]===400 ? alert("Error: " + data[1]) : console.log(data[1]))
-
         this.getBalance();
+        this.setState({
+            fromAccount: '',
+            from_id:'',
+            toAccount: '',
+            to_id:'',
+            amount: ''
+        })
     }
 
     getFormData = () =>{
