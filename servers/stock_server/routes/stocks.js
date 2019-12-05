@@ -94,8 +94,8 @@
         }
     }
   ])
-  if (stock) {
-    res.json(stock)
+  if (stocks) {
+    res.json(stocks)
   }
   else {
     res.send('No Results')
