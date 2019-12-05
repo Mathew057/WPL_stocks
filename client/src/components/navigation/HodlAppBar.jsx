@@ -66,7 +66,7 @@ const HodlAppBar = ({title}) => {
                   </Grid>
                   <Grid item>
                     <span>
-                    <Link style={{textDecoration: 'none'}} to={Cookies.get('app-jt')!==null ? '/logout': '/login'}>
+                    <Link style={{textDecoration: 'none'}} to='/login'>
                                <Button variant="contained" color="primary">
                                    {Cookies.get('app-jt')!==null ? 'Logout': 'Login'}
                                 </Button>
