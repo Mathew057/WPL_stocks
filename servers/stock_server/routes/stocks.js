@@ -60,7 +60,7 @@
      payload.push({
        ...stocks[i],
        price: stocks[i].graph[stocks[i].graph.length-1].y,
-       trend: precDiff(stocks[i].graph[stocks[i].graph.length-1].y, stocks[i].graph[stocks[i].graph.length-2].y)
+       trend: stock.graph.length > 1 ? precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y): 0
      })
    }
    res.json(payload)
@@ -94,7 +94,12 @@
         }
     }
   ])
-   res.json(stocks)
+  if (stock) {
+    res.json(stock)
+  }
+  else {
+    res.send('No Results')
+  }
  })
 
  routes.post("/latest/:stock_id",async (req,res) => {
@@ -129,8 +134,12 @@
     }
   ])
   stock = stock[0]
-   res.json(stock)
-
+  if (stock) {
+    res.json(stock)
+  }
+  else {
+    res.send('No Results')
+  }
  })
 
  routes.route("/5min/:stock_id")
@@ -173,13 +182,17 @@
 
   stock = stock[0]
 
-  console.log(stock)
 
-   res.json({
-     ...stock,
-     price: stock.graph[stock.graph.length-1].y,
-     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
-   })
+  if (stock) {
+    res.json({
+      ...stock,
+      price: stock.graph[stock.graph.length-1].y,
+      trend: stock.graph.length > 1 ? precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y): 0
+    })
+  }
+  else {
+    res.send('No Results')
+  }
 
  })
 
@@ -221,11 +234,16 @@
       }
   }])
 stock = stock[0]
-   res.json({
-     ...stock,
-     price: stock.graph[stock.graph.length-1].y,
-     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
-   })
+if (stock) {
+  res.json({
+    ...stock,
+    price: stock.graph[stock.graph.length-1].y,
+    trend: stock.graph.length > 1 ? precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y): 0
+  })
+}
+else {
+  res.send('No Results')
+}
  })
 
  routes.route("/daily/:stock_id")
@@ -266,11 +284,17 @@ stock = stock[0]
       }
   }])
 stock = stock[0]
-   res.json({
-     ...stock,
-     price: stock.graph[stock.graph.length-1].y,
-     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
-   })
+console.log(stock)
+  if (stock) {
+    res.json({
+      ...stock,
+      price: stock.graph[stock.graph.length-1].y,
+      trend: stock.graph.length > 1 ? precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y): 0
+    })
+  }
+  else {
+    res.send('No Results')
+  }
  })
 
  routes.route("/weekly/:stock_id")
@@ -311,11 +335,16 @@ stock = stock[0]
       }
   }])
 stock = stock[0]
-   res.json({
-     ...stock,
-     price: stock.graph[stock.graph.length-1].y,
-     trend: precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y)
-   })
+if (stock) {
+  res.json({
+    ...stock,
+    price: stock.graph[stock.graph.length-1].y,
+    trend: stock.graph.length > 1 ? precDiff(stock.graph[stock.graph.length-1].y, stock.graph[stock.graph.length-2].y): 0
+  })
+}
+else {
+  res.send('No Results')
+}
  })
 
  module.exports = routes;
