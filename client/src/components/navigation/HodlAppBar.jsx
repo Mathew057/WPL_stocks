@@ -56,47 +56,19 @@ const useStyles = makeStyles(theme => ({
 
 const HodlAppBar = ({title, history}) => {
     const classes = useStyles();
-    const [auth, setAuth] = useState(sessionStorage.getItem('token')==='check' ? 'LOGOUT': 'LOGIN' ) ;
-
-    const checkLogoutUser=()=>{
-
-        console.log(Cookies.get('app-jt'))
-        if(sessionStorage.getItem('token')==='check'){
-            const url = process.env.REACT_APP_baseAPIURL + '/logout';
-            axios.post(url)
-              .then(function (response) {
-                sessionStorage.removeItem('token');
-//                setAuth('LOGIN');
-                console.log(response)
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-        }
-//        setAuth('LOGIN')
-        history.push('/login');
-    }
 
     return(
         <AppBar>
             <Toolbar>
                 <Grid container  justify="space-between" >
                   <Grid item>
-                  <Link style={{ textDecoration: 'none', color: 'white' }}  to="/home">
+                  <Link style={{ textDecoration: 'none', color: 'white' }}  to="/login">
                      <Typography variant="h5">
                             {title}
                       </Typography>
                    </Link>
                   </Grid>
                   <Grid item>
-                 {/*   <span>
-                               <Button variant="contained" color="primary" onClick={checkLogoutUser}>
-                                   {Cookies.get('app-jt') ? 'Logout': 'Login'}
-                                   {sessionStorage.getItem('auth') ? sessionStorage.getItem('auth') : 'LOGIN'}
-                                   {auth}
-                                </Button>
-
-                    </span> */}
                     <span>
                     <Link style={{textDecoration: 'none'}} to="/cart">
                                <IconButton color="secondary" >

@@ -3,7 +3,6 @@ import './App.css'
 import HodlNavigation from './components/navigation/HodlNavigation';
 import Home from './components/Home.jsx';
 import Login from './components/Login.jsx';
-import Logout from './components/Logout.jsx';
 import Profile from './components/Profile.jsx';
 import Accounts from './components/Accounts.jsx';
 import Signup from './components/Signup.jsx';
@@ -28,7 +27,6 @@ class App extends Component{
                         <Route path="/" exact component={Login}/>
                         <Route path="/home" component={Home}/>
                         <Route path="/login" component={Login}/>
-                        <Route path="/logout" component={Logout}/>
                         <Route path="/profile" component={Profile}/>
                         <Route path="/accounts" component={Accounts}/>
                         <Route path="/signup" component={Signup}/>
