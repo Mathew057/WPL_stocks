@@ -18,6 +18,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {encodeFormData} from './functions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Cookies from 'js-cookie';
 const axios = require('axios');
 
 
@@ -35,29 +36,31 @@ class Home extends React.Component{
         quantity: '',
         start_datetime: '',
         end_datetime: ''
-
-
     }
 
     checkLoggedIn = () =>{
-        var self = this;
-        const url = process.env.REACT_APP_baseAPIURL + '/login/init'
-        axios.post(url)
-          .then(function (response) {
-            console.log(response)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+          const url = process.env.REACT_APP_baseAPIURL + '/init'
+          axios.post(url)
+            .then(function (response) {
+              console.log(response)
+              if(response.status===200){
+                console.log(response)
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
     };
 
 
     componentDidMount() {
       this.checkLoggedIn();
-      if(this.state.stocks.length === 0)
+      if(this.state.stocks.length === 0 && Cookies.get('app-jt')!==null){
         this.getStockData();
-      if(this.state.userStockIndicators.length === 0)
-        this.getUserStockIndicators();
+      }
+      if(this.state.userStockIndicators.length === 0 && Cookies.get('app-jt')!==null){
+         this.getUserStockIndicators();
+      }
     }
 
     getStockData = () =>{
@@ -73,6 +76,7 @@ class Home extends React.Component{
     }
 
     getUserStockIndicators = () =>{
+    this.checkLoggedIn();
      const url = process.env.REACT_APP_baseAPIURL + '/user/stocks'
          fetch(url)
          .then(res => res.json())
@@ -394,7 +398,7 @@ class Home extends React.Component{
                        </Button>
                      </DialogActions>
                    </Dialog>
-           </div>
+           </div>}
             </div>
         );
     }
