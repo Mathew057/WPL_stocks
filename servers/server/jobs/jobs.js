@@ -67,6 +67,7 @@ async function auth (token) {
      var response = await axios.post(`${base_exchange_url}/stocks/latest/${stock.stock_indicator}`,{token:job.attrs.data.token})
      const price = response.data.price
      const new_amount = balance.amount - stock.quantity*price
+     console.log(new_amount)
      if (new_amount < 0) {
        console.log('Did not have enough money to make transaction')
        await job.remove();
