@@ -10,7 +10,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 const axios = require('axios');
 
-class Login extends React.Component{
+class Logout extends React.Component{
 
     constructor(){
         super();
@@ -22,6 +22,20 @@ class Login extends React.Component{
 
     handleChange = e =>{
         this.setState({[e.target.name]: e.target.value})
+    }
+
+    componentDidMount() {
+        const url = process.env.REACT_APP_baseAPIURL + '/logout'
+        axios.post(url)
+          .then(function (response) {
+            console.log(response)
+            if(response.status===200){
+                console.log(response)
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
     }
 
     handleSubmit = e =>{
@@ -96,4 +110,4 @@ class Login extends React.Component{
     }
 }
 
-export default withStyles(styles) (Login);
+export default withStyles(styles) (Logout);

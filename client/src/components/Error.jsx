@@ -9,7 +9,7 @@ class Home extends React.Component{
         return(
             <div className={classes.contentContainer}>
                 <h1>404 Error</h1>
-                <h4>Sorry the page you are looking for does not exist.</h4>
+                <h4>Sorry the page you are looking for is unavailable at this time.</h4>
                 <img src="https://stockhead.com.au/wp-content/uploads/2017/08/sad.jpg" alt="error"/>
                 <Link to="/home" >
                       <h4>Return to homepage</h4>

@@ -8,6 +8,7 @@ import {Link} from 'react-router-dom';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import IconButton from '@material-ui/core/IconButton';
+import Cookies from 'js-cookie';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -63,27 +64,11 @@ const HodlAppBar = ({title}) => {
                       </Typography>
                    </Link>
                   </Grid>
-              {/*    <Grid item>
-             <div className={classes.search}>
-                         <div className={classes.searchIcon}>
-                           <SearchIcon />
-                         </div>
-                         <InputBase
-                           placeholder="Search…"
-                           classes={{
-                             root: classes.inputRoot,
-                             input: classes.inputInput,
-                           }}
-                           inputProps={{ 'aria-label': 'search' }}
-                         />
-                       </div>
-                 </Grid> */}
-
                   <Grid item>
                     <span>
-                    <Link style={{textDecoration: 'none'}} to="/login">
-                               <Button variant="contained" color="primary" >
-                                   Login
+                    <Link style={{textDecoration: 'none'}} to={Cookies.get('app-jt')!==null ? '/logout': '/login'}>
+                               <Button variant="contained" color="primary">
+                                   {Cookies.get('app-jt')!==null ? 'Logout': 'Login'}
                                 </Button>
                             </Link>
                     </span>

@@ -5,12 +5,17 @@ import MaterialTable from 'material-table';
 import {Line} from 'react-chartjs-2';
 import {tableIcons} from './materialTableConstants';
 import {encodeFormData} from './functions';
+import Button from '@material-ui/core/Button';
 
 class MyStocks extends React.Component{
 
     state= {
         stocks: [],
-        schedules: []
+        schedules: [],
+        history: 'month',
+        start_min: '',
+        end_max: '',
+        unit: ''
     }
 
     componentDidMount() {
@@ -76,12 +81,19 @@ class MyStocks extends React.Component{
 
     };
 
+    changeHistory=(type)=>{
+        this.setState({
+            history: type
+        })
+    }
+
+
     getConfigData(stockData){
         const data = {
           labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
           datasets: [
             {
-              label: 'My First dataset',
+              label: stockData.stock_indicator,
               fill: false,
               lineTension: 0.1,
               backgroundColor: 'rgba(75,192,192,0.4)',
@@ -99,11 +111,108 @@ class MyStocks extends React.Component{
               pointHoverBorderWidth: 2,
               pointRadius: 1,
               pointHitRadius: 10,
-              data: stockData
+              data: stockData.graph,
             }
           ]
         };
         return data;
+    }
+
+    getTime=()=>{
+        this.updateTimeValues();
+         var display_f={
+              'minute': 'h:mm a',
+              'hour': 'hA',
+              'day': 'MMM DD',
+              'month': 'MMM YYYY'
+           }
+         var time = {
+           unit: this.state.unit,
+            displayFormats: display_f,
+            min: this.state.start_min,
+            max: this.state.end_max
+        }
+        return time;
+    }
+
+    updateTimeValues=()=>{
+        var type = this.state.history;
+        var start = new Date();
+        var end = new Date();
+        switch(type) {
+          case 'day':{
+            this.setState({
+                start_min: start.toISOString(),
+                end_max: new Date(end.setDate(end.getDate() - 1)).toISOString(),
+                unit: 'minute'
+            })
+            break;}
+          case 'week': {
+            this.setState({
+                start_min: start.toISOString(),
+                end_max: new Date(end.setDate(end.getDate() - 7)).toISOString(),
+                unit: 'hour'
+            })
+            break;}
+           case 'lastweek': {
+            this.setState({
+                start_min: end.setDate(end.getDate() - 14).toISOString(),
+                end_max: new Date(end.setDate(end.getDate() - 7)).toISOString(),
+                unit: 'hour'
+            })
+            break;}
+           case 'month': {
+            this.setState({
+                start_min: start.toISOString(),
+                end_max: new Date(end.setMonth(end.getMonth() -1)).toISOString(),
+                unit: 'day'
+            })
+            break;}
+           case 'year': {
+            this.setState({
+                start_min: start.toISOString(),
+                end_max: new Date(end.setFullYear(end.getFullYear()-1)).toISOString(),
+                unit: 'month'
+            })
+            break;}
+           case '5year': {
+            this.setState({
+                start_min: start.toISOString(),
+                end_max: new Date(end.setFullYear(end.getFullYear()-5)).toISOString(),
+                unit: 'month'
+            })
+            break;}
+          default: {
+            this.setState({
+                start_min: start.toISOString(),
+                end_max: new Date(end.setMonth(end.getMonth() -1)).toISOString(),
+                unit: 'day'
+            })
+            break;
+            }
+        }
+    }
+
+    getOptions(){
+        var time = this.getTime();
+         var options = {
+                title: {text: "This is a test"},
+                scales: {
+                    xAxes: [{
+                        title: "time",
+                        type: 'time',
+                        gridLines: {
+                            lineWidth: 2
+                        },
+                        time: time,
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'Date'
+                        }
+                    }]
+                }
+            }
+            return options;
     }
 
     render(){
@@ -130,7 +239,16 @@ class MyStocks extends React.Component{
                      detailPanel={rowData => {
                           return (
                             <div>
-                                <Line data={this.getConfigData(rowData.data)} />
+                                <Line data={this.getConfigData(rowData)} options={this.getOptions()} />
+                                   <span>
+                                    History
+                                    <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={this.changeHistory('day')}>Day</Button>
+                                    <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={this.changeHistory('week')}>Current Week</Button>
+                                    <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={this.changeHistory('lastweek')}>Last Week</Button>
+                                    <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={this.changeHistory('month')}>Month</Button>
+                                    <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={this.changeHistory('year')}>Year</Button>
+                                    <Button  color="primary" variant="contained" className={classes.buttonPadding} onClick={this.changeHistory('5year')}>Past 5 Years</Button>
+                                </span>
                             </div>
                           )
                         }}
@@ -146,8 +264,8 @@ class MyStocks extends React.Component{
                        { title: 'Stock Indicator', field: 'stock_indicator', editable: 'never' },
                        { title: 'Type', field: 'type', lookup: { buy: 'Buy', sell: 'Sell' }},
                        { title: 'Quantity', field: 'quantity', type: 'numeric' },
-                       { title: 'Start Date', field: "start_datetime", type: 'date'},
-                       { title: 'End Date', field: "end_datetime", type: 'date'},
+                       { title: 'Start Date', field: "start_datetime", type: 'datetime'},
+                       { title: 'End Date', field: "end_datetime", type: 'datetime'},
                        { title: 'Interval', field: 'interval', type: 'numeric' },
                        { title: 'Frequency', field: 'frequency',lookup: { day: 'Day', week: 'Week', month: 'Month', year: 'Year' } },
                     ]}

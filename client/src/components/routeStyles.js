@@ -59,7 +59,10 @@ const style = theme => ({
            marginLeft: theme.spacing(1),
            marginRight: theme.spacing(1),
            width: '30%'
-     }
+     },
+      buttonPadding: {
+         margin: "5px"
+      }
 });
 
 export default style;

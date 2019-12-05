@@ -28,7 +28,7 @@ class Signup extends React.Component{
     }
 
     handleSubmit = e =>{
-        const url =  process.env.REACT_APP_baseAPIURL + '/login/signup'
+        const url =  process.env.REACT_APP_baseAPIURL + '/signup'
         const{name, physAddr, email, user, password} = this.state;
         let data = {
             name: name,
@@ -63,7 +63,7 @@ class Signup extends React.Component{
                     </Avatar>
                 </Grid>
                 <h2>Sign Up</h2>
-                <form onSubmit= {this.handleSubmit}>
+                <form>
                     <div>
                         <TextField
                           label="Name"
@@ -116,7 +116,7 @@ class Signup extends React.Component{
                           fullWidth
                         />
                     </div>
-                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                    <Button onClick= {this.handleSubmit} variant="contained" color="primary" fullWidth>
                         Sign Up
                     </Button>
                   </form>
