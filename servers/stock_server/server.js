@@ -4,7 +4,7 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-04T15:29:53-06:00
+ * @Last modified time: 2019-12-06T00:17:07-06:00
  * @License: MIT
  */
 
@@ -92,15 +92,15 @@ async function update_stocks (Model, interval, base_date) {
           }
         })
       }
-    try {
-      const result = await Model.collection.bulkWrite(write_ops)
-      console.log("Finished bulk inserting", symbol)
-    }
-    catch (e) {
-        console.error(e)
-
-    }
   }
+  }
+  try {
+    const result = await Model.collection.bulkWrite(write_ops)
+    console.log("Finished bulk inserting")
+  }
+  catch (e) {
+      console.error(e)
+
   }
 }
 
