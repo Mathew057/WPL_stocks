@@ -4,13 +4,13 @@
  * @Email:  dev@mathewblack.com
  * @Filename: server.js
  * @Last modified by:   Mathew
- * @Last modified time: 2019-12-04T15:30:08-06:00
+ * @Last modified time: 2019-12-06T01:25:36-06:00
  * @License: MIT
  */
  const mongodb_url = process.env.MONGODB_URL || "mongodb://localhost:27017/hodl"
 const port = process.env.PORT || 5000
 const base_route = process.env.BASE_ROUTE || "/api"
-
+const client = process.env.CLIENT || 'http://localhost:3000'
 const mongoose = require('mongoose')
 mongoose.set('debug', true);
 
@@ -32,7 +32,7 @@ app.use(morgan('combined'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+app.use(cors({credentials: true, origin: client}))
 
 app.use(compression())
 app.use(cookieParser())

@@ -12,3 +12,4 @@ data:
   MONGODB_URL: "mongodb://hodl-mongodb:27017/hodl"
   BASE_ROUTE: "/api"
   EXCHANGE_URL: "https://localhost/stock_api"
+  CLIENT: "https://localhost"

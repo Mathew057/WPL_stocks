@@ -13,9 +13,11 @@ import Cart from './components/Cart.jsx';
 import {Route, Redirect, Switch} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import styles from './components/routeStyles';
+const axios = require('axios');
+axios.defaults.withCredentials = true
 
 class App extends Component{
-    
+
     render() {
         const {classes} = this.props;
         return(
