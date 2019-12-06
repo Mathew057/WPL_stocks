@@ -24,6 +24,7 @@
  .post(async (req,res) => {
    var last_month =  new Date()
    last_month.setMonth(last_month.getMonth() - 1);
+   try {
    var stocks = await Stocks_Hourly.aggregate([
      {
        $match: {
@@ -64,9 +65,15 @@
      })
    }
    res.json(payload)
+ }
+ catch (e) {
+   console.error(e)
+     res.status(400).send(e)
+ }
  })
 
  routes.post("/latest",async (req, res) => {
+   try {
    var stocks = await Stocks_5min.aggregate([
      {
       $sort: {
@@ -100,10 +107,16 @@
   else {
     res.send('No Results')
   }
+}
+catch (e) {
+  console.error(e)
+    res.status(400).send(e)
+}
  })
 
  routes.post("/latest/:stock_id",async (req,res) => {
    const stock_id = req.params.stock_id
+   try {
    var stock = await Stocks_5min.aggregate([
      {
        $match: {
@@ -140,6 +153,11 @@
   else {
     res.send('No Results')
   }
+}
+catch (e) {
+  console.error(e)
+    res.status(400).send(e)
+}
  })
 
  routes.route("/5min/:stock_id")
@@ -148,6 +166,7 @@
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   try {
    var stock = await Stocks_5min.aggregate([
      {
        $match: {
@@ -192,6 +211,10 @@
   }
   else {
     res.send('No Results')
+  } }
+  catch (e) {
+    console.error(e)
+      res.status(400).send(e)
   }
 
  })
@@ -202,6 +225,7 @@
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   try {
    var stock = await Stocks_Hourly.aggregate([
      {
        $match: {
@@ -243,6 +267,10 @@ if (stock) {
 }
 else {
   res.send('No Results')
+} }
+catch (e) {
+  console.error(e)
+    res.status(400).send(e)
 }
  })
 
@@ -252,6 +280,7 @@ else {
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   try {
    var stock = await Stocks_Daily.aggregate([
      {
        $match: {
@@ -295,6 +324,11 @@ console.log(stock)
   else {
     res.send('No Results')
   }
+}
+catch (e) {
+  console.error(e)
+    res.status(400).send(e)
+}
  })
 
  routes.route("/weekly/:stock_id")
@@ -303,6 +337,7 @@ console.log(stock)
    start_datetime = new Date(start_datetime)
    end_datetime = new Date(end_datetime)
    const stock_id = req.params.stock_id
+   try {
    var stock = await Stocks_Weekly.aggregate([
      {
        $match: {
@@ -344,6 +379,11 @@ if (stock) {
 }
 else {
   res.send('No Results')
+}
+}
+catch (e) {
+  console.error(e)
+    res.status(400).send(e)
 }
  })
 
