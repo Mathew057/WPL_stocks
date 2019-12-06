@@ -35,10 +35,5 @@ spec:
           backend:
             serviceName: {{ $fullName }}-server
             servicePort: {{ $.Values.service.server.internalPort }}
-        - path: /stock_api
-          backend:
-            serviceName: {{ $fullName }}-stock-server
-            servicePort: {{ $.Values.service.stock_server.internalPort }}
-
     {{- end }}
 {{- end }}

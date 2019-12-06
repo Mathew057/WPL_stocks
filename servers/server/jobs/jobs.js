@@ -140,6 +140,25 @@ async function auth (token) {
        }
      }
    }
+
+   try{
+     var old_stock = await Stock.findOne({
+       user_id: stock.user_id,
+       stock_indicator: stock.stock_indicator
+     })
+   }
+   catch (e) {
+     console.error('could not find original stock', e)
+     job.fail(e)
+     return;
+   }
+
+   if (old_stock && old_stock.quantity - stock.quantity < 0) {
+     console.log('Did not have enough stock to make transaction')
+     await job.remove();
+     return;
+   }
+
    try {
      var balance = await Balance.findOne({
        user_id: stock.user_id
@@ -164,28 +183,25 @@ async function auth (token) {
      return;
    }
 
-
-   try{
-     var old_stock = await Stock.findOne({
-       user_id: stock.user_id,
-       stock_indicator: stock.stock_indicator
-     })
-   }
-   catch (e) {
-     console.error('could not find original stock', e)
-     job.fail(e)
-     return;
-   }
-
    console.log(old_stock)
    const quantity = old_stock ? old_stock.quantity - stock.quantity : stock.quantity
    try {
-     const result = await Stock.updateOne({
-       user_id: stock.user_id,
-       stock_indicator: stock.stock_indicator
-     }, {
-       quantity: quantity
-     });
+     var result;
+     if (quantity === 0) {
+       result = await Stock.deleteOne({
+         user_id: stock.user_id,
+         stock_indicator: stock.stock_indicator
+       });
+     }
+     else {
+       result = await Stock.updateOne({
+         user_id: stock.user_id,
+         stock_indicator: stock.stock_indicator
+       }, {
+         quantity: quantity
+       });
+     }
+
      console.log(result);
    }
    catch(e) {

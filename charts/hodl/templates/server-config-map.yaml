@@ -11,5 +11,5 @@ data:
   PORT: "{{ .Values.service.server.internalPort }}"
   MONGODB_URL: "mongodb://hodl-mongodb:27017/hodl"
   BASE_ROUTE: "/api"
-  EXCHANGE_URL: "http://hodl-stock-server:4000/stock_api"
+  EXCHANGE_URL: "http://localhost:4000/stock_api"
   CLIENT: "https://localhost"

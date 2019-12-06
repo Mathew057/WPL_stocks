@@ -44,6 +44,28 @@ spec:
                 name: {{ include "hodl.fullname" . }}-server-config
           resources:
 {{ toYaml .Values.server.resources | indent 12 }}
+        - name: stock-server
+          image: "{{ .Values.stock_server.image.repository }}:{{ .Values.stock_server.image.tag }}"
+          imagePullPolicy: {{ .Values.stock_server.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.stock_server.internalPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /stock_api
+              port: http
+            initialDelaySeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /stock_api
+              port: http
+            initialDelaySeconds: 120
+          envFrom:
+            - configMapRef:
+                name: {{ include "hodl.fullname" . }}-stock-server-config
+          resources:
+{{ toYaml .Values.stock_server.resources | indent 12 }}
       {{- if hasKey .Values "imagePullSecret"}}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
